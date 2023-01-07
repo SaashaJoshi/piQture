@@ -7,12 +7,14 @@ from qiskit.circuit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit.visualization import plot_histogram
 
 
-class FRQI:
+class NEQR:
 
-    def __init__(self, image_size: tuple[int, int], color_vals: list):
+    def __init__(self, image_size: tuple[int, int], color_vals: list[str], max_color: int=255):
         self.image_size = image_size
         self.color_vals = color_vals
         self.feature_dimen = int(np.sqrt(math.prod(self.image_size)))
+        self.max_color = max_color + 1
+        self.q = int(math.log(self.max_color, 2))
 
     def pixel_position(self, pixel_pos_binary: str):
 
@@ -26,47 +28,37 @@ class FRQI:
 
     def color_info(self, pixel_pos: int):
 
-        qr = QuantumRegister(self.feature_dimen + 1)
+        qr = QuantumRegister(self.feature_dimen + self.q)
         circ = QuantumCircuit(qr)
 
-        circ.cry(
-            self.color_vals[pixel_pos],
-            target_qubit=self.feature_dimen,
-            control_qubit=self.feature_dimen - 2,
-        )
-        circ.cx(0, 1)
-        circ.cry(
-            -self.color_vals[pixel_pos],
-            target_qubit=self.feature_dimen,
-            control_qubit=self.feature_dimen - 1,
-        )
-        circ.cx(0, 1)
-        circ.cry(
-            self.color_vals[pixel_pos],
-            target_qubit=self.feature_dimen,
-            control_qubit=self.feature_dimen - 1,
-        )
+        color_binary = "{0:0>8b}".format(int(self.color_vals[pixel_pos]))
+        print(pixel_pos, int(self.color_vals[pixel_pos]), color_binary)
+
+        control_qubits = list(range(self.feature_dimen))
+        for index, color in enumerate(color_binary):
+            if color == "1":
+                circ.mct(control_qubits=control_qubits, target_qubit=self.feature_dimen + index)
 
         return circ
 
     def measure_circ(self, circ):
 
         # Append measurement gates to the circuit
-        qr = QuantumRegister(self.feature_dimen + 1)
-        cr = ClassicalRegister(self.feature_dimen + 1)
+        qr = QuantumRegister(self.feature_dimen + self.q)
+        cr = ClassicalRegister(self.feature_dimen + self.q)
 
         meas_circ = QuantumCircuit(qr, cr)
         meas_circ.measure(
-            [i for i in range(self.feature_dimen + 1)],
-            [i for i in range(self.feature_dimen + 1)],
+            [i for i in range(self.feature_dimen + self.q)],
+            [i for i in range(self.feature_dimen + self.q)],
         )
-        meas_circ = meas_circ.compose(circ, range(self.feature_dimen + 1), front=True)
+        meas_circ = meas_circ.compose(circ, range(self.feature_dimen + self.q), front=True)
 
         return meas_circ
 
     def image_encoding(self, measure=True):
 
-        qr = QuantumRegister(self.feature_dimen + 1)
+        qr = QuantumRegister(self.feature_dimen + self.q)
         circ = QuantumCircuit(qr)
 
         for i in range(self.feature_dimen):
@@ -85,7 +77,7 @@ class FRQI:
             # Embed color information on qubits
             circ.append(
                 self.color_info(pixel),
-                [qr[i] for i in range(self.feature_dimen + 1)],
+                [qr[i] for i in range(self.feature_dimen + self.q)],
             )
 
             # Remove pixel position embedding
@@ -102,8 +94,8 @@ class FRQI:
     @staticmethod
     def get_simulator_result(
             circ,
-            backend: str='qasm_simulator',
-            shots: int=1024,
+            backend: str = 'qasm_simulator',
+            shots: int = 1024,
             plot_counts=True,
     ):
         backend = Aer.get_backend(backend)
@@ -120,30 +112,31 @@ class FRQI:
     def qic(self):
         pass
 
-    # TODO: Implement Geometric Transforms - G1, G2, and G3 from FRQI paper by Le, PQ. et al.
-    def g_1_tranform(self, circ):
-        # G1 transform for color only: color shift (S)
-        # Apply U to color qubit.
+    # TODO: Implement Color Opertions - CC, PC and CS from NEQR paper by Zhang, Yi et al.
+    def cc_operation(self, circ):
+        # Complete Color Operation
         pass
 
-    def g_2_tranform(self, circ):
-        # G2 transform
-        # Apply U to color qubit based on position qubit.
+    def pc_operation(self, circ):
+        # Partial Color Operation
         pass
 
-    def g_2_tranform(self, circ):
-        # G3 transform
-        # Apply U to color and position qubit.
+    def cs_operation(self, circ):
+        # Color Statistical Operation
         pass
 
 
 # if __name__ == '__main__':
-#     pixel_vals = np.zeros(4)
+#     # color_palette = ["0000", "0001", "0010", "0011",
+#     #               "0100", "0101", "0110", "0111",
+#     #               "1000", "1001", "1010", "1011",
+#     #               "1100", "1101", "1110", "1111"]
+#
+#     # pixel_vals = ["1010", "1111", "0110", "0001"]
+#     pixel_vals = [10, 15, 6, 1]
 #     image_size = (2, 2)
 #
-#     circ = FRQI(image_size=image_size, color_vals=pixel_vals)
-#     circ = circ.image_encoding()
+#     circ = NEQR(image_size=image_size, color_vals=pixel_vals, max_color=15)
+#     circ = circ.image_encoding(measure=True)
 #     circ.decompose().draw('mpl')
 #     plt.show()
-#     plt.savefig('foo.pdf')
-

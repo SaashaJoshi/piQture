@@ -1,8 +1,9 @@
+import numpy as np
 import torch.utils.data
 import torchvision
 import torchvision.datasets as datasets
 import matplotlib.pyplot as plt
-from frqi import FRQI
+from neqr import NEQR
 
 
 def load_mnist_data():
@@ -12,14 +13,14 @@ def load_mnist_data():
     '''
 
     mnist_train = datasets.MNIST(
-        root='./data',
+        root='../FRQI/data',
         train=True,
         download=False,
         transform=torchvision.transforms.ToTensor(),
     )
 
     mnist_test = datasets.MNIST(
-        root='./data',
+        root='../FRQI/data',
         train=False,
         download=False,
         transform=torchvision.transforms.Compose([
@@ -61,14 +62,18 @@ if __name__ == '__main__':
 
     print(train_img.shape, train_labels.shape)
 
-    i = 0
-    new_img = torchvision.transforms.Resize(2)(train_img[i])
+    torch.set_printoptions(precision=0)
 
-    # TODO: This might be wrong. Normalize in [0, pi/2] instead of [0, 1]
-    # train_img[i] is already in range [0, 1]. Confirm this.
-    normal = torchvision.transforms.Normalize((0.1307,), (0.3081,))(new_img)
-    plt.imshow(normal[i], cmap=plt.get_cmap('gray'))
-    plt.show()
+    i = 0
+
+    # plt.hist(np.array(train_img[i]).ravel(), bins=50, density=True);
+    # plt.xlabel("pixel values")
+    # plt.ylabel("relative frequency")
+    # plt.title("distribution of pixels")
+    # plt.show()
+
+    new_img = torchvision.transforms.Resize(2)(train_img[i])
+    normal = torchvision.transforms.Normalize(mean=0., std=(1 / 255.))(new_img)
 
     new_dimen = normal.reshape(-1, 4)
     new_dimen_list = new_dimen.tolist()
@@ -76,13 +81,13 @@ if __name__ == '__main__':
     color_vals = new_dimen_list[0]
     image_size = (2, 2)
 
-    circ = FRQI(image_size, color_vals)
+    circ = NEQR(image_size, color_vals)
     circ = circ.image_encoding(measure=True)
     circ.decompose().draw('mpl')
     plt.show()
 
     # Measurement results
-    counts = FRQI.get_simulator_result(
+    counts = NEQR.get_simulator_result(
         circ,
         backend="qasm_simulator",
         shots=1024,
