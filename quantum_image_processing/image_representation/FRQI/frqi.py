@@ -13,7 +13,7 @@ class FRQI:
         self.color_vals = color_vals
         self.feature_dim = int(np.sqrt(math.prod(self.image_size)))
 
-    def pixel_position(self, pixel_pos_binary: str):
+    def _pixel_position(self, pixel_pos_binary: str):
 
         circ = QuantumCircuit(self.feature_dim)
 
@@ -23,7 +23,7 @@ class FRQI:
 
         return circ
 
-    def color_info(self, pixel_pos: int):
+    def _color_info(self, pixel_pos: int):
 
         qr = QuantumRegister(self.feature_dim + 1)
         circ = QuantumCircuit(qr)
@@ -48,7 +48,7 @@ class FRQI:
 
         return circ
 
-    def measure_circ(self, circ):
+    def _measure_circ(self, circ):
 
         # Append measurement gates to the circuit
         qr = QuantumRegister(self.feature_dim + 1)
@@ -77,24 +77,24 @@ class FRQI:
 
             # Embed pixel position on qubits
             circ.compose(
-                self.pixel_position(pixel_pos_binary),
+                self._pixel_position(pixel_pos_binary),
                 [qr[i] for i in range(self.feature_dim)],
             )
 
             # Embed color information on qubits
             circ.compose(
-                self.color_info(pixel),
+                self._color_info(pixel),
                 [qr[i] for i in range(self.feature_dim + 1)],
             )
 
             # Remove pixel position embedding
             circ.compose(
-                self.pixel_position(pixel_pos_binary),
+                self._pixel_position(pixel_pos_binary),
                 [qr[i] for i in range(self.feature_dim)],
             )
 
         if measure:
-            circ = self.measure_circ(circ)
+            circ = self._measure_circ(circ)
 
         return circ
 
@@ -133,13 +133,3 @@ class FRQI:
         # G3 transform
         # Apply U to color and position qubit.
         pass
-
-# if __name__ == '__main__':
-#     pixel_vals = np.zeros(4)
-#     image_size = (2, 2)
-#
-#     circ = FRQI(image_size=image_size, color_vals=pixel_vals)
-#     circ = circ.image_encoding()
-#     circ.decompose().draw('mpl')
-#     plt.show()
-#     plt.savefig('foo.pdf')

@@ -15,7 +15,7 @@ class NEQR:
         self.max_color = max_color + 1
         self.q = int(math.log(self.max_color, 2))
 
-    def pixel_position(self, pixel_pos_binary: str):
+    def _pixel_position(self, pixel_pos_binary: str):
 
         circ = QuantumCircuit(self.feature_dim)
 
@@ -25,7 +25,7 @@ class NEQR:
 
         return circ
 
-    def color_info(self, pixel_pos: int):
+    def _color_info(self, pixel_pos: int):
 
         qr = QuantumRegister(self.feature_dim + self.q)
         circ = QuantumCircuit(qr)
@@ -39,7 +39,7 @@ class NEQR:
 
         return circ
 
-    def measure_circ(self, circ):
+    def _measure_circ(self, circ):
 
         # Append measurement gates to the circuit
         qr = QuantumRegister(self.feature_dim + self.q)
@@ -68,24 +68,24 @@ class NEQR:
 
             # Embed pixel position on qubits
             circ.compose(
-                self.pixel_position(pixel_pos_binary),
+                self._pixel_position(pixel_pos_binary),
                 [qr[i] for i in range(self.feature_dim)],
             )
 
             # Embed color information on qubits
             circ.compose(
-                self.color_info(pixel),
+                self._color_info(pixel),
                 [qr[i] for i in range(self.feature_dim + self.q)],
             )
 
             # Remove pixel position embedding
             circ.compose(
-                self.pixel_position(pixel_pos_binary),
+                self._pixel_position(pixel_pos_binary),
                 [qr[i] for i in range(self.feature_dim)],
             )
 
         if measure:
-            circ = self.measure_circ(circ)
+            circ = self._measure_circ(circ)
 
         return circ
 
@@ -121,18 +121,3 @@ class NEQR:
     def cs_operation(self, circ):
         # Color Statistical Operation
         pass
-
-# if __name__ == '__main__':
-#     # color_palette = ["0000", "0001", "0010", "0011",
-#     #               "0100", "0101", "0110", "0111",
-#     #               "1000", "1001", "1010", "1011",
-#     #               "1100", "1101", "1110", "1111"]
-#
-#     # pixel_vals = ["1010", "1111", "0110", "0001"]
-#     pixel_vals = [10, 15, 6, 1]
-#     image_size = (2, 2)
-#
-#     circ = NEQR(image_size=image_size, color_vals=pixel_vals, max_color=15)
-#     circ = circ.image_encoding(measure=True)
-#     circ.decompose().draw('mpl')
-#     plt.show()
