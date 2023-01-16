@@ -1,7 +1,6 @@
 from __future__ import annotations
 import math
 import numpy as np
-import matplotlib.pyplot as plt
 from qiskit import Aer, execute
 from qiskit.circuit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit.visualization import plot_histogram
@@ -9,16 +8,16 @@ from qiskit.visualization import plot_histogram
 
 class NEQR:
 
-    def __init__(self, image_size: tuple[int, int], color_vals: list[str], max_color: int=255):
+    def __init__(self, image_size: tuple[int, int], color_vals: list[str], max_color: int = 255):
         self.image_size = image_size
         self.color_vals = color_vals
-        self.feature_dimen = int(np.sqrt(math.prod(self.image_size)))
+        self.feature_dim = int(np.sqrt(math.prod(self.image_size)))
         self.max_color = max_color + 1
         self.q = int(math.log(self.max_color, 2))
 
     def pixel_position(self, pixel_pos_binary: str):
 
-        circ = QuantumCircuit(self.feature_dimen)
+        circ = QuantumCircuit(self.feature_dim)
 
         for index, value in enumerate(pixel_pos_binary):
             if value == '0':
@@ -28,40 +27,39 @@ class NEQR:
 
     def color_info(self, pixel_pos: int):
 
-        qr = QuantumRegister(self.feature_dimen + self.q)
+        qr = QuantumRegister(self.feature_dim + self.q)
         circ = QuantumCircuit(qr)
 
         color_binary = "{0:0>8b}".format(int(self.color_vals[pixel_pos]))
-        print(pixel_pos, int(self.color_vals[pixel_pos]), color_binary)
 
-        control_qubits = list(range(self.feature_dimen))
+        control_qubits = list(range(self.feature_dim))
         for index, color in enumerate(color_binary):
             if color == "1":
-                circ.mct(control_qubits=control_qubits, target_qubit=self.feature_dimen + index)
+                circ.mct(control_qubits=control_qubits, target_qubit=self.feature_dim + index)
 
         return circ
 
     def measure_circ(self, circ):
 
         # Append measurement gates to the circuit
-        qr = QuantumRegister(self.feature_dimen + self.q)
-        cr = ClassicalRegister(self.feature_dimen + self.q)
+        qr = QuantumRegister(self.feature_dim + self.q)
+        cr = ClassicalRegister(self.feature_dim + self.q)
 
         meas_circ = QuantumCircuit(qr, cr)
         meas_circ.measure(
-            [i for i in range(self.feature_dimen + self.q)],
-            [i for i in range(self.feature_dimen + self.q)],
+            [i for i in range(self.feature_dim + self.q)],
+            [i for i in range(self.feature_dim + self.q)],
         )
-        meas_circ = meas_circ.compose(circ, range(self.feature_dimen + self.q), front=True)
+        meas_circ = meas_circ.compose(circ, range(self.feature_dim + self.q), front=True)
 
         return meas_circ
 
     def image_encoding(self, measure=True):
 
-        qr = QuantumRegister(self.feature_dimen + self.q)
+        qr = QuantumRegister(self.feature_dim + self.q)
         circ = QuantumCircuit(qr)
 
-        for i in range(self.feature_dimen):
+        for i in range(self.feature_dim):
             circ.h(i)
 
         num_theta = math.prod(self.image_size)
@@ -69,21 +67,21 @@ class NEQR:
             pixel_pos_binary = "{0:0>2b}".format(pixel)
 
             # Embed pixel position on qubits
-            circ.append(
+            circ.compose(
                 self.pixel_position(pixel_pos_binary),
-                [qr[i] for i in range(self.feature_dimen)],
+                [qr[i] for i in range(self.feature_dim)],
             )
 
             # Embed color information on qubits
-            circ.append(
+            circ.compose(
                 self.color_info(pixel),
-                [qr[i] for i in range(self.feature_dimen + self.q)],
+                [qr[i] for i in range(self.feature_dim + self.q)],
             )
 
             # Remove pixel position embedding
-            circ.append(
+            circ.compose(
                 self.pixel_position(pixel_pos_binary),
-                [qr[i] for i in range(self.feature_dimen)],
+                [qr[i] for i in range(self.feature_dim)],
             )
 
         if measure:
@@ -105,14 +103,13 @@ class NEQR:
 
         if plot_counts:
             plot_histogram(counts)
-            plt.show()
 
         return counts
 
     def qic(self):
         pass
 
-    # TODO: Implement Color Opertions - CC, PC and CS from NEQR paper by Zhang, Yi et al.
+    # TODO: Implement Color Operations - CC, PC and CS from NEQR paper by Zhang, Yi et al.
     def cc_operation(self, circ):
         # Complete Color Operation
         pass
@@ -124,7 +121,6 @@ class NEQR:
     def cs_operation(self, circ):
         # Color Statistical Operation
         pass
-
 
 # if __name__ == '__main__':
 #     # color_palette = ["0000", "0001", "0010", "0011",
