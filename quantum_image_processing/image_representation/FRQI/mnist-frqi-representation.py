@@ -5,7 +5,7 @@ from quantum_image_processing.data_loader.mnist_data_loader import load_mnist_da
 
 
 if __name__ == '__main__':
-    train, test = load_mnist_data()
+    _, __, train, test = load_mnist_data()
     train_data = iter(train)
     train_img, train_labels = next(train_data)
 

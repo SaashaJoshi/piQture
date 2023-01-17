@@ -31,14 +31,26 @@ def load_mnist_data():
 
     train_dataloader = torch.utils.data.DataLoader(
         dataset=mnist_train,
-        batch_size=1,
+        batch_size=60000,
         shuffle=False,
+        collate_fn=collate_fn,
     )
 
     test_dataloader = torch.utils.data.DataLoader(
         dataset=mnist_test,
-        batch_size=1,
+        batch_size=10000,
         shuffle=False,
+        collate_fn=collate_fn,
     )
 
-    return train_dataloader, test_dataloader
+    return mnist_train, mnist_test, train_dataloader, test_dataloader
+
+
+def collate_fn(batch):
+    new_batch = []
+    for img, label in batch:
+        item = img, label
+        if label == 1 or label == 7:
+            new_batch.append(item)
+    return torch.utils.data.default_collate(new_batch)
+
