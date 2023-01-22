@@ -10,7 +10,7 @@ from quantum_image_processing.data_loader.mnist_data_loader import load_mnist_da
 from quantum_image_processing.image_classification.tree_tensor_network_ttn import TTN
 
 
-def data_embedding():
+def data_embedding(img_dim):
     """
     Embeds data using Qubit/Angle encoding for a
     single feature.
@@ -19,10 +19,10 @@ def data_embedding():
     :return:
     """
 
-    params = ParameterVector('img_data', 4)
-    embedding = QuantumCircuit(4)
-    for data in range(4):
-        embedding.ry(params[data], i)
+    params = ParameterVector('img_data', img_dim)
+    embedding = QuantumCircuit(img_dim)
+    for i in range(img_dim):
+        embedding.ry(params[i], i)
 
     return embedding
 
@@ -43,22 +43,18 @@ if __name__ == "__main__":
         elif train_labels[i] == 2:
             train_labels[i] = 1
 
-    # flatten_img_dim = train_img[0].reshape(-1, 4)
-    # params_list = flatten_img_dim.tolist()[0]
-    # # print(params_list)
-
     train_img = np.array(train_img.reshape(-1, 4))
     test_img = np.array(test_img.reshape(-1, 4))
     print(train_img.shape, test_img.shape)
 
-    embedding_circ = data_embedding()
+    img_dim = 4
+    embedding_circ = data_embedding(img_dim=img_dim)
     embedding_circ.barrier()
-    ttn = TTN(img_dim=4).ttn_simple(complex_struct=False)
-    circ = embedding_circ.compose(ttn, range(4))
+    ttn = TTN(img_dim=img_dim).ttn_simple(complex_struct=False)
+    circ = embedding_circ.compose(ttn, range(img_dim))
     circ.decompose().decompose().draw("mpl")
-    # plt.show()
+    plt.show()
 
-    # observable = SparsePauliOp.from_list([("Z" * 4, 1)])
     observable = SparsePauliOp.from_list([("Z" + "I" * 3, 1)])
     # Shouldn't this be I*3 + Z (IIIZ) because we just measure the last qubit
     # Shit it would be the exact opposite since qiskit ordering of qubit is diff.
@@ -89,7 +85,7 @@ if __name__ == "__main__":
 
     estimator_classifier = NeuralNetworkClassifier(
         estimator_qnn,
-        optimizer=COBYLA(maxiter=40),
+        optimizer=COBYLA(maxiter=1),
         callback=callback_graph,
     )
 
