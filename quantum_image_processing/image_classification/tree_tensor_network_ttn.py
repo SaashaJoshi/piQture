@@ -1,3 +1,4 @@
+import numpy as np
 from qiskit.circuit import QuantumCircuit, ParameterVector
 
 
@@ -55,11 +56,21 @@ class TTN:
                     block = self._apply_simple_block(qubits=[qubits, qubits + 1])
                     ttn_circ = ttn_circ.compose(block, range(self.img_dim))
 
-            for index, _ in enumerate(qubit_list[:-1]):
+        # The layers might not be symmetric right now.
+        for layer in range(int(np.sqrt(self.img_dim))):
+            temp_list = []
+
+            for index in range(0, len(qubit_list) - 1, 2):
                 block = self._apply_simple_block(qubits=[qubit_list[index], qubit_list[index + 1]])
                 ttn_circ = ttn_circ.compose(block, range(self.img_dim))
+                temp_list.append(qubit_list[index + 1])
 
-            ttn_circ.ry(self.param_vector_copy[0], qubit_list[-1])
+            if len(qubit_list) % 2 != 0:
+                temp_list.append(qubit_list[-1])
+
+            qubit_list = temp_list
+
+        ttn_circ.ry(self.param_vector_copy[0], qubit_list[-1])
 
         return ttn_circ
 
