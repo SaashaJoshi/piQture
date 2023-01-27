@@ -1,7 +1,3 @@
-import torchvision
-import matplotlib.pyplot as plt
-import numpy as np
-
 from frqi import FRQI
 from quantum_image_processing.data_loader.mnist_data_loader import load_mnist_data
 
@@ -25,8 +21,6 @@ if __name__ == '__main__':
 
     circ = FRQI(image_size, color_vals)
     circ = circ.image_encoding(measure=True)
-    circ.draw('mpl')
-    # plt.show()
 
     # Measurement results
     counts = FRQI.get_simulator_result(
