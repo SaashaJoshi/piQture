@@ -1,5 +1,7 @@
 import torchvision
 import matplotlib.pyplot as plt
+import numpy as np
+
 from frqi import FRQI
 from quantum_image_processing.data_loader.mnist_data_loader import load_mnist_data
 
@@ -9,17 +11,13 @@ if __name__ == '__main__':
     train_data = iter(train)
     train_img, train_labels = next(train_data)
 
-    # print(train_img.shape, train_labels.shape)
+    print(train_img.shape, train_labels.shape)
 
-    i = 0
-    new_img = torchvision.transforms.Resize(2)(train_img[i])
+    # Normalize in [0, pi/2] if already done during data loading.
+    # normal = torchvision.transforms.Normalize((0.2052,), (0.4840,))(train_img[0])
+    # plt.imshow(normal[0], cmap=plt.get_cmap('gray'))
 
-    # TODO: This might be wrong. Normalize in [0, pi/2] instead of [0, 1]
-    # train_img[i] is already in range [0, 1]. Confirm this.
-    normal = torchvision.transforms.Normalize((0.1307,), (0.3081,))(new_img)
-    plt.imshow(normal[i], cmap=plt.get_cmap('gray'))
-
-    new_dim = normal.reshape(-1, 4)
+    new_dim = train_img[0].reshape(-1, 4)
     new_dim_list = new_dim.tolist()
 
     color_vals = new_dim_list[0]
@@ -27,7 +25,8 @@ if __name__ == '__main__':
 
     circ = FRQI(image_size, color_vals)
     circ = circ.image_encoding(measure=True)
-    circ.decompose().draw('mpl')
+    circ.draw('mpl')
+    # plt.show()
 
     # Measurement results
     counts = FRQI.get_simulator_result(
