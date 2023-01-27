@@ -67,21 +67,21 @@ class NEQR:
             pixel_pos_binary = "{0:0>2b}".format(pixel)
 
             # Embed pixel position on qubits
-            circ.compose(
+            circ = circ.compose(
                 self._pixel_position(pixel_pos_binary),
-                [qr[i] for i in range(self.feature_dim)],
+                range(self.feature_dim),
             )
 
             # Embed color information on qubits
-            circ.compose(
+            circ = circ.compose(
                 self._color_info(pixel),
-                [qr[i] for i in range(self.feature_dim + self.q)],
+                range(self.feature_dim + self.q),
             )
 
             # Remove pixel position embedding
-            circ.compose(
+            circ = circ.compose(
                 self._pixel_position(pixel_pos_binary),
-                [qr[i] for i in range(self.feature_dim)],
+                range(self.feature_dim),
             )
 
         if measure:
