@@ -2,14 +2,15 @@ import numpy as np
 from qiskit.circuit import QuantumCircuit, ParameterVector
 
 
-class TTN:
+# Can TTN be an ABC for MERA? Good thought!
+class MERA:
     """
-    Implements a Tree Tensor Network (TTN) as given by
-    Grant et al. (2018).
+    Implements QCNN structure by Cong et al. (2019), replicating
+    the architecture described by MERA - Multiscale Entanglement
+    Renormalization Ansatz, given by Vidal et al. (2008).
 
-    The model architecture only consists of a hierarchical
-    TTN model. It cannot be classified as a QCNN since
-    there is no distinction between conv and pooling layers.
+    The decomposition of MERA architecture takes from the paper
+    by Grant et al. (2018).
     """
 
     def __init__(self, img_dim):
@@ -81,66 +82,43 @@ class TTN:
 
         return block, param_vector_copy
 
-    def ttn_simple(self, complex_struct=True):
-        """
-        Rotations here can be either real or complex.
-
-        For real rotations only RY gates are used since
-        the gate has no complex rotations involved.
-        For complex rotations, a combination of RZ and RY
-        gates are used.
-
-        I HAVE NO IDEA WHY I CHOSE THESE. THE SELECTION
-        OF UNITARY GATES IS COMPLETELY VOLUNTARY.
-
-        PennyLane implements a TTN template with only RX gates.
-
-        :return:
-        """
-        param_vector = ParameterVector('theta', 2 * self.img_dim - 1)
+    def mera_simple(self, complex_struct=True):
+        param_vector = ParameterVector(
+            'theta',
+            int(self.img_dim / 2 * (self.img_dim / 2 + 1)) + 3,
+        )
         param_vector_copy = param_vector
 
         if complex_struct:
             pass
         else:
-            return self.ttn_backbone(self._apply_real_simple_block, param_vector_copy)
+            return self.mera_backbone(self._apply_real_simple_block, param_vector_copy)
 
-    def ttn_general(self, complex_struct=True):
-        """
-        Two qubit gates built from referencing a paper by
-        Vatan et al. (2004).
-
-        As stated in the paper:
-        "A general two-qubit quantum computation, up to a global phase,
-        can be constructed using at most 3 CNOT gates and 15 elementary
-        one-qubit gates from the family {Ry , Rz}."
-        and
-
-        Theorem 3. Every two-qubit quantum gate in SO(4) (i.e. real gate)
-        can be realized by a circuit consisting of 12 elementary
-        one-qubit gates and 2 CNOT gates.
-
-        Theorem 4. Every two-qubit quantum gate in O(4) with determinant
-        equal to −1 can be realized by a circuit consisting of 12 elementary
-        gates and 2 CNOT gates and one SWAP gate
-        :return:
-        """
-        # Check number of params here.
+    # Check number of params here.
+    def mera_general(self, complex_struct=True):
         if complex_struct:
-            param_vector = ParameterVector('theta', 15 * self.img_dim - 1)
+            param_vector = ParameterVector('theta', 20 * self.img_dim - 1)
             param_vector_copy = param_vector
-            return self.ttn_backbone(self._apply_complex_general_block, param_vector_copy)
+            return self.mera_backbone(self._apply_complex_general_block, param_vector_copy)
         else:
-            param_vector = ParameterVector('theta', 6 * self.img_dim - 1)
+            param_vector = ParameterVector('theta', 10 * self.img_dim - 1)
             param_vector_copy = param_vector
-            return self.ttn_backbone(self._apply_real_general_block, param_vector_copy)
+            return self.mera_backbone(self._apply_real_general_block, param_vector_copy)
 
-    def ttn_with_aux(self):
-        pass
+    def mera_backbone(self, gate_structure, param_vector_copy):
+        mera_circ = QuantumCircuit(self.img_dim)
 
-    def ttn_backbone(self, gate_structure, param_vector_copy):
-        ttn_circ = QuantumCircuit(self.img_dim)
+        for qubits in range(1, self.img_dim, 2):
+            if qubits == self.img_dim - 1:
+                break
 
+            block, param_vector_copy = gate_structure(
+                qubits=[qubits, qubits + 1],
+                param_vector_copy=param_vector_copy,
+            )
+            mera_circ = mera_circ.compose(block, range(self.img_dim))
+
+        mera_circ.barrier()
         qubit_list = []
         for qubits in range(0, self.img_dim, 2):
             if qubits == self.img_dim - 1:
@@ -151,18 +129,31 @@ class TTN:
                     qubits=[qubits, qubits + 1],
                     param_vector_copy=param_vector_copy,
                 )
-                ttn_circ = ttn_circ.compose(block, range(self.img_dim))
+                mera_circ = mera_circ.compose(block, range(self.img_dim))
 
         # The layers might not be symmetric right now.
         for layer in range(int(np.sqrt(self.img_dim))):
             temp_list = []
+
+            mera_circ.barrier()
+            for index in range(1, len(qubit_list), 2):
+                if len(qubit_list) == 2 or index == len(qubit_list) - 1:
+                    break
+
+                block, param_vector_copy = gate_structure(
+                    qubits=[qubit_list[index], qubit_list[index + 1]],
+                    param_vector_copy=param_vector_copy,
+                )
+                mera_circ = mera_circ.compose(block, range(self.img_dim))
+
+            mera_circ.barrier()
 
             for index in range(0, len(qubit_list) - 1, 2):
                 block, param_vector_copy = gate_structure(
                     qubits=[qubit_list[index], qubit_list[index + 1]],
                     param_vector_copy=param_vector_copy,
                 )
-                ttn_circ = ttn_circ.compose(block, range(self.img_dim))
+                mera_circ = mera_circ.compose(block, range(self.img_dim))
                 temp_list.append(qubit_list[index + 1])
 
             if len(qubit_list) % 2 != 0:
@@ -170,6 +161,6 @@ class TTN:
 
             qubit_list = temp_list
 
-        ttn_circ.ry(param_vector_copy[0], qubit_list[-1])
+        mera_circ.ry(param_vector_copy[0], qubit_list[-1])
 
-        return ttn_circ
+        return mera_circ
