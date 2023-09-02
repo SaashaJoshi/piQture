@@ -3,7 +3,8 @@ import torch.utils.data
 from neqr import NEQR
 from quantum_image_processing.data_loader.mnist_data_loader import load_mnist_data
 import matplotlib.pyplot as plt
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     _, __, train, test = load_mnist_data()
     train_data = iter(train)
     train_img, train_labels = next(train_data)
@@ -18,7 +19,7 @@ if __name__ == '__main__':
     # plt.title("distribution of pixels")
     # plt.show()
 
-    normal = torchvision.transforms.Normalize(mean=0., std=(1 / 255.))(train_img[0])
+    normal = torchvision.transforms.Normalize(mean=0.0, std=(1 / 255.0))(train_img[0])
 
     new_dim = normal.reshape(-1, 4)
     new_dim_list = new_dim.tolist()

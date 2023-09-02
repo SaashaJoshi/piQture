@@ -2,7 +2,7 @@ from frqi import FRQI
 from quantum_image_processing.data_loader.mnist_data_loader import load_mnist_data
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     _, __, train, test = load_mnist_data()
     train_data = iter(train)
     train_img, train_labels = next(train_data)
@@ -17,10 +17,11 @@ if __name__ == '__main__':
     new_dim_list = new_dim.tolist()
 
     color_vals = new_dim_list[0]
+    print(color_vals)
     image_size = (2, 2)
 
     circ = FRQI(image_size, color_vals)
-    circ = circ.image_encoding(measure=True)
+    circ = circ.frqi(measure=True)
 
     # Measurement results
     counts = FRQI.get_simulator_result(

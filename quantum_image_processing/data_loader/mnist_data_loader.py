@@ -6,27 +6,26 @@ import torchvision.datasets as datasets
 def load_mnist_data():
     """
     Loads MNIST dataset from PyTorch using DataLoader.
-    :return: Train and Test DataLoader objects.
+    Return:
+        Train and Test DataLoader objects.
     """
 
     mnist_train = datasets.MNIST(
         root="../data_loader/mnist_data",
         train=True,
         download=False,
-        transform=torchvision.transforms.Compose([
-            torchvision.transforms.ToTensor(),
-            torchvision.transforms.Resize(2)
-        ])
+        transform=torchvision.transforms.Compose(
+            [torchvision.transforms.ToTensor(), torchvision.transforms.Resize(2)]
+        ),
     )
 
     mnist_test = datasets.MNIST(
         root="../data_loader/mnist_data",
         train=False,
         download=False,
-        transform=torchvision.transforms.Compose([
-            torchvision.transforms.ToTensor(),
-            torchvision.transforms.Resize(2)
-        ])
+        transform=torchvision.transforms.Compose(
+            [torchvision.transforms.ToTensor(), torchvision.transforms.Resize(2)]
+        ),
     )
 
     train_dataloader = torch.utils.data.DataLoader(
@@ -53,4 +52,3 @@ def collate_fn(batch):
         if label == 1 or label == 7:
             new_batch.append(item)
     return torch.utils.data.default_collate(new_batch)
-

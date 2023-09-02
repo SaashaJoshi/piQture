@@ -97,7 +97,7 @@ class TTN:
 
         :return:
         """
-        param_vector = ParameterVector('theta', 2 * self.img_dim - 1)
+        param_vector = ParameterVector("theta", 2 * self.img_dim - 1)
         param_vector_copy = param_vector
 
         if complex_struct:
@@ -127,11 +127,13 @@ class TTN:
         """
         # Check number of params here.
         if complex_struct:
-            param_vector = ParameterVector('theta', 15 * self.img_dim - 1)
+            param_vector = ParameterVector("theta", 15 * self.img_dim - 1)
             param_vector_copy = param_vector
-            return self.ttn_backbone(self._apply_complex_general_block, param_vector_copy)
+            return self.ttn_backbone(
+                self._apply_complex_general_block, param_vector_copy
+            )
         else:
-            param_vector = ParameterVector('theta', 6 * self.img_dim - 1)
+            param_vector = ParameterVector("theta", 6 * self.img_dim - 1)
             param_vector_copy = param_vector
             return self.ttn_backbone(self._apply_real_general_block, param_vector_copy)
 

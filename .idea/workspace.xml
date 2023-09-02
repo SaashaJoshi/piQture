@@ -4,7 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d30f6c35-9293-4fec-87b5-cc5c7cc9e773" name="Changes" comment="" />
+    <list default="true" id="d30f6c35-9293-4fec-87b5-cc5c7cc9e773" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/make_init.py" beforeDir="false" afterPath="$PROJECT_DIR$/make_init.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/quantum_image_processing/data_loader/mnist_data_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/quantum_image_processing/data_loader/mnist_data_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/quantum_image_processing/models/tensor_network_circuits/mera.py" beforeDir="false" afterPath="$PROJECT_DIR$/quantum_image_processing/models/tensor_network_circuits/mera.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/quantum_image_processing/models/tensor_network_circuits/mnist-ttn-classification.py" beforeDir="false" afterPath="$PROJECT_DIR$/quantum_image_processing/models/tensor_network_circuits/mnist-ttn-classification.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/quantum_image_processing/models/tensor_network_circuits/tree_tensor_network_ttn.py" beforeDir="false" afterPath="$PROJECT_DIR$/quantum_image_processing/models/tensor_network_circuits/tree_tensor_network_ttn.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/quantum_image_processing/representations/first-step.py" beforeDir="false" afterPath="$PROJECT_DIR$/quantum_image_processing/representations/first-step.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/quantum_image_processing/representations/frqi.py" beforeDir="false" afterPath="$PROJECT_DIR$/quantum_image_processing/representations/frqi.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/quantum_image_processing/representations/mnist-frqi-representation.py" beforeDir="false" afterPath="$PROJECT_DIR$/quantum_image_processing/representations/mnist-frqi-representation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/quantum_image_processing/representations/mnist-neqr-representation.py" beforeDir="false" afterPath="$PROJECT_DIR$/quantum_image_processing/representations/mnist-neqr-representation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/quantum_image_processing/representations/neqr.py" beforeDir="false" afterPath="$PROJECT_DIR$/quantum_image_processing/representations/neqr.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

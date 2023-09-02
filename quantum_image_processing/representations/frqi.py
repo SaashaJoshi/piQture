@@ -7,23 +7,26 @@ from qiskit.visualization import plot_histogram
 
 
 class FRQI:
+    """Represents images in FRQI representation format."""
 
     def __init__(self, image_size: tuple[int, int], color_vals: list):
         self.image_size = image_size
         self.color_vals = color_vals
         self.feature_dim = int(np.sqrt(math.prod(self.image_size)))
 
-    def _pixel_position(self, pixel_pos_binary: str):
+    def _pixel_position(self, pixel_pos_binary: str) -> QuantumCircuit:
+        """Embeds pixel position values in a circuit."""
 
         circ = QuantumCircuit(self.feature_dim)
 
         for index, value in enumerate(pixel_pos_binary):
-            if value == '0':
+            if value == "0":
                 circ.x(index)
 
         return circ
 
-    def _color_info(self, pixel_pos: int):
+    def _color_info(self, pixel_pos: int) -> QuantumCircuit:
+        """Embeds color values in a circuit"""
 
         qr = QuantumRegister(self.feature_dim + 1)
         circ = QuantumCircuit(qr)
@@ -48,22 +51,27 @@ class FRQI:
 
         return circ
 
-    def _measure_circ(self, circ):
-
+    # TODO: Delete this function from here. Make a separate file.
+    def _measure_circ(self, circ: QuantumCircuit) -> QuantumCircuit:
         # Append measurement gates to the circuit
         qr = QuantumRegister(self.feature_dim + 1)
         cr = ClassicalRegister(self.feature_dim + 1)
 
         meas_circ = QuantumCircuit(qr, cr)
         meas_circ.measure(
-            [i for i in range(self.feature_dim + 1)],
-            [i for i in range(self.feature_dim + 1)],
+            list(range(self.feature_dim + 1)),
+            list(range(self.feature_dim + 1)),
         )
         meas_circ = meas_circ.compose(circ, range(self.feature_dim + 1), front=True)
 
         return meas_circ
 
-    def image_encoding(self, measure=True):
+    def frqi(self, measure=True) -> QuantumCircuit:
+        """Builds the FRQI image representation on a circuit.
+
+        Returns:
+            New circuit.
+        """
 
         qr = QuantumRegister(self.feature_dim + 1)
         circ = QuantumCircuit(qr)
@@ -73,9 +81,10 @@ class FRQI:
 
         num_theta = math.prod(self.image_size)
         for pixel in range(num_theta):
-            pixel_pos_binary = "{0:0>2b}".format(pixel)
+            pixel_pos_binary = f"{pixel:0>2b}"
 
             # Embed pixel position on qubits
+            # Note: Compose method creates/returns a new circuit. Or use inplace=True
             circ = circ.compose(
                 self._pixel_position(pixel_pos_binary),
                 range(self.feature_dim),
@@ -99,12 +108,13 @@ class FRQI:
 
         return circ
 
+    # TODO: Remove the following function from this file.
     @staticmethod
     def get_simulator_result(
-            circ,
-            backend: str = 'qasm_simulator',
-            shots: int = 1024,
-            plot_counts=True,
+        circ: QuantumCircuit,
+        backend: str = "qasm_simulator",
+        shots: int = 1024,
+        plot_counts=True,
     ):
         backend = Aer.get_backend(backend)
         job = execute(circ, backend=backend, shots=shots)

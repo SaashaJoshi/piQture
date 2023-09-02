@@ -84,7 +84,7 @@ class MERA:
 
     def mera_simple(self, complex_struct=True):
         param_vector = ParameterVector(
-            'theta',
+            "theta",
             int(self.img_dim / 2 * (self.img_dim / 2 + 1)) + 3,
         )
         param_vector_copy = param_vector
@@ -97,11 +97,13 @@ class MERA:
     # Check number of params here.
     def mera_general(self, complex_struct=True):
         if complex_struct:
-            param_vector = ParameterVector('theta', 20 * self.img_dim - 1)
+            param_vector = ParameterVector("theta", 20 * self.img_dim - 1)
             param_vector_copy = param_vector
-            return self.mera_backbone(self._apply_complex_general_block, param_vector_copy)
+            return self.mera_backbone(
+                self._apply_complex_general_block, param_vector_copy
+            )
         else:
-            param_vector = ParameterVector('theta', 10 * self.img_dim - 1)
+            param_vector = ParameterVector("theta", 10 * self.img_dim - 1)
             param_vector_copy = param_vector
             return self.mera_backbone(self._apply_real_general_block, param_vector_copy)
 

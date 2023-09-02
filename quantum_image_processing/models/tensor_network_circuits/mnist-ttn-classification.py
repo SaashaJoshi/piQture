@@ -19,7 +19,7 @@ def data_embedding(img_dim):
     :return:
     """
 
-    params = ParameterVector('img_data', img_dim)
+    params = ParameterVector("img_data", img_dim)
     embedding = QuantumCircuit(img_dim)
     for i in range(img_dim):
         embedding.ry(params[i], i)
@@ -69,7 +69,6 @@ if __name__ == "__main__":
         plt.plot(range(len(objective_func_vals)), objective_func_vals)
         plt.savefig("graph.pdf")
         plt.show()
-
 
     estimator_qnn = EstimatorQNN(
         circuit=circ,
