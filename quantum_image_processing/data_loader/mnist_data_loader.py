@@ -11,7 +11,7 @@ def load_mnist_data():
     """
 
     mnist_train = datasets.MNIST(
-        root="../data_loader/mnist_data",
+        root="mnist_data",
         train=True,
         download=False,
         transform=torchvision.transforms.Compose(
@@ -20,7 +20,7 @@ def load_mnist_data():
     )
 
     mnist_test = datasets.MNIST(
-        root="../data_loader/mnist_data",
+        root="data_loader/mnist_data",
         train=False,
         download=False,
         transform=torchvision.transforms.Compose(
@@ -46,6 +46,9 @@ def load_mnist_data():
 
 
 def collate_fn(batch):
+    """
+    Batches the data according to the defined function.
+    """
     new_batch = []
     for img, label in batch:
         item = img, label
