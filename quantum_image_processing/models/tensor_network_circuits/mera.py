@@ -5,7 +5,7 @@ from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 
 
 # Can TTN be an ABC for MERA? Good thought!
-class MERA(TwoQubitUnitary):
+class MERA:
     """
     Implements QCNN structure by Cong et al. (2019), replicating
     the architecture described by MERA - Multiscale Entanglement

@@ -6,7 +6,7 @@ from qiskit.circuit import QuantumCircuit, QuantumRegister, ParameterVector
 from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 
 
-class TTN(TwoQubitUnitary):
+class TTN:
     """
     Implements a Tree Tensor Network (TTN) as given by
     Grant et al. (2018).
