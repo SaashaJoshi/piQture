@@ -11,7 +11,7 @@ def load_mnist_data():
     """
 
     mnist_train = datasets.MNIST(
-        root="mnist_data",
+        root="data_loader/mnist_data",
         train=True,
         download=False,
         transform=torchvision.transforms.Compose(

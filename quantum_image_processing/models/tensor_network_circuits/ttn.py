@@ -1,8 +1,12 @@
+from __future__ import annotations
+from typing import Callable
 import numpy as np
-from qiskit.circuit import QuantumCircuit, ParameterVector
+from qiskit import QuantumCircuit
+from qiskit.circuit import QuantumCircuit, QuantumRegister, ParameterVector
+from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 
 
-class TTN:
+class TTN(TwoQubitUnitary):
     """
     Implements a Tree Tensor Network (TTN) as given by
     Grant et al. (2018).
@@ -15,73 +19,7 @@ class TTN:
     def __init__(self, img_dim):
         self.img_dim = img_dim
 
-    def _apply_real_simple_block(self, qubits, param_vector_copy):
-        block = QuantumCircuit(self.img_dim)
-
-        block.ry(param_vector_copy[0], qubits[0])
-        block.ry(param_vector_copy[1], qubits[1])
-        block.cx(qubits[0], qubits[1])
-
-        param_vector_copy = param_vector_copy[2:]
-
-        return block, param_vector_copy
-
-    def _apply_complex_general_block(self, qubits, param_vector_copy):
-        block = QuantumCircuit(self.img_dim)
-
-        block.rz(param_vector_copy[0], qubits[0])
-        block.ry(param_vector_copy[1], qubits[0])
-        block.rz(param_vector_copy[2], qubits[0])
-
-        block.rz(param_vector_copy[3], qubits[1])
-        block.ry(param_vector_copy[4], qubits[1])
-        block.rz(param_vector_copy[5] + np.pi / 2, qubits[1])
-        block.cnot(qubits[1], qubits[0])
-
-        block.rz((2 * param_vector_copy[6]) - np.pi / 2, qubits[0])
-        block.ry(np.pi / 2 - (2 * param_vector_copy[7]), qubits[1])
-        block.cnot(qubits[0], qubits[1])
-        block.ry((2 * param_vector_copy[8]) - np.pi / 2, qubits[1])
-
-        block.cnot(qubits[1], qubits[0])
-        block.rz(param_vector_copy[9], qubits[1])
-        block.ry(param_vector_copy[10], qubits[1])
-        block.rz(param_vector_copy[11], qubits[1])
-
-        block.rz(param_vector_copy[12] - np.pi / 2, qubits[0])
-        block.ry(param_vector_copy[13], qubits[0])
-        block.rz(param_vector_copy[14], qubits[0])
-
-        param_vector_copy = param_vector_copy[15:]
-
-        return block, param_vector_copy
-
-    def _apply_real_general_block(self, qubits, param_vector_copy):
-        block = QuantumCircuit(self.img_dim)
-
-        block.rz(np.pi / 2, qubits[0])
-        block.rz(np.pi / 2, qubits[1])
-        block.ry(np.pi / 2, qubits[1])
-        block.cnot(qubits[1], qubits[0])
-
-        block.rz(param_vector_copy[0], qubits[0])
-        block.ry(param_vector_copy[1], qubits[0])
-        block.rz(param_vector_copy[2], qubits[0])
-
-        block.rz(param_vector_copy[3], qubits[1])
-        block.ry(param_vector_copy[4], qubits[1])
-        block.rz(param_vector_copy[5], qubits[1])
-
-        block.cnot(qubits[1], qubits[0])
-        block.ry(-np.pi / 2, qubits[1])
-        block.rz(-np.pi / 2, qubits[0])
-        block.rz(-np.pi / 2, qubits[1])
-
-        param_vector_copy = param_vector_copy[6:]
-
-        return block, param_vector_copy
-
-    def ttn_simple(self, complex_struct=True):
+    def ttn_simple(self, complex_structure: bool = True) -> QuantumCircuit:
         """
         Rotations here can be either real or complex.
 
@@ -99,13 +37,11 @@ class TTN:
         """
         param_vector = ParameterVector("theta", 2 * self.img_dim - 1)
         param_vector_copy = param_vector
+        return self.ttn_backbone(
+            TwoQubitUnitary().simple_parameterization, param_vector_copy, complex_structure
+        )
 
-        if complex_struct:
-            pass
-        else:
-            return self.ttn_backbone(self._apply_real_simple_block, param_vector_copy)
-
-    def ttn_general(self, complex_struct=True):
+    def ttn_general(self, complex_structure: bool = True) -> QuantumCircuit:
         """
         Two qubit gates built from referencing a paper by
         Vatan et al. (2004).
@@ -126,45 +62,53 @@ class TTN:
         :return:
         """
         # Check number of params here.
-        if complex_struct:
+        if complex_structure:
             param_vector = ParameterVector("theta", 15 * self.img_dim - 1)
             param_vector_copy = param_vector
-            return self.ttn_backbone(
-                self._apply_complex_general_block, param_vector_copy
-            )
         else:
             param_vector = ParameterVector("theta", 6 * self.img_dim - 1)
             param_vector_copy = param_vector
-            return self.ttn_backbone(self._apply_real_general_block, param_vector_copy)
+
+        return self.ttn_backbone(
+            TwoQubitUnitary().simple_parameterization, param_vector_copy, complex_structure
+        )
 
     def ttn_with_aux(self):
-        pass
+        """
+        TODO: Find the implementation procedure for this.
+        """
 
-    def ttn_backbone(self, gate_structure, param_vector_copy):
-        ttn_circ = QuantumCircuit(self.img_dim)
+    def ttn_backbone(
+        self,
+        gate_structure: Callable,
+        param_vector_copy: ParameterVector,
+        complex_structure: bool = True,
+    ) -> QuantumCircuit:
+        ttn_qr = QuantumRegister(size=self.img_dim)
+        ttn_circ = QuantumCircuit(ttn_qr)
 
         qubit_list = []
-        for qubits in range(0, self.img_dim, 2):
-            if qubits == self.img_dim - 1:
-                qubit_list.append(qubits)
+        for index in range(0, self.img_dim, 2):
+            if index == self.img_dim - 1:
+                qubit_list.append(ttn_qr[index])
             else:
-                qubit_list.append(qubits + 1)
-                block, param_vector_copy = gate_structure(
-                    qubits=[qubits, qubits + 1],
-                    param_vector_copy=param_vector_copy,
+                qubit_list.append(ttn_qr[index + 1])
+                _, param_vector_copy = gate_structure(
+                    circuit=ttn_circ,
+                    qubits=[ttn_qr[index], ttn_qr[index + 1]],
+                    parameter_vector=param_vector_copy,
+                    complex_structure=complex_structure,
                 )
-                ttn_circ = ttn_circ.compose(block, range(self.img_dim))
 
-        # The layers might not be symmetric right now.
-        for layer in range(int(np.sqrt(self.img_dim))):
+        for _ in range(int(np.sqrt(self.img_dim))):
             temp_list = []
-
             for index in range(0, len(qubit_list) - 1, 2):
-                block, param_vector_copy = gate_structure(
-                    qubits=[qubit_list[index], qubit_list[index + 1]],
-                    param_vector_copy=param_vector_copy,
+                _, param_vector_copy = gate_structure(
+                    ttn_circ,
+                    [qubit_list[index], qubit_list[index + 1]],
+                    param_vector_copy,
+                    complex_structure,
                 )
-                ttn_circ = ttn_circ.compose(block, range(self.img_dim))
                 temp_list.append(qubit_list[index + 1])
 
             if len(qubit_list) % 2 != 0:

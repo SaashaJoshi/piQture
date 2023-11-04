@@ -1,9 +1,11 @@
 import numpy as np
-from qiskit.circuit import QuantumCircuit, ParameterVector
+from typing import Callable
+from qiskit.circuit import QuantumCircuit, QuantumRegister, ParameterVector
+from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 
 
 # Can TTN be an ABC for MERA? Good thought!
-class MERA:
+class MERA(TwoQubitUnitary):
     """
     Implements QCNN structure by Cong et al. (2019), replicating
     the architecture described by MERA - Multiscale Entanglement
@@ -11,129 +13,62 @@ class MERA:
 
     The decomposition of MERA architecture takes from the paper
     by Grant et al. (2018).
+
+    NOTE: Remember QCNN and MERA have opposite directions!!
     """
 
     def __init__(self, img_dim):
         self.img_dim = img_dim
 
-    def _apply_real_simple_block(self, qubits, param_vector_copy):
-        block = QuantumCircuit(self.img_dim)
-
-        block.ry(param_vector_copy[0], qubits[0])
-        block.ry(param_vector_copy[1], qubits[1])
-        block.cx(qubits[0], qubits[1])
-
-        param_vector_copy = param_vector_copy[2:]
-
-        return block, param_vector_copy
-
-    def _apply_complex_general_block(self, qubits, param_vector_copy):
-        block = QuantumCircuit(self.img_dim)
-
-        block.rz(param_vector_copy[0], qubits[0])
-        block.ry(param_vector_copy[1], qubits[0])
-        block.rz(param_vector_copy[2], qubits[0])
-
-        block.rz(param_vector_copy[3], qubits[1])
-        block.ry(param_vector_copy[4], qubits[1])
-        block.rz(param_vector_copy[5] + np.pi / 2, qubits[1])
-        block.cnot(qubits[1], qubits[0])
-
-        block.rz((2 * param_vector_copy[6]) - np.pi / 2, qubits[0])
-        block.ry(np.pi / 2 - (2 * param_vector_copy[7]), qubits[1])
-        block.cnot(qubits[0], qubits[1])
-        block.ry((2 * param_vector_copy[8]) - np.pi / 2, qubits[1])
-
-        block.cnot(qubits[1], qubits[0])
-        block.rz(param_vector_copy[9], qubits[1])
-        block.ry(param_vector_copy[10], qubits[1])
-        block.rz(param_vector_copy[11], qubits[1])
-
-        block.rz(param_vector_copy[12] - np.pi / 2, qubits[0])
-        block.ry(param_vector_copy[13], qubits[0])
-        block.rz(param_vector_copy[14], qubits[0])
-
-        param_vector_copy = param_vector_copy[15:]
-
-        return block, param_vector_copy
-
-    def _apply_real_general_block(self, qubits, param_vector_copy):
-        block = QuantumCircuit(self.img_dim)
-
-        block.rz(np.pi / 2, qubits[0])
-        block.rz(np.pi / 2, qubits[1])
-        block.ry(np.pi / 2, qubits[1])
-        block.cnot(qubits[1], qubits[0])
-
-        block.rz(param_vector_copy[0], qubits[0])
-        block.ry(param_vector_copy[1], qubits[0])
-        block.rz(param_vector_copy[2], qubits[0])
-
-        block.rz(param_vector_copy[3], qubits[1])
-        block.ry(param_vector_copy[4], qubits[1])
-        block.rz(param_vector_copy[5], qubits[1])
-
-        block.cnot(qubits[1], qubits[0])
-        block.ry(-np.pi / 2, qubits[1])
-        block.rz(-np.pi / 2, qubits[0])
-        block.rz(-np.pi / 2, qubits[1])
-
-        param_vector_copy = param_vector_copy[6:]
-
-        return block, param_vector_copy
-
-    def mera_simple(self, complex_struct=True):
+    def mera_simple(self, complex_structure: bool = True) -> QuantumCircuit:
         param_vector = ParameterVector(
             "theta",
             int(self.img_dim / 2 * (self.img_dim / 2 + 1)) + 3,
         )
         param_vector_copy = param_vector
-
-        if complex_struct:
-            pass
-        else:
-            return self.mera_backbone(self._apply_real_simple_block, param_vector_copy)
+        return self.mera_backbone(TwoQubitUnitary().simple_parameterization, param_vector_copy, complex_structure)
 
     # Check number of params here.
-    def mera_general(self, complex_struct=True):
-        if complex_struct:
+    def mera_general(self, complex_structure: bool = True) -> QuantumCircuit:
+        if complex_structure:
             param_vector = ParameterVector("theta", 20 * self.img_dim - 1)
             param_vector_copy = param_vector
-            return self.mera_backbone(
-                self._apply_complex_general_block, param_vector_copy
-            )
         else:
             param_vector = ParameterVector("theta", 10 * self.img_dim - 1)
             param_vector_copy = param_vector
-            return self.mera_backbone(self._apply_real_general_block, param_vector_copy)
+        return self.mera_backbone(TwoQubitUnitary().general_parameterization, param_vector_copy, complex_structure)
 
-    def mera_backbone(self, gate_structure, param_vector_copy):
-        mera_circ = QuantumCircuit(self.img_dim)
+    def mera_backbone(
+            self, gate_structure: Callable, param_vector_copy: ParameterVector, complex_structure: bool = True
+    ) -> QuantumCircuit:
+        mera_qr = QuantumRegister(size=self.img_dim)
+        mera_circ = QuantumCircuit(mera_qr)
 
-        for qubits in range(1, self.img_dim, 2):
-            if qubits == self.img_dim - 1:
+        for index in range(1, self.img_dim, 2):
+            if index == self.img_dim - 1:
                 break
 
-            block, param_vector_copy = gate_structure(
-                qubits=[qubits, qubits + 1],
-                param_vector_copy=param_vector_copy,
+            _, param_vector_copy = gate_structure(
+                circuit=mera_circ,
+                qubits=[mera_qr[index], mera_qr[index + 1]],
+                parameter_vector=param_vector_copy,
+                complex_structure=complex_structure,
             )
-            mera_circ = mera_circ.compose(block, range(self.img_dim))
 
         mera_circ.barrier()
         qubit_list = []
-        for qubits in range(0, self.img_dim, 2):
-            if qubits == self.img_dim - 1:
-                qubit_list.append(qubits)
+        for index in range(0, self.img_dim, 2):
+            if index == self.img_dim - 1:
+                qubit_list.append(mera_qr[index])
             else:
-                qubit_list.append(qubits + 1)
-                block, param_vector_copy = gate_structure(
-                    qubits=[qubits, qubits + 1],
-                    param_vector_copy=param_vector_copy,
+                qubit_list.append(mera_qr[index + 1])
+                _, param_vector_copy = gate_structure(
+                    circuit=mera_circ,
+                    qubits=[mera_qr[index], mera_qr[index + 1]],
+                    parameter_vector=param_vector_copy,
+                    complex_structure=complex_structure,
                 )
-                mera_circ = mera_circ.compose(block, range(self.img_dim))
 
-        # The layers might not be symmetric right now.
         for layer in range(int(np.sqrt(self.img_dim))):
             temp_list = []
 
@@ -142,20 +77,21 @@ class MERA:
                 if len(qubit_list) == 2 or index == len(qubit_list) - 1:
                     break
 
-                block, param_vector_copy = gate_structure(
+                _, param_vector_copy = gate_structure(
+                    circuit=mera_circ,
                     qubits=[qubit_list[index], qubit_list[index + 1]],
-                    param_vector_copy=param_vector_copy,
+                    parameter_vector=param_vector_copy,
+                    complex_structure=complex_structure,
                 )
-                mera_circ = mera_circ.compose(block, range(self.img_dim))
 
             mera_circ.barrier()
-
             for index in range(0, len(qubit_list) - 1, 2):
                 block, param_vector_copy = gate_structure(
+                    circuit=mera_circ,
                     qubits=[qubit_list[index], qubit_list[index + 1]],
-                    param_vector_copy=param_vector_copy,
+                    parameter_vector=param_vector_copy,
+                    complex_structure=complex_structure,
                 )
-                mera_circ = mera_circ.compose(block, range(self.img_dim))
                 temp_list.append(qubit_list[index + 1])
 
             if len(qubit_list) % 2 != 0:
