@@ -1,65 +1,64 @@
+"""Tree Tensor Network (TTN)"""
 from __future__ import annotations
 from typing import Callable
 import numpy as np
-from qiskit import QuantumCircuit
 from qiskit.circuit import QuantumCircuit, QuantumRegister, ParameterVector
 from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 
 
 class TTN:
     """
-    Implements a Tree Tensor Network (TTN) as given by
-    Grant et al. (2018).
+    Implements a Tree Tensor Network (TTN) structure class with
+    alternative unitary qubit parameterization.
 
-    The model architecture only consists of a hierarchical
-    TTN model. It cannot be classified as a QCNN since
-    there is no distinction between conv and pooling layers.
+    References:
+        [1] Grant et al. (2018).
     """
 
-    def __init__(self, img_dim):
+    def __init__(self, img_dim: int):
+        """
+        Initializes the TTN class with given input variables.
+
+        Args:
+            img_dim (int): product of dimensions of the input data.
+            For example,
+                for a 2x2 image, img_dim = 4.
+        """
         self.img_dim = img_dim
 
     def ttn_simple(self, complex_structure: bool = True) -> QuantumCircuit:
         """
-        Rotations here can be either real or complex.
+        Implements a TTN network with simple alternative
+        parameterization as given in [1].
 
-        For real rotations only RY gates are used since
-        the gate has no complex rotations involved.
-        For complex rotations, a combination of RZ and RY
-        gates are used.
+        Args:
+            complex_structure (default=True): boolean marker
+            for real or complex gate parameterization.
 
-        I HAVE NO IDEA WHY I CHOSE THESE. THE SELECTION
-        OF UNITARY GATES IS COMPLETELY VOLUNTARY.
-
-        PennyLane implements a TTN template with only RX gates.
-
-        :return:
+        Returns:
+            QuantumCircuit: quantum circuit with unitary gates
+            represented by simple parameterization.
         """
         param_vector = ParameterVector("theta", 2 * self.img_dim - 1)
         param_vector_copy = param_vector
         return self.ttn_backbone(
-            TwoQubitUnitary().simple_parameterization, param_vector_copy, complex_structure
+            TwoQubitUnitary().simple_parameterization,
+            param_vector_copy,
+            complex_structure,
         )
 
     def ttn_general(self, complex_structure: bool = True) -> QuantumCircuit:
         """
-        Two qubit gates built from referencing a paper by
-        Vatan et al. (2004).
+        Implements a TTN network with general alternative
+        parameterization as given in [1].
 
-        As stated in the paper:
-        "A general two-qubit quantum computation, up to a global phase,
-        can be constructed using at most 3 CNOT gates and 15 elementary
-        one-qubit gates from the family {Ry , Rz}."
-        and
+        Args:
+            complex_structure (default=True): boolean marker
+            for real or complex gate parameterization.
 
-        Theorem 3. Every two-qubit quantum gate in SO(4) (i.e. real gate)
-        can be realized by a circuit consisting of 12 elementary
-        one-qubit gates and 2 CNOT gates.
-
-        Theorem 4. Every two-qubit quantum gate in O(4) with determinant
-        equal to −1 can be realized by a circuit consisting of 12 elementary
-        gates and 2 CNOT gates and one SWAP gate
-        :return:
+        Returns:
+            QuantumCircuit: quantum circuit with unitary gates
+            represented by general parameterization.
         """
         # Check number of params here.
         if complex_structure:
@@ -70,12 +69,24 @@ class TTN:
             param_vector_copy = param_vector
 
         return self.ttn_backbone(
-            TwoQubitUnitary().simple_parameterization, param_vector_copy, complex_structure
+            TwoQubitUnitary().simple_parameterization,
+            param_vector_copy,
+            complex_structure,
         )
 
-    def ttn_with_aux(self):
+    def ttn_with_aux(self, complex_structure: bool = True):
         """
         TODO: Find the implementation procedure for this.
+        Implements a TTN network with alternative parameterization
+        that requires an auxiliary qubit, as given in [1].
+
+        Args:
+            complex_structure (default=True): boolean marker for
+            real or complex gate parameterization.
+
+        Returns:
+            QuantumCircuit: quantum circuit with unitary gates
+            represented by general parameterization.
         """
 
     def ttn_backbone(
@@ -84,6 +95,25 @@ class TTN:
         param_vector_copy: ParameterVector,
         complex_structure: bool = True,
     ) -> QuantumCircuit:
+        """
+        Lays out the TTN structure by progressively building layers
+        of unitary gates with their alternative parameterization.
+
+        Args:
+            gate_structure (Callable): a callable function that implements
+            either one of the three available unitary gate parameterization -
+            simple, general or auxiliary.
+
+            param_vector_copy (ParameterVector): copy of the parameter
+            vector list.
+
+            complex_structure (default=True): boolean marker for
+            real or complex gate parameterization.
+
+        Returns:
+            QuantumCircuit: quantum circuit with unitary gates
+            represented by general parameterization.
+        """
         ttn_qr = QuantumRegister(size=self.img_dim)
         ttn_circ = QuantumCircuit(ttn_qr)
 
