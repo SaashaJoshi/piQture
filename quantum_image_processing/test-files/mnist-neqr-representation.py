@@ -1,6 +1,6 @@
 import torchvision
 import torch.utils.data
-from neqr import NEQR
+from quantum_image_processing.data_encoder.image_representations.neqr import NEQR
 from quantum_image_processing.data_loader.mnist_data_loader import load_mnist_data
 import matplotlib.pyplot as plt
 

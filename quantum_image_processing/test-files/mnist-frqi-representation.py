@@ -1,4 +1,4 @@
-from frqi import FRQI
+from quantum_image_processing.data_encoder.image_representations.frqi import FRQI
 from quantum_image_processing.data_loader.mnist_data_loader import load_mnist_data
 
 
