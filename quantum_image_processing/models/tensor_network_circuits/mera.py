@@ -63,6 +63,7 @@ class MERA(TwoQubitUnitary):
         mera_circ = QuantumCircuit(mera_qr)
 
         # TODO: Make recursive layer structure using a static method.
+        qubit_list = []
         for layer in range(self.layer_depth):
             if layer == 0:
                 # D unitary blocks
@@ -79,7 +80,6 @@ class MERA(TwoQubitUnitary):
 
                 # U unitary blocks
                 mera_circ.barrier()
-                qubit_list = []
                 for index in range(0, self.img_dim, 2):
                     if index == self.img_dim - 1:
                         qubit_list.append(mera_qr[index])
@@ -122,6 +122,7 @@ class MERA(TwoQubitUnitary):
                     temp_list.append(qubit_list[-1])
                 qubit_list = temp_list
 
-        mera_circ.ry(param_vector_copy[0], mera_qr[-1])
+                if len(qubit_list) == 1:
+                    mera_circ.ry(param_vector_copy[0], mera_qr[-1])
 
         return mera_circ
