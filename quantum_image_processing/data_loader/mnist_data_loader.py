@@ -1,6 +1,7 @@
+"""Data Loader for MNIST images"""
 import torch.utils.data
 import torchvision
-import torchvision.datasets as datasets
+from torchvision import datasets
 
 
 def load_mnist_data():
@@ -52,6 +53,6 @@ def collate_fn(batch):
     new_batch = []
     for img, label in batch:
         item = img, label
-        if label == 1 or label == 7:
+        if label in (1, 7):
             new_batch.append(item)
     return torch.utils.data.default_collate(new_batch)
