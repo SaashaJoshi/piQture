@@ -1,6 +1,6 @@
 """
 Gate implementations, including unitary gates and their alternative parameterization.
-(mod: quantum_image_processing.gates)
+(module: quantum_image_processing.gates)
 """
 
 from .unitary_block import Unitary

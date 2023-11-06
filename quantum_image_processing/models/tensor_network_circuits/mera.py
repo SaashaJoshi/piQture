@@ -26,7 +26,11 @@ class MERA:
             int(self.img_dim / 2 * (self.img_dim / 2 + 1)) + 3,
         )
         param_vector_copy = param_vector
-        return self.mera_backbone(TwoQubitUnitary().simple_parameterization, param_vector_copy, complex_structure)
+        return self.mera_backbone(
+            TwoQubitUnitary().simple_parameterization,
+            param_vector_copy,
+            complex_structure,
+        )
 
     # Check number of params here.
     def mera_general(self, complex_structure: bool = True) -> QuantumCircuit:
@@ -36,10 +40,17 @@ class MERA:
         else:
             param_vector = ParameterVector("theta", 10 * self.img_dim - 1)
             param_vector_copy = param_vector
-        return self.mera_backbone(TwoQubitUnitary().general_parameterization, param_vector_copy, complex_structure)
+        return self.mera_backbone(
+            TwoQubitUnitary().general_parameterization,
+            param_vector_copy,
+            complex_structure,
+        )
 
     def mera_backbone(
-            self, gate_structure: Callable, param_vector_copy: ParameterVector, complex_structure: bool = True
+        self,
+        gate_structure: Callable,
+        param_vector_copy: ParameterVector,
+        complex_structure: bool = True,
     ) -> QuantumCircuit:
         mera_qr = QuantumRegister(size=self.img_dim)
         mera_circ = QuantumCircuit(mera_qr)
