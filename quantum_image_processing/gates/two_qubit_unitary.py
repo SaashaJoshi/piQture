@@ -9,6 +9,7 @@ class TwoQubitUnitary(Unitary):
     """
     Implements two qubit unitary with alternative parameterizations.
     """
+
     def simple_parameterization(
         self,
         circuit: QuantumCircuit,
