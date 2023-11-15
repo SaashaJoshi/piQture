@@ -1,6 +1,12 @@
+import uuid
 import numpy as np
 from typing import Callable
-from qiskit.circuit import QuantumCircuit, QuantumRegister, ParameterVector
+from qiskit.circuit import (
+    QuantumCircuit,
+    QuantumRegister,
+    ClassicalRegister,
+    ParameterVector,
+)
 from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 
 
@@ -20,17 +26,17 @@ class MERA(TwoQubitUnitary):
     #     number of unitary gate layers.
     """
 
-    def __init__(self, img_dim: int, layer_depth: type(None) = None):
-        self.img_dim = img_dim
+    def __init__(self, num_qubits: int, layer_depth: type(None) = None):
+        self.num_qubits = num_qubits
         if layer_depth is None:
-            self.layer_depth = int(np.ceil(np.sqrt(self.img_dim)))
+            self.layer_depth = int(np.ceil(np.sqrt(self.num_qubits)))
         else:
             self.layer_depth = layer_depth
 
     def mera_simple(self, complex_structure: bool = True) -> QuantumCircuit:
         param_vector = ParameterVector(
-            "theta",
-            int(self.img_dim / 2 * (self.img_dim / 2 + 1)) + 3,
+            f"theta_{str(uuid.uuid4())[:5]}",
+            int(self.num_qubits / 2 * (self.num_qubits / 2 + 1)) + 3,
         )
         param_vector_copy = param_vector
         return self.mera_backbone(
@@ -42,10 +48,10 @@ class MERA(TwoQubitUnitary):
     # Check number of params here.
     def mera_general(self, complex_structure: bool = True) -> QuantumCircuit:
         if complex_structure:
-            param_vector = ParameterVector("theta", 20 * self.img_dim - 1)
+            param_vector = ParameterVector(f"theta_{str(uuid.uuid4())[:5]}", 20 * self.img_dim - 1)
             param_vector_copy = param_vector
         else:
-            param_vector = ParameterVector("theta", 10 * self.img_dim - 1)
+            param_vector = ParameterVector(f"theta_{str(uuid.uuid4())[:5]}", 10 * self.img_dim - 1)
             param_vector_copy = param_vector
         return self.mera_backbone(
             self.general_parameterization,
@@ -59,16 +65,18 @@ class MERA(TwoQubitUnitary):
         param_vector_copy: ParameterVector,
         complex_structure: bool = True,
     ) -> QuantumCircuit:
-        mera_qr = QuantumRegister(size=self.img_dim)
-        mera_circ = QuantumCircuit(mera_qr)
+        mera_qr = QuantumRegister(size=self.num_qubits)
+        mera_cr = ClassicalRegister(size=self.num_qubits)
+        mera_circ = QuantumCircuit(mera_qr, mera_cr)
 
-        # TODO: Make recursive layer structure using a static method.
+        # TODO: Make recursive layer structure using a staticmethod.
+        # That is convert the following code in a staticmethod.
         qubit_list = []
         for layer in range(self.layer_depth):
             if layer == 0:
                 # D unitary blocks
-                for index in range(1, self.img_dim, 2):
-                    if index == self.img_dim - 1:
+                for index in range(1, self.num_qubits, 2):
+                    if index == self.num_qubits - 1:
                         break
 
                     _, param_vector_copy = gate_structure(
@@ -80,8 +88,8 @@ class MERA(TwoQubitUnitary):
 
                 # U unitary blocks
                 mera_circ.barrier()
-                for index in range(0, self.img_dim, 2):
-                    if index == self.img_dim - 1:
+                for index in range(0, self.num_qubits, 2):
+                    if index == self.num_qubits - 1:
                         qubit_list.append(mera_qr[index])
                     else:
                         qubit_list.append(mera_qr[index + 1])
