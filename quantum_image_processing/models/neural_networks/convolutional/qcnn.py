@@ -87,11 +87,14 @@ class QuantumConvolutionalLayer(Layer, MERA):
         if self.mera_instance in instance_mapping:
             method = instance_mapping[self.mera_instance]
             if callable(method):
-                return self.circuit.compose(
-                    method(self.complex_structure),
-                    qubits=self.circuit.qubits,
-                    clbits=self.circuit.clbits,
-                ), self.unmeasured_bits
+                return (
+                    self.circuit.compose(
+                        method(self.complex_structure),
+                        qubits=self.circuit.qubits,
+                        clbits=self.circuit.clbits,
+                    ),
+                    self.unmeasured_bits,
+                )
 
 
 # pylint: disable=too-few-public-methods
@@ -145,19 +148,16 @@ class QuantumPoolingLayer(Layer):
                 self.unmeasured_bits["clbits"][index + 1].index,
             )
             # Dynamic circuit - cannot be composed if using context manager form (e.g. with)
-            with self.circuit.if_test((self.unmeasured_bits["clbits"][index + 1].index, 1)):
+            with self.circuit.if_test(
+                (self.unmeasured_bits["clbits"][index + 1].index, 1)
+            ):
                 self.circuit.z(self.unmeasured_bits["qubits"][index].index)
 
         return self.circuit, unmeasured_bits
 
 
 class FullyConnectedLayer(Layer):
-    def __init__(
-        self,
-        num_qubits: int,
-        circuit: QuantumCircuit,
-        unmeasured_bits: dict
-    ):
+    def __init__(self, num_qubits: int, circuit: QuantumCircuit, unmeasured_bits: dict):
         """
         Initializes a fully connected layer with the preceding
         convolutional or polling layers.
@@ -197,7 +197,9 @@ class FullyConnectedLayer(Layer):
         self.circuit.barrier()
         # Measurement in X-basis
         self.circuit.h(self.unmeasured_bits["qubits"])
-        self.circuit.measure(self.unmeasured_bits["qubits"], self.unmeasured_bits["clbits"])
+        self.circuit.measure(
+            self.unmeasured_bits["qubits"], self.unmeasured_bits["clbits"]
+        )
         return self.circuit
 
 
@@ -230,7 +232,7 @@ class QCNN(QuantumNeuralNetwork):
                 circuit=self.circuit,
                 num_qubits=self.num_qubits,
                 unmeasured_bits=unmeasured_bits,
-                **params
+                **params,
             )
             self.circuit, unmeasured_bits = layer.build_layer()
 

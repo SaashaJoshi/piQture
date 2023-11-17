@@ -26,6 +26,7 @@ class MERA(TwoQubitUnitary):
         vol. 101, no. 11, Sep. 2008,
         doi: https://doi.org/10.1103/physrevlett.101.110501.
     """
+
     def __init__(self, num_qubits: int, layer_depth: type(None) = None):
         self.num_qubits = num_qubits
         if layer_depth is None:
@@ -72,10 +73,14 @@ class MERA(TwoQubitUnitary):
             generated with the help of the input arguments.
         """
         if complex_structure:
-            param_vector = ParameterVector(f"theta_{str(uuid.uuid4())[:5]}", 20 * self.img_dim - 1)
+            param_vector = ParameterVector(
+                f"theta_{str(uuid.uuid4())[:5]}", 20 * self.img_dim - 1
+            )
             param_vector_copy = param_vector
         else:
-            param_vector = ParameterVector(f"theta_{str(uuid.uuid4())[:5]}", 10 * self.img_dim - 1)
+            param_vector = ParameterVector(
+                f"theta_{str(uuid.uuid4())[:5]}", 10 * self.img_dim - 1
+            )
             param_vector_copy = param_vector
         return self.mera_backbone(
             self.general_parameterization,
