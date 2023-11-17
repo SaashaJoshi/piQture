@@ -1,3 +1,4 @@
+"""Unitary Gate class"""
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from qiskit.circuit import QuantumCircuit, ParameterVector
@@ -20,6 +21,23 @@ class Unitary(ABC):
         parameter_vector: ParameterVector,
         complex_structure: bool = False,
     ):
+        """
+        Used to build a two-qubit unitary gate with real or complex
+        simple parameterization.
+
+        Args:
+            circuit (QuantumCircuit): Circuit on which two-qubit
+            unitary gate needs to be applied.
+
+            qubits (list): list of qubits on which the gates need to
+            be applied.
+
+            parameter_vector (ParameterVector): list of parameters
+            of the unitary gates.
+
+            complex_structure (bool): If True, builds the unitary gate
+            parameterization with complex unitary gates (e.g. RY, etc.)
+        """
         return NotImplementedError
 
     @abstractmethod
@@ -30,6 +48,23 @@ class Unitary(ABC):
         parameter_vector: ParameterVector,
         complex_structure: bool = True,
     ):
+        """
+        Used to build a two-qubit unitary gate with real or complex
+        general parameterization.
+
+        Args:
+            circuit (QuantumCircuit): Circuit on which two-qubit
+            unitary gate needs to be applied.
+
+            qubits (list): list of qubits on which the gates need to
+            be applied.
+
+            parameter_vector (ParameterVector): list of parameters
+            of the unitary gates.
+
+            complex_structure (bool): If True, builds the unitary gate
+            parameterization with complex unitary gates (e.g. RY, etc.)
+        """
         return NotImplementedError
 
     @abstractmethod
@@ -40,4 +75,21 @@ class Unitary(ABC):
         parameter_vector: ParameterVector,
         complex_structure: bool = True,
     ):
+        """
+        Used to build a two-qubit unitary gate parameterization
+        with the help of an auxiliary qubit.
+
+        Args:
+            circuit (QuantumCircuit): Circuit on which two-qubit
+            unitary gate needs to be applied.
+
+            qubits (list): list of qubits on which the gates need to
+            be applied.
+
+            parameter_vector (ParameterVector): list of parameters
+            of the unitary gates.
+
+            complex_structure (bool): If True, builds the unitary gate
+            parameterization with complex unitary gates (e.g. RY, etc.)
+        """
         return NotImplementedError

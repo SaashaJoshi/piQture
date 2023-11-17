@@ -1,9 +1,7 @@
 from __future__ import annotations
 import math
 import numpy as np
-from qiskit import Aer, execute
-from qiskit.circuit import QuantumCircuit, QuantumRegister, ClassicalRegister
-from qiskit.visualization import plot_histogram
+from qiskit.circuit import QuantumCircuit, QuantumRegister
 
 
 class NEQR:
@@ -46,21 +44,21 @@ class NEQR:
 
         return circ
 
-    def _measure_circ(self, circ: QuantumCircuit) -> QuantumCircuit:
-        # Append measurement gates to the circuit
-        qr = QuantumRegister(self.feature_dim + self.q)
-        cr = ClassicalRegister(self.feature_dim + self.q)
-
-        meas_circ = QuantumCircuit(qr, cr)
-        meas_circ.measure(
-            list(range(self.feature_dim + self.q)),
-            list(range(self.feature_dim + self.q)),
-        )
-        meas_circ = meas_circ.compose(
-            circ, range(self.feature_dim + self.q), front=True
-        )
-
-        return meas_circ
+    # def _measure_circ(self, circ: QuantumCircuit) -> QuantumCircuit:
+    #     # Append measurement gates to the circuit
+    #     qr = QuantumRegister(self.feature_dim + self.q)
+    #     cr = ClassicalRegister(self.feature_dim + self.q)
+    #
+    #     meas_circ = QuantumCircuit(qr, cr)
+    #     meas_circ.measure(
+    #         list(range(self.feature_dim + self.q)),
+    #         list(range(self.feature_dim + self.q)),
+    #     )
+    #     meas_circ = meas_circ.compose(
+    #         circ, range(self.feature_dim + self.q), front=True
+    #     )
+    #
+    #     return meas_circ
 
     def image_encoding(self, measure=True) -> QuantumCircuit:
         qr = QuantumRegister(self.feature_dim + self.q)
@@ -91,27 +89,27 @@ class NEQR:
                 range(self.feature_dim),
             )
 
-        if measure:
-            circ = self._measure_circ(circ)
+        # if measure:
+        #     circ = self._measure_circ(circ)
 
         return circ
 
-    @staticmethod
-    def get_simulator_result(
-        circ: QuantumCircuit,
-        backend: str = "qasm_simulator",
-        shots: int = 1024,
-        plot_counts=True,
-    ) -> list:
-        backend = Aer.get_backend(backend)
-        job = execute(circ, backend=backend, shots=shots)
-        results = job.result()
-        counts = results.get_counts()
-
-        if plot_counts:
-            plot_histogram(counts)
-
-        return counts
+    # @staticmethod
+    # def get_simulator_result(
+    #     circ: QuantumCircuit,
+    #     backend: str = "qasm_simulator",
+    #     shots: int = 1024,
+    #     plot_counts=True,
+    # ) -> list:
+    #     backend = Aer.get_backend(backend)
+    #     job = execute(circ, backend=backend, shots=shots)
+    #     results = job.result()
+    #     counts = results.get_counts()
+    #
+    #     if plot_counts:
+    #         plot_histogram(counts)
+    #
+    #     return counts
 
     def qic(self):
         pass

@@ -1,9 +1,7 @@
 from __future__ import annotations
 import math
 import numpy as np
-from qiskit import Aer, execute
-from qiskit.circuit import QuantumCircuit, QuantumRegister, ClassicalRegister
-from qiskit.visualization import plot_histogram
+from qiskit.circuit import QuantumCircuit, QuantumRegister
 
 
 class FRQI:
@@ -51,20 +49,20 @@ class FRQI:
 
         return circ
 
-    # TODO: Delete this function from here. Make a separate file.
-    def _measure_circ(self, circ: QuantumCircuit) -> QuantumCircuit:
-        # Append measurement gates to the circuit
-        qr = QuantumRegister(self.feature_dim + 1)
-        cr = ClassicalRegister(self.feature_dim + 1)
-
-        meas_circ = QuantumCircuit(qr, cr)
-        meas_circ.measure(
-            list(range(self.feature_dim + 1)),
-            list(range(self.feature_dim + 1)),
-        )
-        meas_circ = meas_circ.compose(circ, range(self.feature_dim + 1), front=True)
-
-        return meas_circ
+    # # TODO: Delete this function from here. Make a separate file.
+    # def _measure_circ(self, circ: QuantumCircuit) -> QuantumCircuit:
+    #     # Append measurement gates to the circuit
+    #     qr = QuantumRegister(self.feature_dim + 1)
+    #     cr = ClassicalRegister(self.feature_dim + 1)
+    #
+    #     meas_circ = QuantumCircuit(qr, cr)
+    #     meas_circ.measure(
+    #         list(range(self.feature_dim + 1)),
+    #         list(range(self.feature_dim + 1)),
+    #     )
+    #     meas_circ = meas_circ.compose(circ, range(self.feature_dim + 1), front=True)
+    #
+    #     return meas_circ
 
     def frqi(self, measure=True) -> QuantumCircuit:
         """Builds the FRQI image representation on a circuit.
@@ -103,28 +101,28 @@ class FRQI:
             )
             circ.barrier()
 
-        if measure:
-            circ = self._measure_circ(circ)
+        # if measure:
+        #     circ = self._measure_circ(circ)
 
         return circ
 
-    # TODO: Remove the following function from this file.
-    @staticmethod
-    def get_simulator_result(
-        circ: QuantumCircuit,
-        backend: str = "qasm_simulator",
-        shots: int = 1024,
-        plot_counts=True,
-    ):
-        backend = Aer.get_backend(backend)
-        job = execute(circ, backend=backend, shots=shots)
-        results = job.result()
-        counts = results.get_counts()
-
-        if plot_counts:
-            plot_histogram(counts)
-
-        return counts
+    # # TODO: Remove the following function from this file.
+    # @staticmethod
+    # def get_simulator_result(
+    #     circ: QuantumCircuit,
+    #     backend: str = "qasm_simulator",
+    #     shots: int = 1024,
+    #     plot_counts=True,
+    # ):
+    #     backend = Aer.get_backend(backend)
+    #     job = execute(circ, backend=backend, shots=shots)
+    #     results = job.result()
+    #     counts = results.get_counts()
+    #
+    #     if plot_counts:
+    #         plot_histogram(counts)
+    #
+    #     return counts
 
     def qic(self):
         pass
