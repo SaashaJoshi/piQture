@@ -74,12 +74,12 @@ class MERA(TwoQubitUnitary):
         """
         if complex_structure:
             param_vector = ParameterVector(
-                f"theta_{str(uuid.uuid4())[:5]}", 20 * self.img_dim - 1
+                f"theta_{str(uuid.uuid4())[:5]}", 20 * self.num_qubits - 1
             )
             param_vector_copy = param_vector
         else:
             param_vector = ParameterVector(
-                f"theta_{str(uuid.uuid4())[:5]}", 10 * self.img_dim - 1
+                f"theta_{str(uuid.uuid4())[:5]}", 10 * self.num_qubits - 1
             )
             param_vector_copy = param_vector
         return self.mera_backbone(
@@ -118,6 +118,7 @@ class MERA(TwoQubitUnitary):
 
         # TODO: Make recursive layer structure using a staticmethod.
         # That is convert the following code in a staticmethod.
+        # This should solve R0912: Too many branches (13/12) (too-many-branches)
         qubit_list = []
         for layer in range(self.layer_depth):
             if layer == 0:
@@ -165,7 +166,7 @@ class MERA(TwoQubitUnitary):
                 # U unitary blocks
                 mera_circ.barrier()
                 for index in range(0, len(qubit_list) - 1, 2):
-                    block, param_vector_copy = gate_structure(
+                    _, param_vector_copy = gate_structure(
                         circuit=mera_circ,
                         qubits=[qubit_list[index], qubit_list[index + 1]],
                         parameter_vector=param_vector_copy,

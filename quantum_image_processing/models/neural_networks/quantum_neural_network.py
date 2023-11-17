@@ -3,13 +3,15 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Callable
-from qiskit.circuit import QuantumCircuit, QuantumRegister, ClassicalRegister
+
+# pylint: disable=too-few-public-methods
 
 
 class QuantumNeuralNetwork(ABC):
     """
     Abstract base class for all quantum neural network structures.
-    These structures consist of data encoding/embedding,
+
+    These structures may consist of data encoding/embedding,
     model layers (consisting of layers such as convolutional,
     pooling, etc.), and a measurement stage.
     """
@@ -25,8 +27,12 @@ class QuantumNeuralNetwork(ABC):
         # self.circuit = QuantumCircuit(self.qr, self.cr)
 
     @abstractmethod
-    def sequence(self, operations: Callable):
+    def sequence(self, operations: list[tuple[Callable, dict]]):
         """
         Composes circuits with given list of operations.
+
+        Args:
+            operations (list[tuple[Callable, dict]]: a tuple
+            of a Layer object and a dictionary of its arguments.
         """
         return NotImplementedError
