@@ -12,7 +12,9 @@ class TTN:
     alternative unitary qubit parameterization.
 
     References:
-        [1] Grant et al. (2018).
+        [1] E. Grant et al., “Hierarchical quantum classifiers,”
+        npj Quantum Information, vol. 4, no. 1, Dec. 2018,
+        doi: https://doi.org/10.1038/s41534-018-0116-9.
     """
 
     def __init__(self, img_dim: int):
