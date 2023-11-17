@@ -1,46 +1,103 @@
-import numpy as np
+"""Multiscale Entanglement Renormalization Ansatz (MERA) Tensor Network"""
 from typing import Callable
+import numpy as np
 from qiskit.circuit import QuantumCircuit, QuantumRegister, ParameterVector
 from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 
 
-# Can TTN be an ABC for MERA? Good thought!
 class MERA:
     """
-    Implements QCNN structure by Cong et al. (2019), replicating
-    the architecture described by MERA - Multiscale Entanglement
-    Renormalization Ansatz, given by Vidal et al. (2008).
+    Implements a Multiscale Entanglement Renormalization Ansatz
+    (MERA) tensor network structure as given by [2].
 
-    The decomposition of MERA architecture takes from the paper
-    by Grant et al. (2018).
+    References:
+        [1] E. Grant et al., “Hierarchical quantum classifiers,”
+        npj Quantum Information, vol. 4, no. 1, Dec. 2018,
+        doi: https://doi.org/10.1038/s41534-018-0116-9.
 
-    NOTE: Remember QCNN and MERA have opposite directions!!
+        [2] G. Vidal, “Class of Quantum Many-Body States That
+        Can Be Efficiently Simulated,” Physical Review Letters,
+        vol. 101, no. 11, Sep. 2008,
+        doi: https://doi.org/10.1103/physrevlett.101.110501.
     """
 
     def __init__(self, img_dim):
         self.img_dim = img_dim
 
     def mera_simple(self, complex_structure: bool = True) -> QuantumCircuit:
+        """
+        Builds a MERA circuit with a simple unitary gate
+        parameterization.
+
+        Args:
+            complex_structure (bool): If True, builds the MERA
+            structure with complex unitary gates (e.g. RY, etc.)
+
+        Returns:
+            circuit (QuantumCircuit): Returns the MERA circuit
+            generated with the help of the input arguments.
+        """
         param_vector = ParameterVector(
             "theta",
             int(self.img_dim / 2 * (self.img_dim / 2 + 1)) + 3,
         )
         param_vector_copy = param_vector
-        return self.mera_backbone(TwoQubitUnitary().simple_parameterization, param_vector_copy, complex_structure)
+        return self.mera_backbone(
+            TwoQubitUnitary().simple_parameterization,
+            param_vector_copy,
+            complex_structure,
+        )
 
     # Check number of params here.
     def mera_general(self, complex_structure: bool = True) -> QuantumCircuit:
+        """
+        Builds a MERA circuit with a general unitary gate
+        parameterization. Refer [1].
+
+        Args:
+            complex_structure (bool): If True, builds the MERA
+            structure with complex unitary gates (e.g. RY, etc.)
+
+        Returns:
+            circuit (QuantumCircuit): Returns the MERA circuit
+            generated with the help of the input arguments.
+        """
         if complex_structure:
             param_vector = ParameterVector("theta", 20 * self.img_dim - 1)
             param_vector_copy = param_vector
         else:
             param_vector = ParameterVector("theta", 10 * self.img_dim - 1)
             param_vector_copy = param_vector
-        return self.mera_backbone(TwoQubitUnitary().general_parameterization, param_vector_copy, complex_structure)
+        return self.mera_backbone(
+            TwoQubitUnitary().general_parameterization,
+            param_vector_copy,
+            complex_structure,
+        )
 
     def mera_backbone(
-            self, gate_structure: Callable, param_vector_copy: ParameterVector, complex_structure: bool = True
+        self,
+        gate_structure: Callable,
+        param_vector_copy: ParameterVector,
+        complex_structure: bool = True,
     ) -> QuantumCircuit:
+        """
+        Lays out the backbone structure of a MERA circuit onto
+        which the unitary gates are applied.
+
+        Args:
+            gate_structure (Callable): calls the function with
+            the required unitary gate parameterization structure.
+
+            param_vector_copy (ParameterVector): list of unitary
+            gate parameters to be used in the circuit.
+
+            complex_structure (bool): If True, builds the MERA
+            structure with complex unitary gates (e.g. RY, etc.)
+
+        Returns:
+            circuit (QuantumCircuit): Returns the MERA circuit
+            generated with the help of the input arguments.
+        """
         mera_qr = QuantumRegister(size=self.img_dim)
         mera_circ = QuantumCircuit(mera_qr)
 
