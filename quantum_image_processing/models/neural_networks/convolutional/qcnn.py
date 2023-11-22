@@ -31,9 +31,7 @@ class QuantumConvolutionalLayer(Layer, MERA):
         self,
         num_qubits: int,
         circuit: QuantumCircuit,
-        layer_depth: int,
-        mera_instance: int,
-        complex_structure: bool = True,
+        mera_args: dict,
         unmeasured_bits: Optional[dict] = None,
     ):
         """
@@ -58,11 +56,11 @@ class QuantumConvolutionalLayer(Layer, MERA):
             and classical bits in the circuit.
         """
         Layer.__init__(self, num_qubits)
-        MERA.__init__(self, num_qubits, layer_depth)
+        MERA.__init__(self, num_qubits, mera_args["layer_depth"])
 
         self.circuit = circuit
-        self.mera_instance = mera_instance
-        self.complex_structure = complex_structure
+        self.mera_instance = mera_args["mera_instance"]
+        self.complex_structure = mera_args["complex_structure"]
 
         self.unmeasured_bits = {}
         if unmeasured_bits is None:
@@ -97,6 +95,7 @@ class QuantumConvolutionalLayer(Layer, MERA):
                     method(self.complex_structure),
                     qubits=self.circuit.qubits,
                     clbits=self.circuit.clbits,
+                    inplace=True,
                 )
         else:
             raise ValueError(f"Invalid mera_instance value: {self.mera_instance}")
@@ -161,11 +160,19 @@ class QuantumPoolingLayer(Layer):
                 self.unmeasured_bits["qubits"][index + 1].index,
                 self.unmeasured_bits["clbits"][index + 1].index,
             )
-            # Dynamic circuit - cannot be composed if using context manager form (e.g. with)
+            # Dynamic circuit - cannot be composed with another circuit if
+            # using context manager form (e.g. with).
+            # Also, dynamic circuits don't work with runtime primitives.
             with self.circuit.if_test(
                 (self.unmeasured_bits["clbits"][index + 1].index, 1)
             ):
                 self.circuit.z(self.unmeasured_bits["qubits"][index].index)
+
+            # Without if_test.
+            # self.circuit.cz(
+            #     self.unmeasured_bits["qubits"][index + 1].index,
+            #     self.unmeasured_bits["qubits"][index].index,
+            # )
 
         return self.circuit, unmeasured_bits
 
@@ -221,6 +228,7 @@ class FullyConnectedLayer(Layer):
                 self.unmeasured_bits["qubits"][index],
                 self.unmeasured_bits["qubits"][index + 1],
             )
+        # Comment next line to skip implicit measurement.
         self.final_measurement()
         return self.circuit, unmeasured_bits
 
