@@ -1,5 +1,6 @@
-"""
-Quantum Neural Networks, including convolutional and
-generative adversarial neural networks
-(module: quantum_image_processing.models.neural_networks)
-"""
+""" Neural Network Structures"""
+
+from .quantum_neural_network import QuantumNeuralNetwork
+from .layer import Layer
+
+__all__ = ["QuantumNeuralNetwork", "Layer"]

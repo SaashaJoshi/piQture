@@ -1,11 +1,17 @@
 """Multiscale Entanglement Renormalization Ansatz (MERA) Tensor Network"""
+import uuid
 from typing import Callable
 import numpy as np
-from qiskit.circuit import QuantumCircuit, QuantumRegister, ParameterVector
+from qiskit.circuit import (
+    QuantumCircuit,
+    QuantumRegister,
+    ClassicalRegister,
+    ParameterVector,
+)
 from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 
 
-class MERA:
+class MERA(TwoQubitUnitary):
     """
     Implements a Multiscale Entanglement Renormalization Ansatz
     (MERA) tensor network structure as given by [2].
@@ -21,8 +27,12 @@ class MERA:
         doi: https://doi.org/10.1103/physrevlett.101.110501.
     """
 
-    def __init__(self, img_dim):
-        self.img_dim = img_dim
+    def __init__(self, num_qubits: int, layer_depth: type(None) = None):
+        self.num_qubits = num_qubits
+        if layer_depth is None:
+            self.layer_depth = int(np.ceil(np.sqrt(self.num_qubits)))
+        else:
+            self.layer_depth = layer_depth
 
     def mera_simple(self, complex_structure: bool = True) -> QuantumCircuit:
         """
@@ -38,12 +48,12 @@ class MERA:
             generated with the help of the input arguments.
         """
         param_vector = ParameterVector(
-            "theta",
-            int(self.img_dim / 2 * (self.img_dim / 2 + 1)) + 3,
+            f"theta_{str(uuid.uuid4())[:5]}",
+            int(self.num_qubits / 2 * (self.num_qubits / 2 + 1)) + 3,
         )
         param_vector_copy = param_vector
         return self.mera_backbone(
-            TwoQubitUnitary().simple_parameterization,
+            self.simple_parameterization,
             param_vector_copy,
             complex_structure,
         )
@@ -63,13 +73,17 @@ class MERA:
             generated with the help of the input arguments.
         """
         if complex_structure:
-            param_vector = ParameterVector("theta", 20 * self.img_dim - 1)
+            param_vector = ParameterVector(
+                f"theta_{str(uuid.uuid4())[:5]}", 20 * self.num_qubits - 1
+            )
             param_vector_copy = param_vector
         else:
-            param_vector = ParameterVector("theta", 10 * self.img_dim - 1)
+            param_vector = ParameterVector(
+                f"theta_{str(uuid.uuid4())[:5]}", 10 * self.num_qubits - 1
+            )
             param_vector_copy = param_vector
         return self.mera_backbone(
-            TwoQubitUnitary().general_parameterization,
+            self.general_parameterization,
             param_vector_copy,
             complex_structure,
         )
@@ -98,64 +112,73 @@ class MERA:
             circuit (QuantumCircuit): Returns the MERA circuit
             generated with the help of the input arguments.
         """
-        mera_qr = QuantumRegister(size=self.img_dim)
-        mera_circ = QuantumCircuit(mera_qr)
+        mera_qr = QuantumRegister(size=self.num_qubits)
+        mera_cr = ClassicalRegister(size=self.num_qubits)
+        mera_circ = QuantumCircuit(mera_qr, mera_cr)
 
-        for index in range(1, self.img_dim, 2):
-            if index == self.img_dim - 1:
-                break
-
-            _, param_vector_copy = gate_structure(
-                circuit=mera_circ,
-                qubits=[mera_qr[index], mera_qr[index + 1]],
-                parameter_vector=param_vector_copy,
-                complex_structure=complex_structure,
-            )
-
-        mera_circ.barrier()
+        # TODO: Make recursive layer structure using a staticmethod.
+        # That is convert the following code in a staticmethod.
+        # This should solve R0912: Too many branches (13/12) (too-many-branches)
         qubit_list = []
-        for index in range(0, self.img_dim, 2):
-            if index == self.img_dim - 1:
-                qubit_list.append(mera_qr[index])
+        for layer in range(self.layer_depth):
+            if layer == 0:
+                # D unitary blocks
+                for index in range(1, self.num_qubits, 2):
+                    if index == self.num_qubits - 1:
+                        break
+
+                    _, param_vector_copy = gate_structure(
+                        circuit=mera_circ,
+                        qubits=[mera_qr[index], mera_qr[index + 1]],
+                        parameter_vector=param_vector_copy,
+                        complex_structure=complex_structure,
+                    )
+
+                # U unitary blocks
+                mera_circ.barrier()
+                for index in range(0, self.num_qubits, 2):
+                    if index == self.num_qubits - 1:
+                        qubit_list.append(mera_qr[index])
+                    else:
+                        qubit_list.append(mera_qr[index + 1])
+                        _, param_vector_copy = gate_structure(
+                            circuit=mera_circ,
+                            qubits=[mera_qr[index], mera_qr[index + 1]],
+                            parameter_vector=param_vector_copy,
+                            complex_structure=complex_structure,
+                        )
+
             else:
-                qubit_list.append(mera_qr[index + 1])
-                _, param_vector_copy = gate_structure(
-                    circuit=mera_circ,
-                    qubits=[mera_qr[index], mera_qr[index + 1]],
-                    parameter_vector=param_vector_copy,
-                    complex_structure=complex_structure,
-                )
+                temp_list = []
+                # D unitary blocks
+                mera_circ.barrier()
+                for index in range(1, len(qubit_list), 2):
+                    if len(qubit_list) == 2 or index == len(qubit_list) - 1:
+                        break
 
-        for layer in range(int(np.sqrt(self.img_dim))):
-            temp_list = []
+                    _, param_vector_copy = gate_structure(
+                        circuit=mera_circ,
+                        qubits=[qubit_list[index], qubit_list[index + 1]],
+                        parameter_vector=param_vector_copy,
+                        complex_structure=complex_structure,
+                    )
 
-            mera_circ.barrier()
-            for index in range(1, len(qubit_list), 2):
-                if len(qubit_list) == 2 or index == len(qubit_list) - 1:
-                    break
+                # U unitary blocks
+                mera_circ.barrier()
+                for index in range(0, len(qubit_list) - 1, 2):
+                    _, param_vector_copy = gate_structure(
+                        circuit=mera_circ,
+                        qubits=[qubit_list[index], qubit_list[index + 1]],
+                        parameter_vector=param_vector_copy,
+                        complex_structure=complex_structure,
+                    )
+                    temp_list.append(qubit_list[index + 1])
 
-                _, param_vector_copy = gate_structure(
-                    circuit=mera_circ,
-                    qubits=[qubit_list[index], qubit_list[index + 1]],
-                    parameter_vector=param_vector_copy,
-                    complex_structure=complex_structure,
-                )
+                if len(qubit_list) % 2 != 0:
+                    temp_list.append(qubit_list[-1])
+                qubit_list = temp_list
 
-            mera_circ.barrier()
-            for index in range(0, len(qubit_list) - 1, 2):
-                block, param_vector_copy = gate_structure(
-                    circuit=mera_circ,
-                    qubits=[qubit_list[index], qubit_list[index + 1]],
-                    parameter_vector=param_vector_copy,
-                    complex_structure=complex_structure,
-                )
-                temp_list.append(qubit_list[index + 1])
-
-            if len(qubit_list) % 2 != 0:
-                temp_list.append(qubit_list[-1])
-
-            qubit_list = temp_list
-
-        mera_circ.ry(param_vector_copy[0], qubit_list[-1])
+                if len(qubit_list) == 1:
+                    mera_circ.ry(param_vector_copy[0], mera_qr[-1])
 
         return mera_circ

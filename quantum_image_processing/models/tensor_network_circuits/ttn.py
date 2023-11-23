@@ -6,7 +6,7 @@ from qiskit.circuit import QuantumCircuit, QuantumRegister, ParameterVector
 from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 
 
-class TTN:
+class TTN(TwoQubitUnitary):
     """
     Implements a Tree Tensor Network (TTN) structure class with
     alternative unitary qubit parameterization.
@@ -44,7 +44,7 @@ class TTN:
         param_vector = ParameterVector("theta", 2 * self.img_dim - 1)
         param_vector_copy = param_vector
         return self.ttn_backbone(
-            TwoQubitUnitary().simple_parameterization,
+            self.simple_parameterization,
             param_vector_copy,
             complex_structure,
         )
@@ -71,7 +71,7 @@ class TTN:
             param_vector_copy = param_vector
 
         return self.ttn_backbone(
-            TwoQubitUnitary().simple_parameterization,
+            self.simple_parameterization,
             param_vector_copy,
             complex_structure,
         )
