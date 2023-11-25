@@ -1,47 +1,57 @@
-# Quantum Machine Learning for Image Processing
+# Quantum Image Processing Library (QIPL)
 
-This repository covers and implements various image processing techniques with the help of Quantum Machine Learning concepts. 
+**Quantum Image Processing Library (QIPL)** is an open-source Python toolkit designed to simplify the development, execution, and training of Quantum Machine Learning (QML) models tailored for image processing tasks. This library seamlessly integrates with the Qiskit SDK, providing a convenient and user-friendly workflow integration for leveraging the potential of quantum computing for advanced image processing.
 
-Note: The repository complements the Master's thesis written by the author.
-
-## Description
-
-An in-depth paragraph about your project and overview of use.
-
-## Getting Started
+## Installation
 
 ### Dependencies
 
+### Getting Started
 
-### Installing
+Let's build a Quantum Convolutional Neural Network (QCNN) with Convolutional, Pooling, and Fully-Connected layers.
 
+```python
+from quantum_image_processing.models.neural_networks.convolutional.qcnn import (
+    QCNN,
+    QuantumConvolutionalLayer,
+    QuantumPoolingLayer,
+    FullyConnectedLayer,
+)
 
-### Executing program
+# Initializing a QCNN circuit with given image dimensions.
+image_dimensions = 4
+qcnn_circuit = QCNN(image_dimensions)
 
+# Gathering parameters for layer objects.
+mera_params = {"layer_depth": 1, "mera_instance": 0, "complex_structure": False}
+convolutional_params = {"mera_args": mera_parameters}
+
+# Build QCNN circuit.
+qcnn_circuit = qcnn_circuit.sequence(
+  [
+    (QuantumConvolutionalLayer, convolutional_params),
+    (QuantumPoolingLayer, {}),
+    (FullyConnectedLayer, {})
+  ]
+)
+
+# Display circuit.
+qcnn_circuit.draw()
 ```
-code blocks
-```
 
-## Author
+### Further examples
+
+## Contribution Guidelines
+
+We welcome contributions! Whether you're a quantum enthusiast or a Python developer, your input is valuable. Check out our Contribution Guidelines to get started.
+
+## Authors and Citation
 
 Saasha Joshi
 
-[![Linkedin](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/saashajoshi/)
-&nbsp;
-[![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/sassy_joshy)
-&nbsp;
-[![Github](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/SaashaJoshi)
-&nbsp;
-[![GitLab](https://img.shields.io/badge/GitLab-330F63?style=for-the-badge&logo=gitlab&logoColor=white)](https://gitlab.com/saashajoshy)
-&nbsp;
-[![GoogleScholar](https://img.shields.io/badge/Google_Scholar-4285F4?style=for-the-badge&logo=google-scholar&logoColor=white)](https://scholar.google.com/citations?user=DXyC8HQAAAAJ&hl=en)
-&nbsp;
-[![GitLab](https://img.shields.io/badge/orcid-A6CE39?style=for-the-badge&logo=orcid&logoColor=white)](https://orcid.org/0000-0001-9928-9796)
-&nbsp;
-
-## Version History
-
 ## License
 
+This project is licensed under the Apache License - see the [LICENSE](https://github.com/SaashaJoshi/quantum-image-processing/blob/main/LICENSE) file for details.
 
 ## Acknowledgments
+
