@@ -1,4 +1,5 @@
 """Abstract Base Class for Image Embedding"""
+from __future__ import annotations
 from abc import ABC, abstractmethod
 
 
@@ -10,7 +11,15 @@ class ImageEmbedding(ABC):
     - Pixel value (color) embedding
     """
 
-    def __init__(self, img_dims, pixel_vals):
+    def __init__(self, img_dims: tuple[int, ...], pixel_vals: list):
+        if not all([isinstance(dims, int) for dims in img_dims]) or not isinstance(
+            img_dims, tuple
+        ):
+            raise TypeError(f"Input img_dims must be of the type tuple[int, ...].")
+
+        if not isinstance(pixel_vals, list):
+            raise TypeError(f"Input pixel_vals must be of the type list.")
+
         self.img_dims = img_dims
         self.pixel_vals = pixel_vals
 
