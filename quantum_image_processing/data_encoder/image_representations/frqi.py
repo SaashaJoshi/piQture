@@ -33,31 +33,31 @@ class FRQI(ImageEmbedding):
 
         # FRQI circuit
         self.qr = QuantumRegister(self.feature_dim + 1)
-        self.circ = QuantumCircuit(self.qr)
+        self.circuit = QuantumCircuit(self.qr)
 
     def pixel_position(self, pixel_pos_binary: str):
         """Embeds pixel position values in a circuit."""
 
         for index, value in enumerate(pixel_pos_binary):
             if value == "0":
-                self.circ.x(index)
+                self.circuit.x(index)
 
     def pixel_value(self, pixel_pos: int):
         """Embeds pixel (color) values in a circuit"""
 
-        self.circ.cry(
+        self.circuit.cry(
             self.pixel_vals[pixel_pos],
             target_qubit=self.feature_dim,
             control_qubit=self.feature_dim - 2,
         )
-        self.circ.cx(0, 1)
-        self.circ.cry(
+        self.circuit.cx(0, 1)
+        self.circuit.cry(
             -self.pixel_vals[pixel_pos],
             target_qubit=self.feature_dim,
             control_qubit=self.feature_dim - 1,
         )
-        self.circ.cx(0, 1)
-        self.circ.cry(
+        self.circuit.cx(0, 1)
+        self.circuit.cry(
             self.pixel_vals[pixel_pos],
             target_qubit=self.feature_dim,
             control_qubit=self.feature_dim - 1,
@@ -72,7 +72,7 @@ class FRQI(ImageEmbedding):
             representation.
         """
         for i in range(self.feature_dim):
-            self.circ.h(i)
+            self.circuit.h(i)
 
         num_theta = math.prod(self.img_dims)
         for pixel in range(num_theta):
@@ -85,4 +85,4 @@ class FRQI(ImageEmbedding):
             # Remove pixel position embedding
             self.pixel_position(pixel_pos_binary)
 
-        return self.circ
+        return self.circuit

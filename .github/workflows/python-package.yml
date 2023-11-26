@@ -38,3 +38,4 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
+        pytest --cov --cov-report=html:.pytest_cache/coverage_re

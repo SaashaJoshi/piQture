@@ -15,10 +15,10 @@ class ImageEmbedding(ABC):
         if not all([isinstance(dims, int) for dims in img_dims]) or not isinstance(
             img_dims, tuple
         ):
-            raise TypeError(f"Input img_dims must be of the type tuple[int, ...].")
+            raise TypeError("Input img_dims must be of the type tuple[int, ...].")
 
         if not isinstance(pixel_vals, list):
-            raise TypeError(f"Input pixel_vals must be of the type list.")
+            raise TypeError("Input pixel_vals must be of the type list.")
 
         self.img_dims = img_dims
         self.pixel_vals = pixel_vals
