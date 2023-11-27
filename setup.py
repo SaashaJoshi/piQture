@@ -1,5 +1,5 @@
 """Quantum Image Processing setup file."""
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name="quantum_image_processing",
