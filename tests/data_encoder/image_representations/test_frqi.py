@@ -87,6 +87,18 @@ class TestFRQI:
         ):
             _ = FRQI(img_dims, pixel_vals)
 
+    @pytest.mark.parametrize(
+        "img_dims, pixel_vals",
+        [((2, 2), [100, -23, 505, 256]), ((2, 2), [-100, -23, 230, 256])],
+    )
+    def test_pixel_values(self, img_dims, pixel_vals):
+        """Tests the range of pixel values."""
+        with raises(
+            ValueError,
+            match=r"Pixel values cannot be less than \d or greater than \d.",
+        ):
+            _ = FRQI(img_dims, pixel_vals)
+
     @pytest.mark.parametrize("img_dims, pixel_vals", [((2, 2), list(range(4)))])
     def test_circuit_property(self, img_dims, pixel_vals):
         """Tests the FRQI circuits initialization."""

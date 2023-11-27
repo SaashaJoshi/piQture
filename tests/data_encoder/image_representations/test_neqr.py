@@ -4,6 +4,7 @@ import math
 from unittest import mock
 import numpy as np
 import pytest
+from pytest import raises
 from qiskit.circuit import QuantumCircuit
 from quantum_image_processing.data_encoder.image_representations.neqr import NEQR
 
@@ -30,6 +31,18 @@ def circuit_pixel_value_fixture():
 
 class TestNEQR:
     """Tests for FRQI image representation class"""
+
+    @pytest.mark.parametrize(
+        "img_dims, pixel_vals, max_color_intensity",
+        [((2, 2), list(range(251, 255)), 300), ((2, 2), list(range(251, 255)), -20)],
+    )
+    def test_max_color_intensity(self, img_dims, pixel_vals, max_color_intensity):
+        """Tests value of maximum color intensity."""
+        with raises(
+            ValueError,
+            match=r"Maximum color intensity cannot be less than \d or greater than \d.",
+        ):
+            _ = NEQR(img_dims, pixel_vals, max_color_intensity)
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals, max_color_intensity",
