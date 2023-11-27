@@ -12,7 +12,7 @@ class ImageEmbedding(ABC):
     """
 
     def __init__(self, img_dims: tuple[int, ...], pixel_vals: list):
-        if not all([isinstance(dims, int) for dims in img_dims]) or not isinstance(
+        if not all((isinstance(dims, int) for dims in img_dims)) or not isinstance(
             img_dims, tuple
         ):
             raise TypeError("Input img_dims must be of the type tuple[int, ...].")

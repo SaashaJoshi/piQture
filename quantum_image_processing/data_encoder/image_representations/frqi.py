@@ -37,6 +37,7 @@ class FRQI(ImageEmbedding):
 
     @property
     def circuit(self):
+        """Returns the FRQI circuit."""
         return self._circuit
 
     def pixel_position(self, pixel_pos_binary: str):
