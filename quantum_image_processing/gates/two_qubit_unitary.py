@@ -18,7 +18,7 @@ class TwoQubitUnitary(Unitary):
         parameter_vector: ParameterVector,
         complex_structure: bool = True,
     ) -> tuple[QuantumCircuit, ParameterVector]:
-        if not complex_structure:
+        if complex_structure:
             return self._complex_simple_block(circuit, qubits, parameter_vector)
         return self._real_simple_block(circuit, qubits, parameter_vector)
 
