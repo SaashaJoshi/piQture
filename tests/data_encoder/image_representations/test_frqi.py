@@ -89,7 +89,7 @@ class TestFRQI:
 
     @pytest.mark.parametrize("img_dims, pixel_vals", [((2, 2), list(range(4)))])
     def test_circuit_property(self, img_dims, pixel_vals):
-        """Tests the FRQI circuits after initialization."""
+        """Tests the FRQI circuits initialization."""
         test_circuit = QuantumCircuit(int(math.prod(img_dims)))
         assert FRQI(img_dims, pixel_vals).circuit.data == test_circuit.data
 

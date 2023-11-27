@@ -10,18 +10,26 @@ class NEQR(FRQI):
     """Represents images in NEQR representation format."""
 
     def __init__(
-        self, img_dims: tuple[int, int], pixel_vals: list[str], max_color: int = 255
+        self,
+        img_dims: tuple[int, int],
+        pixel_vals: list,
+        max_color_intensity: int = 255,
     ):
         FRQI.__init__(self, img_dims, pixel_vals)
 
         self.feature_dim = int(np.sqrt(math.prod(self.img_dims)))
-        self.max_color = max_color + 1
-        # color/pixel value in binary
-        self.color_binary = int(math.log(self.max_color, 2))
+        self.max_color_intensity = max_color_intensity + 1
+
+        # number of qubits to encode color
+        self.color_qubits = int(math.log(self.max_color_intensity, 2))
 
         # NEQR circuit
-        self.qr = QuantumRegister(self.feature_dim + self.color_binary)
-        self.circ = QuantumCircuit(self.qr)
+        self.qr = QuantumRegister(self.feature_dim + self.color_qubits)
+        self._circuit = QuantumCircuit(self.qr)
+
+    @property
+    def circuit(self):
+        return self._circuit
 
     def pixel_value(self, pixel_pos: int):
         """Embeds pixel (color) values in a circuit"""
@@ -30,7 +38,7 @@ class NEQR(FRQI):
         control_qubits = list(range(self.feature_dim))
         for index, color in enumerate(color_binary):
             if color == "1":
-                self.circ.mct(
+                self.circuit.mct(
                     control_qubits=control_qubits, target_qubit=self.feature_dim + index
                 )
 
