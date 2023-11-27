@@ -1,9 +1,9 @@
 """Unit test for NEQR class"""
 from __future__ import annotations
 import math
+from unittest import mock
 import numpy as np
 import pytest
-from unittest import mock
 from qiskit.circuit import QuantumCircuit
 from quantum_image_processing.data_encoder.image_representations.neqr import NEQR
 
@@ -64,6 +64,7 @@ class TestNEQR:
                 neqr_object.pixel_value(index)
                 assert mock_circuit.data == test_circuit.data
 
+    # pylint: disable=too-many-arguments
     @pytest.mark.parametrize(
         "img_dims, pixel_vals, max_color_intensity",
         [((2, 2), list(range(1, 5)), MAX_COLOR_INTENSITY)],
