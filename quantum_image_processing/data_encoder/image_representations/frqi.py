@@ -30,7 +30,9 @@ class FRQI(ImageEmbedding):
 
         for val in pixel_vals:
             if val < 0 or val > 255:
-                raise ValueError("Pixel values cannot be less than 0 or greater than 255.")
+                raise ValueError(
+                    "Pixel values cannot be less than 0 or greater than 255."
+                )
 
         # feature_dim = no. of qubits for pixel position embedding
         self.feature_dim = int(np.sqrt(math.prod(self.img_dims)))
