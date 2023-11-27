@@ -33,7 +33,11 @@ class FRQI(ImageEmbedding):
 
         # FRQI circuit
         self.qr = QuantumRegister(self.feature_dim + 1)
-        self.circuit = QuantumCircuit(self.qr)
+        self._circuit = QuantumCircuit(self.qr)
+
+    @property
+    def circuit(self):
+        return self._circuit
 
     def pixel_position(self, pixel_pos_binary: str):
         """Embeds pixel position values in a circuit."""

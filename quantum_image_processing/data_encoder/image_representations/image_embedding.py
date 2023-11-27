@@ -32,7 +32,6 @@ class ImageEmbedding(ABC):
             pixel_pos_binary (str): takes a binary
             representation of the pixel position.
         """
-        return NotImplementedError
 
     @abstractmethod
     def pixel_value(self, pixel_pos: int):
@@ -43,4 +42,3 @@ class ImageEmbedding(ABC):
             pixel_pos (int): takes as an input
             the pixel position.
         """
-        return NotImplementedError
