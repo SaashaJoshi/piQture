@@ -19,9 +19,8 @@ class TwoQubitUnitary(Unitary):
         complex_structure: bool = True,
     ) -> tuple[QuantumCircuit, ParameterVector]:
         if complex_structure:
-            pass
-        else:
-            return self._real_simple_block(circuit, qubits, parameter_vector)
+            return self._complex_simple_block(circuit, qubits, parameter_vector)
+        return self._real_simple_block(circuit, qubits, parameter_vector)
 
     def general_parameterization(
         self,
@@ -78,6 +77,14 @@ class TwoQubitUnitary(Unitary):
         parameter_vector = parameter_vector[2:]
 
         return block, parameter_vector
+
+    @staticmethod
+    def _complex_simple_block(
+        circuit: QuantumCircuit, qubits: list, parameter_vector: ParameterVector
+    ) -> tuple[QuantumCircuit, ParameterVector]:
+        """
+        Placeholder for complex simple box.
+        """
 
     @staticmethod
     def _real_general_block(

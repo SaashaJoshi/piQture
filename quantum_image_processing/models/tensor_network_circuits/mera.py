@@ -88,6 +88,7 @@ class MERA(TwoQubitUnitary):
             complex_structure,
         )
 
+    # pylint: disable=too-many-branches
     def mera_backbone(
         self,
         gate_structure: Callable,
@@ -116,8 +117,7 @@ class MERA(TwoQubitUnitary):
         mera_cr = ClassicalRegister(size=self.num_qubits)
         mera_circ = QuantumCircuit(mera_qr, mera_cr)
 
-        # TODO: Make recursive layer structure using a staticmethod.
-        # That is convert the following code in a staticmethod.
+        # Make recursive layer structure using a staticmethod i.e. convert code to staticmethod.
         # This should solve R0912: Too many branches (13/12) (too-many-branches)
         qubit_list = []
         for layer in range(self.layer_depth):
