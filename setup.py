@@ -1,3 +1,4 @@
+"""Quantum Image Processing setup file."""
 from distutils.core import setup
 
 setup(
