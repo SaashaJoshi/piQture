@@ -1,9 +1,9 @@
 """Unit test for TwoQubitUnitary class"""
 from __future__ import annotations
-import pytest
 import re
+import pytest
 from pytest import raises
-from qiskit.circuit import QuantumCircuit, ParameterVector, Qubit
+from qiskit.circuit import QuantumCircuit, ParameterVector
 from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 
 
@@ -12,11 +12,12 @@ class TestTwoQubitUnitary:
 
     @pytest.mark.parametrize(
         "circuit, qubits, parameter_vector, complex_structure",
-        [(None, [0, 1], [12.8, 45.9], False)],
+        [(None, [0, 1], ParameterVector("theta", 2), False)],
     )
     def test_validate_circuit(
         self, circuit, qubits, parameter_vector, complex_structure
     ):
+        """Tests the type of circuit input."""
         with raises(
             TypeError, match="Input circuit is not of the type QuantumCircuit."
         ):
@@ -26,11 +27,12 @@ class TestTwoQubitUnitary:
 
     @pytest.mark.parametrize(
         "circuit, qubits, parameter_vector, complex_structure",
-        [(QuantumCircuit(2), None, [12.8, 45.9], False)],
+        [(QuantumCircuit(2), None, ParameterVector("theta", 2), False)],
     )
     def test_validate_qubits_type(
         self, circuit, qubits, parameter_vector, complex_structure
     ):
+        """Tests the type of qubits input."""
         with raises(TypeError, match="Input qubits must be of the type list."):
             _ = TwoQubitUnitary().simple_parameterization(
                 circuit, qubits, parameter_vector, complex_structure
@@ -38,11 +40,12 @@ class TestTwoQubitUnitary:
 
     @pytest.mark.parametrize(
         "circuit, qubits, parameter_vector, complex_structure",
-        [(QuantumCircuit(2), [], [12.8, 45.9], False)],
+        [(QuantumCircuit(2), [], ParameterVector("theta", 2), False)],
     )
     def test_validate_qubits_arg(
         self, circuit, qubits, parameter_vector, complex_structure
     ):
+        """Tests the type of elements in qubits input."""
         with raises(ValueError, match="Input qubits list cannot be empty."):
             _ = TwoQubitUnitary().simple_parameterization(
                 circuit, qubits, parameter_vector, complex_structure
@@ -50,13 +53,15 @@ class TestTwoQubitUnitary:
 
     @pytest.mark.parametrize(
         "circuit, qubits, parameter_vector, complex_structure",
-        [(QuantumCircuit(2), [0, 1], [None, None], False)],
+        [(QuantumCircuit(2), [0, 1], [23.9, 1.4], False)],
     )
     def test_validate_parameter_vector(
         self, circuit, qubits, parameter_vector, complex_structure
     ):
+        """Tests the type of parameter_vector input."""
         with raises(
-            TypeError, match="Vectors in parameters must be of the type Number."
+            TypeError,
+            match="Vectors in parameter_vectors must be of the type Parameter.",
         ):
             _ = TwoQubitUnitary().simple_parameterization(
                 circuit, qubits, parameter_vector, complex_structure
@@ -64,11 +69,12 @@ class TestTwoQubitUnitary:
 
     @pytest.mark.parametrize(
         "circuit, qubits, parameter_vector, complex_structure",
-        [(QuantumCircuit(2), [0, 1], [12.8, 45.9], None)],
+        [(QuantumCircuit(2), [0, 1], ParameterVector("theta", 2), None)],
     )
     def test_validate_complex_structure(
         self, circuit, qubits, parameter_vector, complex_structure
     ):
+        """Tests the type of complex_structure input."""
         with raises(
             TypeError,
             match=re.escape(
@@ -78,3 +84,7 @@ class TestTwoQubitUnitary:
             _ = TwoQubitUnitary().simple_parameterization(
                 circuit, qubits, parameter_vector, complex_structure
             )
+
+    # def test_real_simple_block(self):
+    #     """Tests the real simple parameterization circuit."""
+    #     pass
