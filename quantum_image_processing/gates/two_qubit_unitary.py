@@ -1,23 +1,59 @@
 """Two-Qubit Unitary Gate class"""
 from __future__ import annotations
-
+from numbers import Number
 import numpy as np
 from qiskit.circuit import QuantumCircuit, ParameterVector
-from quantum_image_processing.gates.unitary_block import Unitary
+from quantum_image_processing.gates.unitary_block import UnitaryBlock
 
 
-class TwoQubitUnitary(Unitary):
+class TwoQubitUnitary(UnitaryBlock):
     """
     Implements two qubit unitary with alternative parameterizations.
     """
+
+    @staticmethod
+    def _validate_arguments(
+        circuit: QuantumCircuit,
+        qubits: list,
+        parameter_vector: list,
+        complex_structure: bool = True,
+    ):
+        """Validates the inputs for two-qubit parameterizations."""
+        if not isinstance(circuit, QuantumCircuit):
+            raise TypeError("Input circuit is not of the type QuantumCircuit.")
+
+        if not isinstance(qubits, list):
+            raise TypeError("Input qubits must be of the type list.")
+
+        if len(qubits) == 0:
+            raise ValueError("Input qubits list cannot be empty.")
+
+        # if not isinstance(parameter_vector, ParameterVector):
+        #     raise TypeError(
+        #         "Input parameter_vector must be of the type ParameterVector."
+        #     )
+
+        if not all(isinstance(vector, Number) for vector in parameter_vector):
+            raise TypeError("Vectors in parameters must be of the type Number.")
+
+        if not isinstance(complex_structure, bool):
+            raise TypeError(
+                "Input complex_structure must be either True or False (bool)."
+            )
 
     def simple_parameterization(
         self,
         circuit: QuantumCircuit,
         qubits: list,
-        parameter_vector: ParameterVector,
+        parameter_vector: list,
         complex_structure: bool = True,
     ) -> tuple[QuantumCircuit, ParameterVector]:
+        self._validate_arguments(
+            circuit,
+            qubits,
+            parameter_vector,
+            complex_structure,
+        )
         if complex_structure:
             return self._complex_simple_block(circuit, qubits, parameter_vector)
         return self._real_simple_block(circuit, qubits, parameter_vector)
@@ -26,9 +62,15 @@ class TwoQubitUnitary(Unitary):
         self,
         circuit: QuantumCircuit,
         qubits: list,
-        parameter_vector: ParameterVector,
+        parameter_vector: list,
         complex_structure: bool = True,
     ) -> tuple[QuantumCircuit, ParameterVector]:
+        self._validate_arguments(
+            circuit,
+            qubits,
+            parameter_vector,
+            complex_structure,
+        )
         if complex_structure:
             return self._complex_general_block(circuit, qubits, parameter_vector)
         return self._real_general_block(circuit, qubits, parameter_vector)
@@ -37,9 +79,15 @@ class TwoQubitUnitary(Unitary):
         self,
         circuit: QuantumCircuit,
         qubits: list,
-        parameter_vector: ParameterVector,
+        parameter_vector: list,
         complex_structure: bool = True,
     ):
+        self._validate_arguments(
+            circuit,
+            qubits,
+            parameter_vector,
+            complex_structure,
+        )
         if complex_structure:
             pass
         else:
@@ -47,7 +95,7 @@ class TwoQubitUnitary(Unitary):
 
     @staticmethod
     def _real_simple_block(
-        circuit: QuantumCircuit, qubits: list, parameter_vector: ParameterVector
+        circuit: QuantumCircuit, qubits: list, parameter_vector: list
     ) -> tuple[QuantumCircuit, ParameterVector]:
         """
         Builds a two-qubit unitary gate with simple parameterization,
@@ -80,7 +128,7 @@ class TwoQubitUnitary(Unitary):
 
     @staticmethod
     def _complex_simple_block(
-        circuit: QuantumCircuit, qubits: list, parameter_vector: ParameterVector
+        circuit: QuantumCircuit, qubits: list, parameter_vector: list
     ) -> tuple[QuantumCircuit, ParameterVector]:
         """
         Placeholder for complex simple box.
@@ -88,7 +136,7 @@ class TwoQubitUnitary(Unitary):
 
     @staticmethod
     def _real_general_block(
-        circuit: QuantumCircuit, qubits: list, parameter_vector: ParameterVector
+        circuit: QuantumCircuit, qubits: list, parameter_vector: list
     ) -> tuple[QuantumCircuit, ParameterVector]:
         """
         Builds a two-qubit unitary gate with a general parameterization,
@@ -135,7 +183,7 @@ class TwoQubitUnitary(Unitary):
 
     @staticmethod
     def _complex_general_block(
-        circuit: QuantumCircuit, qubits: list, parameter_vector: ParameterVector
+        circuit: QuantumCircuit, qubits: list, parameter_vector: list
     ) -> tuple[QuantumCircuit, ParameterVector]:
         """
         Builds a two-qubit unitary gate with a general parameterization,
