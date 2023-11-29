@@ -27,8 +27,10 @@ class TTN(TwoQubitUnitary):
         """
         self.img_dims = img_dims
 
-        if not all(isinstance(dim, int) for dim in img_dims):
-            raise TypeError("Input img_dims must of the type tuple(int, int).")
+        if not all((isinstance(dims, int) for dims in img_dims)) or not isinstance(
+            img_dims, tuple
+        ):
+            raise TypeError("Input img_dims must be of the type tuple[int, int].")
 
         if math.prod(img_dims) <= 0:
             raise ValueError("Image dimensions cannot be zero or negative.")
@@ -57,6 +59,7 @@ class TTN(TwoQubitUnitary):
             represented by simple parameterization.
         """
         param_vector = ParameterVector("theta", 2 * self.num_qubits - 1)
+        print(param_vector)
         param_vector_copy = param_vector
         return self.ttn_backbone(
             self.simple_parameterization,
