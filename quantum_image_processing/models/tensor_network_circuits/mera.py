@@ -1,6 +1,8 @@
 """Multiscale Entanglement Renormalization Ansatz (MERA) Tensor Network"""
+from __future__ import annotations
 import uuid
 from typing import Callable
+import math
 import numpy as np
 from qiskit.circuit import (
     QuantumCircuit,
@@ -27,8 +29,9 @@ class MERA(TwoQubitUnitary):
         doi: https://doi.org/10.1103/physrevlett.101.110501.
     """
 
-    def __init__(self, num_qubits: int, layer_depth: type(None) = None):
-        self.num_qubits = num_qubits
+    def __init__(self, img_dims: tuple[int, int], layer_depth: type(None) = None):
+        self.img_dims = img_dims
+        self.num_qubits = int(math.prod(img_dims))
         if layer_depth is None:
             self.layer_depth = int(np.ceil(np.sqrt(self.num_qubits)))
         else:
