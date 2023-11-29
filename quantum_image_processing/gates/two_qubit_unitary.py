@@ -1,6 +1,5 @@
 """Two-Qubit Unitary Gate class"""
 from __future__ import annotations
-from numbers import Number
 import numpy as np
 from qiskit.circuit import QuantumCircuit, ParameterVector, Parameter
 from quantum_image_processing.gates.unitary_block import UnitaryBlock
@@ -136,7 +135,6 @@ class TwoQubitUnitary(UnitaryBlock):
         Placeholder for complex simple box.
         """
         # Currently, does nothing.
-        return circuit, parameter_vector
 
     @staticmethod
     def _real_general_block(
