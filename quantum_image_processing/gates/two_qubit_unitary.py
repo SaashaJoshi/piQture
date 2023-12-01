@@ -12,21 +12,10 @@ class TwoQubitUnitary(UnitaryBlock):
 
     @staticmethod
     def _validate_arguments(
-        circuit: QuantumCircuit,
-        qubits: list,
         parameter_vector: ParameterVector,
         complex_structure: bool = True,
     ):
         """Validates the inputs for two-qubit parameterizations."""
-        if not isinstance(circuit, QuantumCircuit):
-            raise TypeError("Input circuit is not of the type QuantumCircuit.")
-
-        if not isinstance(qubits, list):
-            raise TypeError("Input qubits must be of the type list.")
-
-        if len(qubits) == 0:
-            raise ValueError("Input qubits list cannot be empty.")
-
         # if not isinstance(parameter_vector, list):
         #     raise TypeError(
         #         "Input parameter_vector must be of the type ParameterVector."
@@ -44,59 +33,43 @@ class TwoQubitUnitary(UnitaryBlock):
 
     def simple_parameterization(
         self,
-        circuit: QuantumCircuit,
-        qubits: list,
         parameter_vector: ParameterVector,
         complex_structure: bool = True,
     ) -> tuple[QuantumCircuit, ParameterVector]:
         self._validate_arguments(
-            circuit,
-            qubits,
             parameter_vector,
             complex_structure,
         )
         if complex_structure:
-            return self._complex_simple_block(circuit, qubits, parameter_vector)
-        return self._real_simple_block(circuit, qubits, parameter_vector)
+            return self._complex_simple_block(parameter_vector)
+        return self._real_simple_block(parameter_vector)
 
     def general_parameterization(
         self,
-        circuit: QuantumCircuit,
-        qubits: list,
         parameter_vector: ParameterVector,
         complex_structure: bool = True,
     ) -> tuple[QuantumCircuit, ParameterVector]:
         self._validate_arguments(
-            circuit,
-            qubits,
             parameter_vector,
             complex_structure,
         )
         if complex_structure:
-            return self._complex_general_block(circuit, qubits, parameter_vector)
-        return self._real_general_block(circuit, qubits, parameter_vector)
+            return self._complex_general_block(parameter_vector)
+        return self._real_general_block(parameter_vector)
 
     def auxiliary_parameterization(
         self,
-        circuit: QuantumCircuit,
-        qubits: list,
         parameter_vector: ParameterVector,
         complex_structure: bool = True,
     ):
-        self._validate_arguments(
-            circuit,
-            qubits,
-            parameter_vector,
-            complex_structure,
-        )
-        if complex_structure:
-            pass
-        else:
-            pass
+        """
+        Used to build a unitary gate parameterization
+        with the help of an auxiliary qubit.
+        """
 
     @staticmethod
     def _real_simple_block(
-        circuit: QuantumCircuit, qubits: list, parameter_vector: ParameterVector
+        parameter_vector: ParameterVector,
     ) -> tuple[QuantumCircuit, ParameterVector]:
         """
         Builds a two-qubit unitary gate with simple parameterization,
@@ -109,27 +82,20 @@ class TwoQubitUnitary(UnitaryBlock):
             doi: https://doi.org/10.1038/s41534-018-0116-9.
 
         Args:
-            circuit (QuantumCircuit): Circuit on which two-qubit
-            unitary gate needs to be applied.
-
-            qubits (list): list of qubits on which the gates need to
-            be applied.
-
             parameter_vector (ParameterVector): list of parameters
             of the unitary gates.
         """
-        block = circuit
-        block.ry(parameter_vector[0], qubits[0])
-        block.ry(parameter_vector[1], qubits[1])
-        block.cx(qubits[0], qubits[1])
-
+        block = QuantumCircuit(2)
+        block.ry(parameter_vector[0], 0)
+        block.ry(parameter_vector[1], 1)
+        block.cx(0, 1)
         parameter_vector = parameter_vector[2:]
 
         return block, parameter_vector
 
     @staticmethod
     def _complex_simple_block(
-        circuit: QuantumCircuit, qubits: list, parameter_vector: ParameterVector
+        parameter_vector: ParameterVector,
     ) -> tuple[QuantumCircuit, ParameterVector]:
         """
         Placeholder for complex simple box.
@@ -138,7 +104,7 @@ class TwoQubitUnitary(UnitaryBlock):
 
     @staticmethod
     def _real_general_block(
-        circuit: QuantumCircuit, qubits: list, parameter_vector: ParameterVector
+        parameter_vector: ParameterVector,
     ) -> tuple[QuantumCircuit, ParameterVector]:
         """
         Builds a two-qubit unitary gate with a general parameterization,
@@ -150,34 +116,27 @@ class TwoQubitUnitary(UnitaryBlock):
             Mar. 2004, doi: https://doi.org/10.1103/physreva.69.032315.
 
         Args:
-            circuit (QuantumCircuit): Circuit on which two-qubit
-            unitary gate needs to be applied.
-
-            qubits (list): list of qubits on which the gates need to
-            be applied.
-
             parameter_vector (ParameterVector): list of parameters
             of the unitary gates.
         """
-        block = circuit
+        block = QuantumCircuit(2)
+        block.rz(np.pi / 2, 0)
+        block.rz(np.pi / 2, 1)
+        block.ry(np.pi / 2, 1)
+        block.cnot(1, 0)
 
-        block.rz(np.pi / 2, qubits[0])
-        block.rz(np.pi / 2, qubits[1])
-        block.ry(np.pi / 2, qubits[1])
-        block.cnot(qubits[1], qubits[0])
+        block.rz(parameter_vector[0], 0)
+        block.ry(parameter_vector[1], 0)
+        block.rz(parameter_vector[2], 0)
 
-        block.rz(parameter_vector[0], qubits[0])
-        block.ry(parameter_vector[1], qubits[0])
-        block.rz(parameter_vector[2], qubits[0])
+        block.rz(parameter_vector[3], 1)
+        block.ry(parameter_vector[4], 1)
+        block.rz(parameter_vector[5], 1)
 
-        block.rz(parameter_vector[3], qubits[1])
-        block.ry(parameter_vector[4], qubits[1])
-        block.rz(parameter_vector[5], qubits[1])
-
-        block.cnot(qubits[1], qubits[0])
-        block.ry(-np.pi / 2, qubits[1])
-        block.rz(-np.pi / 2, qubits[0])
-        block.rz(-np.pi / 2, qubits[1])
+        block.cnot(1, 0)
+        block.ry(-np.pi / 2, 1)
+        block.rz(-np.pi / 2, 0)
+        block.rz(-np.pi / 2, 1)
 
         parameter_vector = parameter_vector[6:]
 
@@ -185,7 +144,7 @@ class TwoQubitUnitary(UnitaryBlock):
 
     @staticmethod
     def _complex_general_block(
-        circuit: QuantumCircuit, qubits: list, parameter_vector: ParameterVector
+        parameter_vector: ParameterVector,
     ) -> tuple[QuantumCircuit, ParameterVector]:
         """
         Builds a two-qubit unitary gate with a general parameterization,
@@ -197,38 +156,32 @@ class TwoQubitUnitary(UnitaryBlock):
             Mar. 2004, doi: https://doi.org/10.1103/physreva.69.032315.
 
         Args:
-            circuit (QuantumCircuit): Circuit on which two-qubit
-            unitary gate needs to be applied.
-
-            qubits (list): list of qubits on which the gates need to
-            be applied.
-
             parameter_vector (ParameterVector): list of parameters
             of the unitary gates.
         """
-        block = circuit
-        block.rz(parameter_vector[0], qubits[0])
-        block.ry(parameter_vector[1], qubits[0])
-        block.rz(parameter_vector[2], qubits[0])
+        block = QuantumCircuit(2)
+        block.rz(parameter_vector[0], 0)
+        block.ry(parameter_vector[1], 0)
+        block.rz(parameter_vector[2], 0)
 
-        block.rz(parameter_vector[3], qubits[1])
-        block.ry(parameter_vector[4], qubits[1])
-        block.rz(parameter_vector[5] + np.pi / 2, qubits[1])
-        block.cnot(qubits[1], qubits[0])
+        block.rz(parameter_vector[3], 1)
+        block.ry(parameter_vector[4], 1)
+        block.rz(parameter_vector[5] + np.pi / 2, 1)
+        block.cnot(1, 0)
 
-        block.rz((2 * parameter_vector[6]) - np.pi / 2, qubits[0])
-        block.ry(np.pi / 2 - (2 * parameter_vector[7]), qubits[1])
-        block.cnot(qubits[0], qubits[1])
-        block.ry((2 * parameter_vector[8]) - np.pi / 2, qubits[1])
+        block.rz((2 * parameter_vector[6]) - np.pi / 2, 0)
+        block.ry(np.pi / 2 - (2 * parameter_vector[7]), 1)
+        block.cnot(0, 1)
+        block.ry((2 * parameter_vector[8]) - np.pi / 2, 1)
 
-        block.cnot(qubits[1], qubits[0])
-        block.rz(parameter_vector[9], qubits[1])
-        block.ry(parameter_vector[10], qubits[1])
-        block.rz(parameter_vector[11], qubits[1])
+        block.cnot(1, 0)
+        block.rz(parameter_vector[9], 1)
+        block.ry(parameter_vector[10], 1)
+        block.rz(parameter_vector[11], 1)
 
-        block.rz(parameter_vector[12] - np.pi / 2, qubits[0])
-        block.ry(parameter_vector[13], qubits[0])
-        block.rz(parameter_vector[14], qubits[0])
+        block.rz(parameter_vector[12] - np.pi / 2, 0)
+        block.ry(parameter_vector[13], 0)
+        block.rz(parameter_vector[14], 0)
 
         parameter_vector = parameter_vector[15:]
 

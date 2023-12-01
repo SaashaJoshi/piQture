@@ -1,7 +1,6 @@
 """Unitary Gate class"""
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from qiskit.circuit import QuantumCircuit
 
 
 class UnitaryBlock(ABC):
@@ -16,8 +15,6 @@ class UnitaryBlock(ABC):
     @abstractmethod
     def simple_parameterization(
         self,
-        circuit: QuantumCircuit,
-        qubits: list,
         parameter_vector: list,
         complex_structure: bool = True,
     ):
@@ -29,8 +26,6 @@ class UnitaryBlock(ABC):
     @abstractmethod
     def general_parameterization(
         self,
-        circuit: QuantumCircuit,
-        qubits: list,
         parameter_vector: list,
         complex_structure: bool = True,
     ):
@@ -42,8 +37,6 @@ class UnitaryBlock(ABC):
     @abstractmethod
     def auxiliary_parameterization(
         self,
-        circuit: QuantumCircuit,
-        qubits: list,
         parameter_vector: list,
         complex_structure: bool = True,
     ):

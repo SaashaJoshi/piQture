@@ -7,7 +7,7 @@ from qiskit.circuit import QuantumCircuit, QuantumRegister, ParameterVector
 from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 
 
-class TTN(TwoQubitUnitary):
+class TTN:
     """
     Implements a Tree Tensor Network (TTN) structure class with
     alternative unitary qubit parameterization.
@@ -62,7 +62,7 @@ class TTN(TwoQubitUnitary):
         print(param_vector)
         param_vector_copy = param_vector
         return self.ttn_backbone(
-            self.simple_parameterization,
+            TwoQubitUnitary().simple_parameterization,
             param_vector_copy,
             complex_structure,
         )
@@ -89,7 +89,7 @@ class TTN(TwoQubitUnitary):
             param_vector_copy = param_vector
 
         return self.ttn_backbone(
-            self.simple_parameterization,
+            TwoQubitUnitary().general_parameterization,
             param_vector_copy,
             complex_structure,
         )
@@ -140,21 +140,27 @@ class TTN(TwoQubitUnitary):
                 qubit_list.append(self.q_reg[index])
             else:
                 qubit_list.append(self.q_reg[index + 1])
-                _, param_vector_copy = gate_structure(
-                    circuit=self.circuit,
-                    qubits=[self.q_reg[index], self.q_reg[index + 1]],
+                unitary_block, param_vector_copy = gate_structure(
                     parameter_vector=param_vector_copy,
                     complex_structure=complex_structure,
+                )
+                self.circuit.compose(
+                    unitary_block,
+                    qubits=[self.q_reg[index], self.q_reg[index + 1]],
+                    inplace=True,
                 )
 
         for _ in range(int(np.sqrt(self.num_qubits))):
             temp_list = []
             for index in range(0, len(qubit_list) - 1, 2):
-                _, param_vector_copy = gate_structure(
-                    self.circuit,
-                    [qubit_list[index], qubit_list[index + 1]],
-                    param_vector_copy,
-                    complex_structure,
+                unitary_block, param_vector_copy = gate_structure(
+                    parameter_vector=param_vector_copy,
+                    complex_structure=complex_structure,
+                )
+                self.circuit.compose(
+                    unitary_block,
+                    qubits=[qubit_list[index], qubit_list[index + 1]],
+                    inplace=True,
                 )
                 temp_list.append(qubit_list[index + 1])
 
