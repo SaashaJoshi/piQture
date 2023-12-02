@@ -25,8 +25,6 @@ class TTN:
         Args:
             img_dims (int): dimensions of the input image data.
         """
-        self.img_dims = img_dims
-
         if not all((isinstance(dims, int) for dims in img_dims)) or not isinstance(
             img_dims, tuple
         ):
@@ -35,10 +33,11 @@ class TTN:
         if math.prod(img_dims) <= 0:
             raise ValueError("Image dimensions cannot be zero or negative.")
 
+        self.img_dims = img_dims
         self.num_qubits = int(math.prod(img_dims))
 
-        self.q_reg = QuantumRegister(self.num_qubits)
-        self._circuit = QuantumCircuit(self.q_reg)
+        self._circuit = QuantumCircuit(self.num_qubits)
+        self.q_reg = self._circuit.qubits
 
     @property
     def circuit(self):
@@ -59,7 +58,6 @@ class TTN:
             represented by simple parameterization.
         """
         param_vector = ParameterVector("theta", 2 * self.num_qubits - 1)
-        print(param_vector)
         param_vector_copy = param_vector
         return self.ttn_backbone(
             TwoQubitUnitary().simple_parameterization,
