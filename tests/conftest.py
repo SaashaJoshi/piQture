@@ -3,8 +3,7 @@ import math
 
 # pylint: disable=unused-import
 import pytest
-import uuid
-from qiskit.circuit import QuantumCircuit, ParameterVector, Parameter
+from qiskit.circuit import QuantumCircuit
 from tests.data_encoder.image_representations.test_frqi import (
     circuit_pixel_position_fixture,
 )
