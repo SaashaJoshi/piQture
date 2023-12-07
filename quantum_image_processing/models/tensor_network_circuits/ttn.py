@@ -1,12 +1,13 @@
 """Tree Tensor Network (TTN)"""
 from __future__ import annotations
 from typing import Callable
+import math
 import numpy as np
-from qiskit.circuit import QuantumCircuit, QuantumRegister, ParameterVector
+from qiskit.circuit import QuantumCircuit, ParameterVector
 from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 
 
-class TTN(TwoQubitUnitary):
+class TTN:
     """
     Implements a Tree Tensor Network (TTN) structure class with
     alternative unitary qubit parameterization.
@@ -17,16 +18,31 @@ class TTN(TwoQubitUnitary):
         doi: https://doi.org/10.1038/s41534-018-0116-9.
     """
 
-    def __init__(self, img_dim: int):
+    def __init__(self, img_dims: tuple[int, int]):
         """
         Initializes the TTN class with given input variables.
 
         Args:
-            img_dim (int): product of dimensions of the input data.
-            For example,
-                for a 2x2 image, img_dim = 4.
+            img_dims (int): dimensions of the input image data.
         """
-        self.img_dim = img_dim
+        if not all((isinstance(dims, int) for dims in img_dims)) or not isinstance(
+            img_dims, tuple
+        ):
+            raise TypeError("Input img_dims must be of the type tuple[int, int].")
+
+        if math.prod(img_dims) <= 0:
+            raise ValueError("Image dimensions cannot be zero or negative.")
+
+        self.img_dims = img_dims
+        self.num_qubits = int(math.prod(img_dims))
+
+        self._circuit = QuantumCircuit(self.num_qubits)
+        self.q_reg = self._circuit.qubits
+
+    @property
+    def circuit(self):
+        """Returns the TTN circuit."""
+        return self._circuit
 
     def ttn_simple(self, complex_structure: bool = True) -> QuantumCircuit:
         """
@@ -41,10 +57,10 @@ class TTN(TwoQubitUnitary):
             QuantumCircuit: quantum circuit with unitary gates
             represented by simple parameterization.
         """
-        param_vector = ParameterVector("theta", 2 * self.img_dim - 1)
+        param_vector = ParameterVector("theta", 2 * self.num_qubits - 1)
         param_vector_copy = param_vector
         return self.ttn_backbone(
-            self.simple_parameterization,
+            TwoQubitUnitary().simple_parameterization,
             param_vector_copy,
             complex_structure,
         )
@@ -64,14 +80,14 @@ class TTN(TwoQubitUnitary):
         """
         # Check number of params here.
         if complex_structure:
-            param_vector = ParameterVector("theta", 15 * self.img_dim - 1)
+            param_vector = ParameterVector("theta", 15 * self.num_qubits - 1)
             param_vector_copy = param_vector
         else:
-            param_vector = ParameterVector("theta", 6 * self.img_dim - 1)
+            param_vector = ParameterVector("theta", 6 * self.num_qubits - 1)
             param_vector_copy = param_vector
 
         return self.ttn_backbone(
-            self.simple_parameterization,
+            TwoQubitUnitary().general_parameterization,
             param_vector_copy,
             complex_structure,
         )
@@ -116,30 +132,33 @@ class TTN(TwoQubitUnitary):
             QuantumCircuit: quantum circuit with unitary gates
             represented by general parameterization.
         """
-        ttn_qr = QuantumRegister(size=self.img_dim)
-        ttn_circ = QuantumCircuit(ttn_qr)
-
         qubit_list = []
-        for index in range(0, self.img_dim, 2):
-            if index == self.img_dim - 1:
-                qubit_list.append(ttn_qr[index])
+        for index in range(0, self.num_qubits, 2):
+            if index == self.num_qubits - 1:
+                qubit_list.append(self.q_reg[index])
             else:
-                qubit_list.append(ttn_qr[index + 1])
-                _, param_vector_copy = gate_structure(
-                    circuit=ttn_circ,
-                    qubits=[ttn_qr[index], ttn_qr[index + 1]],
+                qubit_list.append(self.q_reg[index + 1])
+                unitary_block, param_vector_copy = gate_structure(
                     parameter_vector=param_vector_copy,
                     complex_structure=complex_structure,
                 )
+                self.circuit.compose(
+                    unitary_block,
+                    qubits=[self.q_reg[index], self.q_reg[index + 1]],
+                    inplace=True,
+                )
 
-        for _ in range(int(np.sqrt(self.img_dim))):
+        for _ in range(int(np.sqrt(self.num_qubits))):
             temp_list = []
             for index in range(0, len(qubit_list) - 1, 2):
-                _, param_vector_copy = gate_structure(
-                    ttn_circ,
-                    [qubit_list[index], qubit_list[index + 1]],
-                    param_vector_copy,
-                    complex_structure,
+                unitary_block, param_vector_copy = gate_structure(
+                    parameter_vector=param_vector_copy,
+                    complex_structure=complex_structure,
+                )
+                self.circuit.compose(
+                    unitary_block,
+                    qubits=[qubit_list[index], qubit_list[index + 1]],
+                    inplace=True,
                 )
                 temp_list.append(qubit_list[index + 1])
 
@@ -148,6 +167,6 @@ class TTN(TwoQubitUnitary):
 
             qubit_list = temp_list
 
-        ttn_circ.ry(param_vector_copy[0], qubit_list[-1])
+        self.circuit.ry(param_vector_copy[0], qubit_list[-1])
 
-        return ttn_circ
+        return self.circuit
