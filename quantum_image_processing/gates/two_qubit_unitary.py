@@ -16,14 +16,14 @@ class TwoQubitUnitary(UnitaryBlock):
         complex_structure: bool = True,
     ):
         """Validates the inputs for two-qubit parameterizations."""
-        # if not isinstance(parameter_vector, list):
+        # if not isinstance(parameter_vector, ParameterVector):
         #     raise TypeError(
         #         "Input parameter_vector must be of the type ParameterVector."
         #     )
 
         if not all(isinstance(vector, Parameter) for vector in parameter_vector):
             raise TypeError(
-                "Vectors in parameter_vectors must be of the type Parameter."
+                "Vectors in parameter_vector must be of the type Parameter."
             )
 
         if not isinstance(complex_structure, bool):

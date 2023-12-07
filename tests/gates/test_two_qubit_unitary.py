@@ -15,11 +15,11 @@ class TestTwoQubitUnitary:
         "parameter_vector, complex_structure",
         [([23.9, 1.4], False)],
     )
-    def test_validate_parameter_vector(self, parameter_vector, complex_structure):
-        """Tests the type of parameter_vector input."""
+    def test_validate_vectors(self, parameter_vector, complex_structure):
+        """Tests the type of vectors in parameter_vector input."""
         with raises(
             TypeError,
-            match="Vectors in parameter_vectors must be of the type Parameter.",
+            match="Vectors in parameter_vector must be of the type Parameter.",
         ):
             _ = TwoQubitUnitary().simple_parameterization(
                 parameter_vector, complex_structure
