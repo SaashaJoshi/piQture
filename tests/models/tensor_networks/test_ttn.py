@@ -13,6 +13,7 @@ from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 
 @pytest.fixture(name="ttn_simple_circuit")
 def ttn_simple_circuit_fixture():
+    """Fixture to replicate a real simple two-qubit unitary block."""
     def _ttn_simple_circuit(img_dims, parameter_vector):
         test_circuit = QuantumCircuit(int(math.prod(img_dims)))
         if math.prod(img_dims) == 2:
