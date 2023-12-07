@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Callable
 import math
 import numpy as np
-from qiskit.circuit import QuantumCircuit, QuantumRegister, ParameterVector
+from qiskit.circuit import QuantumCircuit, ParameterVector
 from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 
 

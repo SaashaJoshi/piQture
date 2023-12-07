@@ -41,8 +41,8 @@ class TwoQubitUnitary(UnitaryBlock):
             complex_structure,
         )
         if complex_structure:
-            return self._complex_simple_block(parameter_vector)
-        return self._real_simple_block(parameter_vector)
+            return self.complex_simple_block(parameter_vector)
+        return self.real_simple_block(parameter_vector)
 
     def general_parameterization(
         self,
@@ -54,8 +54,8 @@ class TwoQubitUnitary(UnitaryBlock):
             complex_structure,
         )
         if complex_structure:
-            return self._complex_general_block(parameter_vector)
-        return self._real_general_block(parameter_vector)
+            return self.complex_general_block(parameter_vector)
+        return self.real_general_block(parameter_vector)
 
     def auxiliary_parameterization(
         self,
@@ -68,7 +68,7 @@ class TwoQubitUnitary(UnitaryBlock):
         """
 
     @staticmethod
-    def _real_simple_block(
+    def real_simple_block(
         parameter_vector: ParameterVector,
     ) -> tuple[QuantumCircuit, ParameterVector]:
         """
@@ -94,7 +94,7 @@ class TwoQubitUnitary(UnitaryBlock):
         return block, parameter_vector
 
     @staticmethod
-    def _complex_simple_block(
+    def complex_simple_block(
         parameter_vector: ParameterVector,
     ) -> tuple[QuantumCircuit, ParameterVector]:
         """
@@ -103,7 +103,7 @@ class TwoQubitUnitary(UnitaryBlock):
         # Currently, does nothing.
 
     @staticmethod
-    def _real_general_block(
+    def real_general_block(
         parameter_vector: ParameterVector,
     ) -> tuple[QuantumCircuit, ParameterVector]:
         """
@@ -143,7 +143,7 @@ class TwoQubitUnitary(UnitaryBlock):
         return block, parameter_vector
 
     @staticmethod
-    def _complex_general_block(
+    def complex_general_block(
         parameter_vector: ParameterVector,
     ) -> tuple[QuantumCircuit, ParameterVector]:
         """
