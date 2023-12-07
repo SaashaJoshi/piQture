@@ -6,8 +6,52 @@ import re
 from unittest import mock
 import pytest
 from pytest import raises
-from qiskit.circuit import QuantumCircuit
+from qiskit.circuit import QuantumCircuit, ParameterVector
 from quantum_image_processing.models.tensor_network_circuits.ttn import TTN
+from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
+
+
+@pytest.fixture(name="ttn_simple_circuit")
+def ttn_simple_circuit_fixture():
+    def _ttn_simple_circuit(img_dims, parameter_vector):
+        test_circuit = QuantumCircuit(int(math.prod(img_dims)))
+        if math.prod(img_dims) == 2:
+            test_circuit.compose(
+                TwoQubitUnitary().real_simple_block(parameter_vector[:2])[0],
+                qubits=[0, 1],
+                inplace=True,
+            )
+        elif math.prod(img_dims) == 3:
+            test_circuit.compose(
+                TwoQubitUnitary().real_simple_block(parameter_vector[:2])[0],
+                qubits=[0, 1],
+                inplace=True,
+            )
+            test_circuit.compose(
+                TwoQubitUnitary().real_simple_block(parameter_vector[2:4])[0],
+                qubits=[1, 2],
+                inplace=True,
+            )
+        elif math.prod(img_dims) == 4:
+            test_circuit.compose(
+                TwoQubitUnitary().real_simple_block(parameter_vector[:2])[0],
+                qubits=[0, 1],
+                inplace=True,
+            )
+            test_circuit.compose(
+                TwoQubitUnitary().real_simple_block(parameter_vector[2:4])[0],
+                qubits=[2, 3],
+                inplace=True,
+            )
+            test_circuit.compose(
+                TwoQubitUnitary().real_simple_block(parameter_vector[4:6])[0],
+                qubits=[1, 3],
+                inplace=True,
+            )
+        test_circuit.ry(parameter_vector[-1], len(test_circuit.qubits) - 1)
+        return test_circuit
+
+    return _ttn_simple_circuit
 
 
 class TestTTN:
@@ -67,3 +111,23 @@ class TestTTN:
                 mock_ttn_simple.assert_called_once_with(
                     general_parameterization, mock.ANY, complex_structure
                 )
+
+    @pytest.mark.parametrize(
+        "img_dims, complex_structure",
+        [((1, 3), False), ((2, 2), False), ((1, 2), False)],
+    )
+    def test_ttn_backbone(self, img_dims, complex_structure, ttn_simple_circuit):
+        """
+        Tests the ttn_backbone circuit.
+        Currently, tests only for simple real parameterization, i.e. complex_structure = False.
+        """
+        parameter_vector = ParameterVector(
+            "test", length=2 * int(math.prod(img_dims)) - 1
+        )
+        test_circuit = ttn_simple_circuit(img_dims, parameter_vector)
+        circuit = TTN(img_dims).ttn_backbone(
+            TwoQubitUnitary().simple_parameterization,
+            parameter_vector,
+            complex_structure,
+        )
+        assert circuit.data == test_circuit.data
