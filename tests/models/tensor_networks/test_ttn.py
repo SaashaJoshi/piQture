@@ -11,11 +11,11 @@ from quantum_image_processing.models.tensor_network_circuits.ttn import TTN
 from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 
 
-@pytest.fixture(name="ttn_simple_circuit")
-def ttn_simple_circuit_fixture():
+@pytest.fixture(name="ttn_circuit")
+def ttn_circuit_fixture():
     """Fixture to replicate a real simple two-qubit unitary block."""
 
-    def _ttn_simple_circuit(img_dims, parameter_vector, parameterization):
+    def _ttn_circuit(img_dims, parameter_vector, parameterization):
         test_circuit = QuantumCircuit(int(math.prod(img_dims)))
 
         parameterization_callable = {
@@ -67,7 +67,7 @@ def ttn_simple_circuit_fixture():
             )
         return test_circuit
 
-    return _ttn_simple_circuit
+    return _ttn_circuit
 
 
 class TestTTN:
@@ -119,25 +119,31 @@ class TestTTN:
         """Tests the ttn_backbone method call via the ttn_general function."""
         with mock.patch(
             "quantum_image_processing.models.tensor_network_circuits.ttn.TTN.ttn_backbone"
-        ) as mock_ttn_simple:
+        ) as mock_ttn_general:
             with mock.patch(
                 "quantum_image_processing.gates.two_qubit_unitary.TwoQubitUnitary.general_parameterization"
             ) as general_parameterization:
                 _ = TTN(img_dims).ttn_general(complex_structure)
-                mock_ttn_simple.assert_called_once_with(
+                mock_ttn_general.assert_called_once_with(
                     general_parameterization, mock.ANY, complex_structure
                 )
 
     @pytest.mark.parametrize(
         "img_dims, complex_structure, parameterization",
         [
+            ((1, 2), False, "real_general"),
             ((1, 3), False, "real_general"),
+            ((1, 4), False, "real_general"),
+            ((2, 1), False, "real_simple"),
+            ((1, 3), False, "real_simple"),
             ((2, 2), False, "real_simple"),
             ((1, 2), True, "complex_general"),
+            ((1, 3), True, "complex_general"),
+            ((1, 4), True, "complex_general"),
         ],
     )
     def test_ttn_backbone(
-        self, img_dims, complex_structure, parameterization, ttn_simple_circuit
+        self, img_dims, complex_structure, parameterization, ttn_circuit
     ):
         """Tests the ttn_backbone circuit with real and complex parameterization."""
         parameterization_mapper = {
@@ -155,7 +161,7 @@ class TestTTN:
             ],
         }
 
-        test_circuit = ttn_simple_circuit(
+        test_circuit = ttn_circuit(
             img_dims, parameterization_mapper[parameterization][0], parameterization
         )
         circuit = TTN(img_dims).ttn_backbone(
