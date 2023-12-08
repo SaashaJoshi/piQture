@@ -34,7 +34,7 @@ class TTN:
             raise ValueError("Image dimensions cannot be zero or negative.")
 
         self.img_dims = img_dims
-        self.num_qubits = int(math.prod(img_dims))
+        self.num_qubits = int(math.prod(self.img_dims))
 
         self._circuit = QuantumCircuit(self.num_qubits)
         self.q_reg = self._circuit.qubits
