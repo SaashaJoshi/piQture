@@ -201,7 +201,9 @@ class TestMERA:
             ((1, 2), None, True, "complex_general"),
             ((1, 3), None, True, "complex_general"),
             ((1, 4), None, True, "complex_general"),
+            ((1, 5), None, False, "real_general"),
             ((5, 1), None, False, "real_simple"),
+            ((1, 5), None, True, "complex_general"),
         ],
     )
     def test_mera_backbone(
