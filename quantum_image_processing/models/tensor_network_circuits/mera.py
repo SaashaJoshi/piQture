@@ -74,9 +74,10 @@ class MERA(TTN):
             circuit (QuantumCircuit): Returns the MERA circuit
             generated with the help of the input arguments.
         """
+        # Check params here.
         param_vector = ParameterVector(
             f"theta_{str(uuid.uuid4())[:5]}",
-            int(self.num_qubits / 2 * (self.num_qubits / 2 + 1)) + 3 + 1,
+            10 * self.num_qubits - 1,
         )
         param_vector_copy = param_vector
         return self.mera_backbone(
@@ -174,41 +175,39 @@ class MERA(TTN):
                 )
 
         # Rest of the layers.
+        temp_list = qubit_list.copy()
         if self.layer_depth > 1:
-            temp_list = []
-            # D unitary blocks
-            for index in range(1, len(qubit_list), 2):
-                if len(qubit_list) == 2 or index == len(qubit_list) - 1:
-                    break
+            while len(temp_list) > 1:
+                # D unitary blocks
+                for index in range(1, len(qubit_list), 2):
+                    if len(temp_list) == 2 or index == len(temp_list) - 1:
+                        break
 
-                unitary_block, param_vector_copy = gate_structure(
-                    parameter_vector=param_vector_copy,
-                    complex_structure=complex_structure,
-                )
-                self.circuit.compose(
-                    unitary_block,
-                    qubits=[qubit_list[index], qubit_list[index + 1]],
-                    inplace=True,
-                )
+                    unitary_block, param_vector_copy = gate_structure(
+                        parameter_vector=param_vector_copy,
+                        complex_structure=complex_structure,
+                    )
+                    self.circuit.compose(
+                        unitary_block,
+                        qubits=[qubit_list[index], qubit_list[index + 1]],
+                        inplace=True,
+                    )
 
-            # U unitary blocks
-            for index in range(0, len(qubit_list) - 1, 2):
-                unitary_block, param_vector_copy = gate_structure(
-                    parameter_vector=param_vector_copy,
-                    complex_structure=complex_structure,
-                )
-                self.circuit.compose(
-                    unitary_block,
-                    qubits=[qubit_list[index], qubit_list[index + 1]],
-                    inplace=True,
-                )
-                temp_list.append(qubit_list[index + 1])
+                # U unitary blocks
+                for index in range(0, len(qubit_list) - 1, 2):
+                    unitary_block, param_vector_copy = gate_structure(
+                        parameter_vector=param_vector_copy,
+                        complex_structure=complex_structure,
+                    )
+                    self.circuit.compose(
+                        unitary_block,
+                        qubits=[qubit_list[index], qubit_list[index + 1]],
+                        inplace=True,
+                    )
+                    temp_list.pop(0)
+                qubit_list = temp_list
 
-            if len(qubit_list) % 2 != 0:
-                temp_list.append(qubit_list[-1])
-            qubit_list = temp_list
-
-            if len(qubit_list) == 1:
-                self.circuit.ry(param_vector_copy[0], self.mera_qr[-1])
+        if len(qubit_list) == 1:
+            self.circuit.ry(param_vector_copy[0], self.mera_qr[-1])
 
         return self.circuit

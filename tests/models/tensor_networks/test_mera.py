@@ -12,6 +12,7 @@ from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 @pytest.fixture(name="mera_circuit")
 def mera_circuit_fixture():
     """Fixture to replicate a real simple two-qubit unitary block."""
+
     # pylint: disable=duplicate-code
     def _mera_circuit(img_dims, parameter_vector, parameterization):
         test_circuit = QuantumCircuit(int(math.prod(img_dims)))
@@ -40,13 +41,13 @@ def mera_circuit_fixture():
             )
             # U-block
             test_circuit.compose(
-                mapper[0](parameter_vector[mapper[1]: 2 * mapper[1]])[0],
+                mapper[0](parameter_vector[mapper[1] : 2 * mapper[1]])[0],
                 qubits=[0, 1],
                 inplace=True,
             )
             # No D-block now. Skip to U-block
             test_circuit.compose(
-                mapper[0](parameter_vector[2 * mapper[1]: 3 * mapper[1]])[0],
+                mapper[0](parameter_vector[2 * mapper[1] : 3 * mapper[1]])[0],
                 qubits=[1, 2],
                 inplace=True,
             )
@@ -71,25 +72,73 @@ def mera_circuit_fixture():
                 qubits=[2, 3],
                 inplace=True,
             )
-            # D-block
+            # U-block again.
             test_circuit.compose(
-                mapper[0](parameter_vector[3 * mapper[1]: 4 * mapper[1]])[0],
+                mapper[0](parameter_vector[3 * mapper[1] : 4 * mapper[1]])[0],
                 qubits=[1, 3],
                 inplace=True,
             )
             test_circuit.ry(
                 parameter_vector[4 * mapper[1]], len(test_circuit.qubits) - 1
             )
+        elif math.prod(img_dims) == 5:
+            # D-block
+            test_circuit.compose(
+                mapper[0](parameter_vector[: mapper[1]])[0],
+                qubits=[1, 2],
+                inplace=True,
+            )
+            test_circuit.compose(
+                mapper[0](parameter_vector[mapper[1] : 2 * mapper[1]])[0],
+                qubits=[3, 4],
+                inplace=True,
+            )
+            # U-block
+            test_circuit.compose(
+                mapper[0](parameter_vector[2 * mapper[1] : 3 * mapper[1]])[0],
+                qubits=[0, 1],
+                inplace=True,
+            )
+            test_circuit.compose(
+                mapper[0](parameter_vector[3 * mapper[1] : 4 * mapper[1]])[0],
+                qubits=[2, 3],
+                inplace=True,
+            )
+            # D-block
+            test_circuit.compose(
+                mapper[0](parameter_vector[4 * mapper[1] : 5 * mapper[1]])[0],
+                qubits=[3, 4],
+                inplace=True,
+            )
+            # U-block
+            test_circuit.compose(
+                mapper[0](parameter_vector[5 * mapper[1] : 6 * mapper[1]])[0],
+                qubits=[1, 3],
+                inplace=True,
+            )
+            # U-block again.
+            test_circuit.compose(
+                mapper[0](parameter_vector[6 * mapper[1] : 7 * mapper[1]])[0],
+                qubits=[3, 4],
+                inplace=True,
+            )
+            test_circuit.ry(
+                parameter_vector[7 * mapper[1]], len(test_circuit.qubits) - 1
+            )
         return test_circuit
 
     return _mera_circuit
 
+
 class TestMERA:
     """Tests for MERA class"""
+
     @pytest.mark.parametrize("img_dims, layer_depth", [((3, 1), -0.9), ((2, 1), "abc")])
     def test_layer_depth(self, img_dims, layer_depth):
         """Tests the type of layer_depth input."""
-        with raises(TypeError, match="The input layer_depth must be of the type int or None."):
+        with raises(
+            TypeError, match="The input layer_depth must be of the type int or None."
+        ):
             _ = MERA(img_dims, layer_depth)
 
     @pytest.mark.parametrize("img_dims, layer_depth", [((3, 1), 0)])
@@ -105,7 +154,8 @@ class TestMERA:
         assert test_circuit.data == MERA(img_dims).circuit.data
 
     @pytest.mark.parametrize(
-        "img_dims, layer_depth, complex_structure", [((2, 2), 1, False), ((4, 5), None, True)]
+        "img_dims, layer_depth, complex_structure",
+        [((2, 2), 1, False), ((4, 5), None, True)],
     )
     def test_mera_simple(self, img_dims, layer_depth, complex_structure):
         # pylint: disable=line-too-long
@@ -122,7 +172,8 @@ class TestMERA:
                 )
 
     @pytest.mark.parametrize(
-        "img_dims, layer_depth, complex_structure", [((2, 2), 1, False), ((4, 5), None, True)]
+        "img_dims, layer_depth, complex_structure",
+        [((2, 2), 1, False), ((4, 5), None, True)],
     )
     def test_mera_general(self, img_dims, layer_depth, complex_structure):
         # pylint: disable=line-too-long
@@ -150,6 +201,7 @@ class TestMERA:
             ((1, 2), None, True, "complex_general"),
             ((1, 3), None, True, "complex_general"),
             ((1, 4), None, True, "complex_general"),
+            ((5, 1), None, False, "real_simple"),
         ],
     )
     def test_mera_backbone(
@@ -161,7 +213,7 @@ class TestMERA:
         num_qubits = int(math.prod(img_dims))
         parameterization_mapper = {
             "real_simple": [
-                ParameterVector("test", int(num_qubits / 2 * (num_qubits / 2 + 1)) + 3 + 1),
+                ParameterVector("test", 10 * num_qubits - 1),
                 TwoQubitUnitary().simple_parameterization,
             ],
             "real_general": [
@@ -182,8 +234,4 @@ class TestMERA:
             parameterization_mapper[parameterization][0],
             complex_structure,
         )
-        print(circuit)
-        print(test_circuit)
-
-        # assert False
         assert circuit.data == test_circuit.data
