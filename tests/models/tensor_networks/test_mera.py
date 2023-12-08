@@ -12,11 +12,9 @@ from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 @pytest.fixture(name="mera_circuit")
 def mera_circuit_fixture():
     """Fixture to replicate a real simple two-qubit unitary block."""
-
+    # pylint: disable=duplicate-code
     def _mera_circuit(img_dims, parameter_vector, parameterization):
         test_circuit = QuantumCircuit(int(math.prod(img_dims)))
-        num_qubits = int(math.prod(img_dims))
-
         parameterization_callable = {
             "real_simple": [TwoQubitUnitary().real_simple_block, 2],
             "real_general": [TwoQubitUnitary().real_general_block, 6],
@@ -157,7 +155,9 @@ class TestMERA:
     def test_mera_backbone(
         self, img_dims, layer_depth, complex_structure, parameterization, mera_circuit
     ):
+        # pylint: disable=too-many-arguments
         """Tests the mera_backbone circuit with real and complex parameterization."""
+        # Add test cases when layer_depth is not None.
         num_qubits = int(math.prod(img_dims))
         parameterization_mapper = {
             "real_simple": [
