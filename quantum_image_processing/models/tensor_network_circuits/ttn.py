@@ -94,7 +94,6 @@ class TTN:
 
     def ttn_with_aux(self, complex_structure: bool = True):
         """
-        TODO: Find the implementation procedure for this.
         Implements a TTN network with alternative parameterization
         that requires an auxiliary qubit, as given in [1].
 
@@ -132,6 +131,7 @@ class TTN:
             QuantumCircuit: quantum circuit with unitary gates
             represented by general parameterization.
         """
+        # Layer = 0
         qubit_list = []
         for index in range(0, self.num_qubits, 2):
             if index == self.num_qubits - 1:
@@ -148,6 +148,7 @@ class TTN:
                     inplace=True,
                 )
 
+        # Rest of the layers.
         for _ in range(int(np.sqrt(self.num_qubits))):
             temp_list = []
             for index in range(0, len(qubit_list) - 1, 2):
