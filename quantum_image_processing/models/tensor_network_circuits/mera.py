@@ -39,7 +39,7 @@ class MERA(TTN):
             layer_depth (int): number of MERA layers to be built in a circuit.
         """
         TTN.__init__(self, img_dims)
-        self.num_qubits = int(math.prod(img_dims))
+        self.num_qubits = int(math.prod(self.img_dims))
 
         if not isinstance(layer_depth, int) and layer_depth is not None:
             raise TypeError("The input layer_depth must be of the type int or None.")
@@ -76,7 +76,7 @@ class MERA(TTN):
         """
         param_vector = ParameterVector(
             f"theta_{str(uuid.uuid4())[:5]}",
-            int(self.num_qubits / 2 * (self.num_qubits / 2 + 1)) + 3,
+            int(self.num_qubits / 2 * (self.num_qubits / 2 + 1)) + 3 + 1,
         )
         param_vector_copy = param_vector
         return self.mera_backbone(
@@ -158,7 +158,6 @@ class MERA(TTN):
             )
 
         # U unitary blocks
-        self.circuit.barrier()
         for index in range(0, self.num_qubits, 2):
             if index == self.num_qubits - 1:
                 qubit_list.append(self.mera_qr[index])
@@ -178,7 +177,6 @@ class MERA(TTN):
         if self.layer_depth > 1:
             temp_list = []
             # D unitary blocks
-            self.circuit.barrier()
             for index in range(1, len(qubit_list), 2):
                 if len(qubit_list) == 2 or index == len(qubit_list) - 1:
                     break
@@ -194,7 +192,6 @@ class MERA(TTN):
                 )
 
             # U unitary blocks
-            self.circuit.barrier()
             for index in range(0, len(qubit_list) - 1, 2):
                 unitary_block, param_vector_copy = gate_structure(
                     parameter_vector=param_vector_copy,
