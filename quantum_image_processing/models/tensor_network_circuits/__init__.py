@@ -4,8 +4,10 @@ Tensor Network Quantum Circuits (module: quantum_image_processing.models.tensor_
 
 from .ttn import TTN
 from .mera import MERA
+from .mps import MPS
 
 __all__ = [
     "TTN",
     "MERA",
+    "MPS",
 ]
