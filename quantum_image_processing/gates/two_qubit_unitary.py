@@ -98,9 +98,26 @@ class TwoQubitUnitary(UnitaryBlock):
         parameter_vector: ParameterVector,
     ) -> tuple[QuantumCircuit, ParameterVector]:
         """
-        Placeholder for complex simple box.
+        Builds a two-qubit unitary gate with simple parameterization,
+        consisting of complex two single-unitary gates (either Rx, Ry, or Rz)
+        followed by a CNOT gate as given in the following paper.
+
+        References:
+            [1] E. Grant et al., “Hierarchical quantum classifiers,”
+            npj Quantum Information, vol. 4, no. 1, Dec. 2018,
+            doi: https://doi.org/10.1038/s41534-018-0116-9.
+
+        Args:
+            parameter_vector (ParameterVector): list of parameters
+            of the unitary gates.
         """
-        # Currently, does nothing.
+        block = QuantumCircuit(2)
+        block.rx(parameter_vector[0], 0)
+        block.ry(parameter_vector[1], 1)
+        block.cx(0, 1)
+        parameter_vector = parameter_vector[2:]
+
+        return block, parameter_vector
 
     @staticmethod
     def real_general_block(

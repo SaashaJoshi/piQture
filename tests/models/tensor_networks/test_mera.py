@@ -18,6 +18,7 @@ def mera_circuit_fixture():
         test_circuit = QuantumCircuit(int(math.prod(img_dims)))
         parameterization_callable = {
             "real_simple": [TwoQubitUnitary().real_simple_block, 2],
+            "complex_simple": [TwoQubitUnitary().complex_simple_block, 2],
             "real_general": [TwoQubitUnitary().real_general_block, 6],
             "complex_general": [TwoQubitUnitary().complex_general_block, 15],
         }
@@ -204,6 +205,7 @@ class TestMERA:
             ((1, 5), None, False, "real_general"),
             ((5, 1), None, False, "real_simple"),
             ((1, 5), None, True, "complex_general"),
+            ((1, 5), None, True, "complex_simple"),
         ],
     )
     def test_mera_backbone(
@@ -215,6 +217,10 @@ class TestMERA:
         num_qubits = int(math.prod(img_dims))
         parameterization_mapper = {
             "real_simple": [
+                ParameterVector("test", 10 * num_qubits - 1),
+                TwoQubitUnitary().simple_parameterization,
+            ],
+            "complex_simple": [
                 ParameterVector("test", 10 * num_qubits - 1),
                 TwoQubitUnitary().simple_parameterization,
             ],
