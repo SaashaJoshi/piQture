@@ -20,6 +20,7 @@ def ttn_circuit_fixture():
 
         parameterization_callable = {
             "real_simple": [TwoQubitUnitary().real_simple_block, 2],
+            "complex_simple": [TwoQubitUnitary().complex_simple_block, 2],
             "real_general": [TwoQubitUnitary().real_general_block, 6],
             "complex_general": [TwoQubitUnitary().complex_general_block, 15],
         }
@@ -137,6 +138,7 @@ class TestTTN:
             ((2, 1), False, "real_simple"),
             ((1, 3), False, "real_simple"),
             ((2, 2), False, "real_simple"),
+            ((1, 2), True, "complex_simple"),
             ((1, 2), True, "complex_general"),
             ((1, 3), True, "complex_general"),
             ((1, 4), True, "complex_general"),
@@ -148,7 +150,11 @@ class TestTTN:
         """Tests the ttn_backbone circuit with real and complex parameterization."""
         parameterization_mapper = {
             "real_simple": [
-                ParameterVector("test", length=2 * int(math.prod(img_dims)) - 1),
+                ParameterVector("test", 2 * int(math.prod(img_dims)) - 1),
+                TwoQubitUnitary().simple_parameterization,
+            ],
+            "complex_simple": [
+                ParameterVector("test", 10 * int(math.prod(img_dims)) - 1),
                 TwoQubitUnitary().simple_parameterization,
             ],
             "real_general": [
