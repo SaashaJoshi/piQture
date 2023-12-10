@@ -4,7 +4,7 @@ from __future__ import annotations
 import math
 from unittest import mock
 import pytest
-from qiskit.circuit import QuantumCircuit, ParameterVector
+from qiskit.circuit import QuantumCircuit
 from quantum_image_processing.models.tensor_network_circuits.ttn import TTN
 from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 
@@ -129,28 +129,16 @@ class TestTTN:
         ],
     )
     def test_ttn_backbone(
-        self, img_dims, complex_structure, parameterization, ttn_circuit
+        self,
+        img_dims,
+        complex_structure,
+        parameterization,
+        ttn_circuit,
+        parameterization_mapper,
     ):
+        # pylint: disable=too-many-arguments
         """Tests the ttn_backbone circuit with real and complex parameterization."""
-        parameterization_mapper = {
-            "real_simple": [
-                ParameterVector("test", 2 * int(math.prod(img_dims)) - 1),
-                TwoQubitUnitary().simple_parameterization,
-            ],
-            "complex_simple": [
-                ParameterVector("test", 10 * int(math.prod(img_dims)) - 1),
-                TwoQubitUnitary().simple_parameterization,
-            ],
-            "real_general": [
-                ParameterVector("test", 6 * int(math.prod(img_dims)) - 1),
-                TwoQubitUnitary().general_parameterization,
-            ],
-            "complex_general": [
-                ParameterVector("test", 15 * int(math.prod(img_dims)) - 1),
-                TwoQubitUnitary().general_parameterization,
-            ],
-        }
-
+        parameterization_mapper = parameterization_mapper(img_dims)
         test_circuit = ttn_circuit(
             img_dims, parameterization_mapper[parameterization][0], parameterization
         )
