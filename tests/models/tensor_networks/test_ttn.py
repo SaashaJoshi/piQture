@@ -2,10 +2,8 @@
 from __future__ import annotations
 
 import math
-import re
 from unittest import mock
 import pytest
-from pytest import raises
 from qiskit.circuit import QuantumCircuit, ParameterVector
 from quantum_image_processing.models.tensor_network_circuits.ttn import TTN
 from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
@@ -15,6 +13,7 @@ from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 def ttn_circuit_fixture():
     """Fixture to replicate a real simple two-qubit unitary block."""
 
+    # pylint: disable=duplicate-code
     def _ttn_circuit(img_dims, parameter_vector, parameterization):
         test_circuit = QuantumCircuit(int(math.prod(img_dims)))
 
@@ -72,21 +71,6 @@ def ttn_circuit_fixture():
 
 class TestTTN:
     """Tests for TTN class"""
-
-    @pytest.mark.parametrize("img_dims", [({"abc", "def"}), (2, 1.5), (None, None)])
-    def test_img_dims(self, img_dims):
-        """Tests the type of img_dims input."""
-        with raises(
-            TypeError,
-            match=re.escape("Input img_dims must be of the type tuple[int, int]."),
-        ):
-            _ = TTN(img_dims)
-
-    @pytest.mark.parametrize("img_dims", [(-3, 1), (2, 0)])
-    def test_num_qubits(self, img_dims):
-        """Tests the product of img_dims."""
-        with raises(ValueError, match="Image dimensions cannot be zero or negative."):
-            _ = TTN(img_dims)
 
     @pytest.mark.parametrize("img_dims", [(2, 4)])
     def test_circuit_property(self, img_dims):

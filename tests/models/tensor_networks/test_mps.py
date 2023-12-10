@@ -15,6 +15,7 @@ from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 def mps_circuit_fixture():
     """Fixture to replicate a real simple two-qubit unitary block."""
 
+    # pylint: disable=duplicate-code
     def _mps_circuit(img_dims, parameter_vector, parameterization):
         test_circuit = QuantumCircuit(int(math.prod(img_dims)))
 

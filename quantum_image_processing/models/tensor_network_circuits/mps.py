@@ -140,8 +140,7 @@ class MPS:
         """
         for index in range(0, self.num_qubits - 1):
             unitary_block, param_vector_copy = gate_structure(
-                param_vector_copy,
-                complex_structure
+                param_vector_copy, complex_structure
             )
             self.circuit.compose(unitary_block, qubits=[index, index + 1], inplace=True)
 
