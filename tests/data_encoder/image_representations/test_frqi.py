@@ -10,7 +10,6 @@ from qiskit.circuit import QuantumCircuit
 from quantum_image_processing.data_encoder.image_representations.frqi import FRQI
 
 PIXEL_POS_BINARY2 = ["00", "01", "10", "11"]
-PIXEL_POS2 = list(range(len(PIXEL_POS_BINARY2)))
 
 
 @pytest.fixture(name="circuit_pixel_position")
@@ -20,7 +19,7 @@ def circuit_pixel_position_fixture():
     def _circuit(img_dims, pixel_pos_binary):
         test_circuit = QuantumCircuit(int(math.prod(img_dims)))
         index = [index for index, val in enumerate(pixel_pos_binary) if val == "0"]
-        if len(index) != 0:
+        if len(index):
             test_circuit.x(index)
         return test_circuit
 
@@ -128,17 +127,17 @@ class TestFRQI:
                 assert mock_circuit.data == test_circuit.data
 
     @pytest.mark.parametrize(
-        "img_dims, pixel_vals, pixel_pos_list",
-        [((2, 2), list(range(4)), PIXEL_POS2)],
+        "img_dims, pixel_vals",
+        [((2, 2), list(range(4)))],
     )
     def test_pixel_value(
-        self, img_dims, pixel_vals, pixel_pos_list, circuit_pixel_value
+        self, img_dims, pixel_vals, circuit_pixel_value
     ):
         """Tests the circuit received after pixel value embedding."""
         frqi_object = FRQI(img_dims, pixel_vals)
         mock_circuit = QuantumCircuit(int(math.prod(img_dims)))
 
-        for pixel in pixel_pos_list:
+        for pixel in range(int(math.prod(img_dims))):
             mock_circuit.clear()
             test_circuit = circuit_pixel_value(img_dims, pixel_vals, pixel)
 
@@ -165,11 +164,10 @@ class TestFRQI:
         """Tests the final FRQI circuit."""
         frqi_object = FRQI(img_dims, pixel_vals)
         mock_circuit = QuantumCircuit(int(math.prod(img_dims)))
-        pixel_pos_list = list(range(len(pixel_pos_binary_list)))
 
         test_circuit = QuantumCircuit(int(math.prod(img_dims)))
         test_circuit.h(list(range(int(np.sqrt(math.prod(img_dims))))))
-        for pixel, pixel_pos_binary in zip(pixel_pos_list, pixel_pos_binary_list):
+        for pixel, pixel_pos_binary in enumerate(pixel_pos_binary_list):
             test_circuit.compose(
                 circuit_pixel_position(img_dims, pixel_pos_binary), inplace=True
             )

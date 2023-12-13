@@ -223,9 +223,9 @@ class FullyConnectedLayer(Layer):
         """
         self.circuit.barrier()
         unmeasured_bits: dict = {"qubits": [], "clbits": []}
-        for index in range(len(self.unmeasured_bits["qubits"]) - 1):
+        for index, qubit in enumerate(self.unmeasured_bits["qubits"][:-1]):
             self.circuit.cz(
-                self.unmeasured_bits["qubits"][index],
+                qubit,
                 self.unmeasured_bits["qubits"][index + 1],
             )
         # Comment next line to skip implicit measurement.

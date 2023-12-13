@@ -156,7 +156,7 @@ class TTN(MPS):
                 )
                 temp_list.append(qubit_list[index + 1])
 
-            if len(qubit_list) % 2 != 0:
+            if len(qubit_list) % 2:
                 temp_list.append(qubit_list[-1])
 
             qubit_list = temp_list
