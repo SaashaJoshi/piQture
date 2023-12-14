@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 # pylint: disable=too-few-public-methods
 
 
-class Layer(ABC):
+class BaseLayer(ABC):
     """
     Abstract base class for layer structures in a quantum
     neural network.

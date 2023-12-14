@@ -1,6 +1,6 @@
-""" Neural Network Structures"""
+"""Neural Network Structures"""
 
 from .quantum_neural_network import QuantumNeuralNetwork
-from .layer import Layer
+from .qcnn import QCNN
 
-__all__ = ["QuantumNeuralNetwork", "Layer"]
+__all__ = ["QuantumNeuralNetwork", "QCNN"]
