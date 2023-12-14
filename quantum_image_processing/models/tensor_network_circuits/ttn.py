@@ -1,14 +1,15 @@
 """Tree Tensor Network (TTN)"""
 from __future__ import annotations
 from typing import Callable
-import math
 import numpy as np
 from qiskit.circuit import QuantumCircuit, ParameterVector
 from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
-from quantum_image_processing.models.tensor_network_circuits.mps import MPS
+from quantum_image_processing.models.tensor_network_circuits.base_tensor_network import (
+    BaseTensorNetwork,
+)
 
 
-class TTN(MPS):
+class TTN(BaseTensorNetwork):
     """
     Implements a Tree Tensor Network (TTN) structure class with
     alternative unitary qubit parameterization.
@@ -26,16 +27,11 @@ class TTN(MPS):
         Args:
             img_dims (int): dimensions of the input image data.
         """
-        MPS.__init__(self, img_dims)
-        self.num_qubits = int(math.prod(self.img_dims))
+        BaseTensorNetwork.__init__(self, img_dims)
 
-        self._circuit = QuantumCircuit(self.num_qubits)
-        self.q_reg = self._circuit.qubits
-
-    @property
-    def circuit(self):
-        """Returns the TTN circuit."""
-        return self._circuit
+    def __repr__(self):
+        """TTN class representation"""
+        return f"TreeTensorNetwork(img_dims={self.img_dims})"
 
     def ttn_simple(self, complex_structure: bool = True) -> QuantumCircuit:
         """

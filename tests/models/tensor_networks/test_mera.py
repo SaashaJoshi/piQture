@@ -2,6 +2,7 @@
 from __future__ import annotations
 import math
 from unittest import mock
+import numpy as np
 import pytest
 from pytest import raises
 from qiskit.circuit import QuantumCircuit, ParameterVector
@@ -133,6 +134,19 @@ def mera_circuit_fixture():
 
 class TestMERA:
     """Tests for MERA class"""
+
+    @pytest.mark.parametrize("img_dims, layer_depth", [((2, 4), 2), ((2, 4), None)])
+    def test_repr(self, img_dims, layer_depth):
+        """Tests the representation of the MERA class."""
+        representation = repr(MERA(img_dims, layer_depth))
+        if not layer_depth:
+            layer_depth = int(np.ceil(np.sqrt(math.prod(img_dims))))
+        test_representation = (
+            f"MultiScaleEntanglementRenormalizationAnsatz("
+            f"img_dims={img_dims}, layer_depth={layer_depth}"
+            f")"
+        )
+        assert test_representation == representation
 
     @pytest.mark.parametrize("img_dims, layer_depth", [((3, 1), -0.9), ((2, 1), "abc")])
     def test_layer_depth(self, img_dims, layer_depth):

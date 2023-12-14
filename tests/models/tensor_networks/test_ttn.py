@@ -74,6 +74,12 @@ class TestTTN:
     """Tests for TTN class"""
 
     @pytest.mark.parametrize("img_dims", [(2, 4)])
+    def test_repr(self, img_dims):
+        """Tests the representation of the TTN class."""
+        test_representation = f"TreeTensorNetwork(img_dims={img_dims})"
+        assert test_representation == repr(TTN(img_dims))
+
+    @pytest.mark.parametrize("img_dims", [(2, 4)])
     def test_circuit_property(self, img_dims):
         """Tests the TTN circuit initialization."""
         test_circuit = QuantumCircuit(math.prod(img_dims))

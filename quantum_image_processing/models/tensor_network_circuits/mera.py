@@ -2,17 +2,18 @@
 from __future__ import annotations
 import uuid
 from typing import Callable, Optional
-import math
 import numpy as np
 from qiskit.circuit import (
     QuantumCircuit,
     ParameterVector,
 )
 from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
-from quantum_image_processing.models.tensor_network_circuits.ttn import TTN
+from quantum_image_processing.models.tensor_network_circuits.base_tensor_network import (
+    BaseTensorNetwork,
+)
 
 
-class MERA(TTN):
+class MERA(BaseTensorNetwork):
     """
     Implements a Multiscale Entanglement Renormalization Ansatz
     (MERA) tensor network structure as given by [2].
@@ -38,8 +39,7 @@ class MERA(TTN):
             img_dims (int): dimensions of the input image data.
             layer_depth (int): number of MERA layers to be built in a circuit.
         """
-        TTN.__init__(self, img_dims)
-        self.num_qubits = int(math.prod(self.img_dims))
+        BaseTensorNetwork.__init__(self, img_dims)
 
         if not isinstance(layer_depth, int) and layer_depth is not None:
             raise TypeError("The input layer_depth must be of the type int or None.")
@@ -53,13 +53,13 @@ class MERA(TTN):
         else:
             self.layer_depth = layer_depth
 
-        self._circuit = QuantumCircuit(self.num_qubits)
-        self.mera_qr = self._circuit.qubits
-
-    @property
-    def circuit(self):
-        """Returns the MERA circuit."""
-        return self._circuit
+    def __repr__(self):
+        """MERA class representation"""
+        return (
+            f"MultiScaleEntanglementRenormalizationAnsatz("
+            f"img_dims={self.img_dims}, layer_depth={self.layer_depth}"
+            f")"
+        )
 
     def mera_simple(self, complex_structure: bool = True) -> QuantumCircuit:
         """
@@ -154,23 +154,23 @@ class MERA(TTN):
             )
             self.circuit.compose(
                 unitary_block,
-                qubits=[self.mera_qr[index], self.mera_qr[index + 1]],
+                qubits=[self.q_reg[index], self.q_reg[index + 1]],
                 inplace=True,
             )
 
         # U unitary blocks
         for index in range(0, self.num_qubits, 2):
             if index == self.num_qubits - 1:
-                qubit_list.append(self.mera_qr[index])
+                qubit_list.append(self.q_reg[index])
             else:
-                qubit_list.append(self.mera_qr[index + 1])
+                qubit_list.append(self.q_reg[index + 1])
                 unitary_block, param_vector_copy = gate_structure(
                     parameter_vector=param_vector_copy,
                     complex_structure=complex_structure,
                 )
                 self.circuit.compose(
                     unitary_block,
-                    qubits=[self.mera_qr[index], self.mera_qr[index + 1]],
+                    qubits=[self.q_reg[index], self.q_reg[index + 1]],
                     inplace=True,
                 )
 
@@ -208,6 +208,6 @@ class MERA(TTN):
                 qubit_list = temp_list
 
         if len(qubit_list) == 1:
-            self.circuit.ry(param_vector_copy[0], self.mera_qr[-1])
+            self.circuit.ry(param_vector_copy[0], self.q_reg[-1])
 
         return self.circuit
