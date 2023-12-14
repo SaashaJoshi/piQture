@@ -1,6 +1,5 @@
 """Base Tensor Network Circuit"""
 from __future__ import annotations
-import math
 from qiskit.circuit import QuantumCircuit
 
 # pylint: disable=too-few-public-methods
