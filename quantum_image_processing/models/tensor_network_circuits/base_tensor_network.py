@@ -9,23 +9,22 @@ from qiskit.circuit import QuantumCircuit
 class BaseTensorNetwork:
     """Abstract Base Class for Tensor Network Circuits"""
 
-    def __init__(self, img_dims: tuple[int, int]):
+    def __init__(self, num_qubits: int):
         """
         Initializes a tensor network circuit.
 
         Args:
-            img_dims (int): dimensions of the input image data.
+            num_qubits (int): number of pixels in the input image data.
         """
-        if not all((isinstance(dims, int) for dims in img_dims)) or not isinstance(
-            img_dims, tuple
+        if not isinstance(
+            num_qubits, int
         ):
-            raise TypeError("Input img_dims must be of the type tuple[int, int].")
+            raise TypeError("Input num_qubits must be of the type int.")
 
-        if math.prod(img_dims) <= 0:
-            raise ValueError("Image dimensions cannot be zero or negative.")
+        if num_qubits <= 0:
+            raise ValueError("Number of qubits cannot be zero or negative.")
 
-        self.img_dims = img_dims
-        self.num_qubits = int(math.prod(self.img_dims))
+        self.num_qubits = num_qubits
         self._circuit = QuantumCircuit(self.num_qubits)
         self.q_reg = self._circuit.qubits
 

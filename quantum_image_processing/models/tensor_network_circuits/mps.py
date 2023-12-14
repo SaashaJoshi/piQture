@@ -27,18 +27,18 @@ class MPS(BaseTensorNetwork):
         doi: https://doi.org/10.1038/s41598-023-30258-y.
     """
 
-    def __init__(self, img_dims: tuple[int, int]):
+    def __init__(self, num_qubits: int):
         """
         Initializes the MPS class with given input variables.
 
         Args:
-            img_dims (int): dimensions of the input image data.
+            num_qubits (int): number of qubits.
         """
-        BaseTensorNetwork.__init__(self, img_dims)
+        BaseTensorNetwork.__init__(self, num_qubits)
 
     def __repr__(self):
         """MPS class representation"""
-        return f"MatrixProductState(img_dims={self.img_dims})"
+        return f"MatrixProductState(num_qubits={self.num_qubits})"
 
     def mps_simple(self, complex_structure: bool = True) -> QuantumCircuit:
         """
