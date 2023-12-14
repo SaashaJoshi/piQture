@@ -1,7 +1,7 @@
 # Quantum Image Processing Library (QIPL)
 
 <p align="center">
-    <img src="https://github.com/SaashaJoshi/quantum-image-processing/blob/main/graphics/QuIPL-svg.svg" alt="QIPL-logo" width="350"/>
+    <img src="graphics/QuIPL-svg.svg" alt="QIPL-logo" width="350"/>
 </p>
 <p align="center">
     <img alt="Static Badge" src="https://img.shields.io/badge/license-Apache_2.0-bright_green">
@@ -21,12 +21,12 @@
 Let's build a Quantum Convolutional Neural Network (QCNN) with Convolutional, Pooling, and Fully-Connected layers.
 
 ```python
-from quantum_image_processing.models.neural_networks.convolutional.qcnn import (
-    QCNN,
+from quantum_image_processing.models.neural_networks.layers import (
     QuantumConvolutionalLayer,
     QuantumPoolingLayer,
     FullyConnectedLayer,
 )
+from quantum_image_processing.models.neural_networks.qcnn import QCNN
 
 # Initializing a QCNN circuit with given image dimensions.
 image_dimensions = 4
@@ -34,15 +34,15 @@ qcnn_circuit = QCNN(image_dimensions)
 
 # Gathering parameters for layer objects.
 mera_params = {"layer_depth": 1, "mera_instance": 0, "complex_structure": False}
-convolutional_params = {"mera_args": mera_parameters}
+convolutional_params = {"mera_args": mera_params}
 
 # Build QCNN circuit.
 qcnn_circuit = qcnn_circuit.sequence(
-  [
-    (QuantumConvolutionalLayer, convolutional_params),
-    (QuantumPoolingLayer, {}),
-    (FullyConnectedLayer, {})
-  ]
+    [
+        (QuantumConvolutionalLayer, convolutional_params),
+        (QuantumPoolingLayer, {}),
+        (FullyConnectedLayer, {})
+    ]
 )
 
 # Display circuit.
