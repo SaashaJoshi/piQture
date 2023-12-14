@@ -1,6 +1,5 @@
 """Unit test for MERA class"""
 from __future__ import annotations
-import math
 from unittest import mock
 import numpy as np
 import pytest
@@ -15,8 +14,8 @@ def mera_circuit_fixture():
     """Fixture to replicate a real simple two-qubit unitary block."""
 
     # pylint: disable=duplicate-code
-    def _mera_circuit(img_dims, parameter_vector, parameterization):
-        test_circuit = QuantumCircuit(int(math.prod(img_dims)))
+    def _mera_circuit(num_qubits, parameter_vector, parameterization):
+        test_circuit = QuantumCircuit(num_qubits)
         parameterization_callable = {
             "real_simple": [TwoQubitUnitary().real_simple_block, 2],
             "complex_simple": [TwoQubitUnitary().complex_simple_block, 2],
@@ -25,7 +24,7 @@ def mera_circuit_fixture():
         }
 
         mapper = parameterization_callable[parameterization]
-        if math.prod(img_dims) == 2:
+        if num_qubits == 2:
             # D-block doesn't exist
             # U-block implementation
             test_circuit.compose(
@@ -34,7 +33,7 @@ def mera_circuit_fixture():
                 inplace=True,
             )
             test_circuit.ry(parameter_vector[mapper[1]], len(test_circuit.qubits) - 1)
-        elif math.prod(img_dims) == 3:
+        elif num_qubits == 3:
             # D-block
             test_circuit.compose(
                 mapper[0](parameter_vector[: mapper[1]])[0],
@@ -56,7 +55,7 @@ def mera_circuit_fixture():
             test_circuit.ry(
                 parameter_vector[3 * mapper[1]], len(test_circuit.qubits) - 1
             )
-        elif math.prod(img_dims) == 4:
+        elif num_qubits == 4:
             # D-block
             test_circuit.compose(
                 mapper[0](parameter_vector[: mapper[1]])[0],
@@ -83,7 +82,7 @@ def mera_circuit_fixture():
             test_circuit.ry(
                 parameter_vector[4 * mapper[1]], len(test_circuit.qubits) - 1
             )
-        elif math.prod(img_dims) == 5:
+        elif num_qubits == 5:
             # D-block
             test_circuit.compose(
                 mapper[0](parameter_vector[: mapper[1]])[0],
@@ -135,44 +134,44 @@ def mera_circuit_fixture():
 class TestMERA:
     """Tests for MERA class"""
 
-    @pytest.mark.parametrize("img_dims, layer_depth", [((2, 4), 2), ((2, 4), None)])
-    def test_repr(self, img_dims, layer_depth):
+    @pytest.mark.parametrize("num_qubits, layer_depth", [(8, 2), (6, None)])
+    def test_repr(self, num_qubits, layer_depth):
         """Tests the representation of the MERA class."""
-        representation = repr(MERA(img_dims, layer_depth))
+        representation = repr(MERA(num_qubits, layer_depth))
         if not layer_depth:
-            layer_depth = int(np.ceil(np.sqrt(math.prod(img_dims))))
+            layer_depth = int(np.ceil(np.sqrt(num_qubits)))
         test_representation = (
             f"MultiScaleEntanglementRenormalizationAnsatz("
-            f"img_dims={img_dims}, layer_depth={layer_depth}"
+            f"num_qubits={num_qubits}, layer_depth={layer_depth}"
             f")"
         )
         assert test_representation == representation
 
-    @pytest.mark.parametrize("img_dims, layer_depth", [((3, 1), -0.9), ((2, 1), "abc")])
-    def test_layer_depth(self, img_dims, layer_depth):
+    @pytest.mark.parametrize("num_qubits, layer_depth", [(3, -0.9), (2, "abc")])
+    def test_layer_depth(self, num_qubits, layer_depth):
         """Tests the type of layer_depth input."""
         with raises(
             TypeError, match="The input layer_depth must be of the type int or None."
         ):
-            _ = MERA(img_dims, layer_depth)
+            _ = MERA(num_qubits, layer_depth)
 
-    @pytest.mark.parametrize("img_dims, layer_depth", [((3, 1), 0)])
-    def test_layer_depth_value(self, img_dims, layer_depth):
+    @pytest.mark.parametrize("num_qubits, layer_depth", [(3, 0)])
+    def test_layer_depth_value(self, num_qubits, layer_depth):
         """Tests the value of layer_depth input."""
         with raises(ValueError, match="The input layer_depth must be at least 1."):
-            _ = MERA(img_dims, layer_depth)
+            _ = MERA(num_qubits, layer_depth)
 
-    @pytest.mark.parametrize("img_dims", [(2, 4)])
-    def test_circuit_property(self, img_dims):
+    @pytest.mark.parametrize("num_qubits", [8])
+    def test_circuit_property(self, num_qubits):
         """Tests the MERA circuit initialization."""
-        test_circuit = QuantumCircuit(math.prod(img_dims))
-        assert test_circuit.data == MERA(img_dims).circuit.data
+        test_circuit = QuantumCircuit(num_qubits)
+        assert test_circuit.data == MERA(num_qubits).circuit.data
 
     @pytest.mark.parametrize(
-        "img_dims, layer_depth, complex_structure",
-        [((2, 2), 1, False), ((4, 5), None, True)],
+        "num_qubits, layer_depth, complex_structure",
+        [(4, 1, False), (20, None, True)],
     )
-    def test_mera_simple(self, img_dims, layer_depth, complex_structure):
+    def test_mera_simple(self, num_qubits, layer_depth, complex_structure):
         # pylint: disable=line-too-long
         """Tests the mera_backbone method call via the mera_simple function."""
         with mock.patch(
@@ -181,16 +180,16 @@ class TestMERA:
             with mock.patch(
                 "quantum_image_processing.gates.two_qubit_unitary.TwoQubitUnitary.simple_parameterization"
             ) as simple_parameterization:
-                _ = MERA(img_dims, layer_depth).mera_simple(complex_structure)
+                _ = MERA(num_qubits, layer_depth).mera_simple(complex_structure)
                 mock_mera_simple.assert_called_once_with(
                     simple_parameterization, mock.ANY, complex_structure
                 )
 
     @pytest.mark.parametrize(
-        "img_dims, layer_depth, complex_structure",
-        [((2, 2), 1, False), ((4, 5), None, True)],
+        "num_qubits, layer_depth, complex_structure",
+        [(4, 1, False), (12, None, True)],
     )
-    def test_mera_general(self, img_dims, layer_depth, complex_structure):
+    def test_mera_general(self, num_qubits, layer_depth, complex_structure):
         # pylint: disable=line-too-long
         """Tests the mera_backbone method call via the mera_general function."""
         with mock.patch(
@@ -199,36 +198,35 @@ class TestMERA:
             with mock.patch(
                 "quantum_image_processing.gates.two_qubit_unitary.TwoQubitUnitary.general_parameterization"
             ) as general_parameterization:
-                _ = MERA(img_dims, layer_depth).mera_general(complex_structure)
+                _ = MERA(num_qubits, layer_depth).mera_general(complex_structure)
                 mock_mera_general.assert_called_once_with(
                     general_parameterization, mock.ANY, complex_structure
                 )
 
     @pytest.mark.parametrize(
-        "img_dims, layer_depth, complex_structure, parameterization",
+        "num_qubits, layer_depth, complex_structure, parameterization",
         [
-            ((1, 2), None, False, "real_general"),
-            ((1, 3), None, False, "real_general"),
-            ((1, 4), None, False, "real_general"),
-            ((2, 1), None, False, "real_simple"),
-            ((1, 3), None, False, "real_simple"),
-            ((2, 2), None, False, "real_simple"),
-            ((1, 2), None, True, "complex_general"),
-            ((1, 3), None, True, "complex_general"),
-            ((1, 4), None, True, "complex_general"),
-            ((1, 5), None, False, "real_general"),
-            ((5, 1), None, False, "real_simple"),
-            ((1, 5), None, True, "complex_general"),
-            ((1, 5), None, True, "complex_simple"),
+            (2, None, False, "real_general"),
+            (3, None, False, "real_general"),
+            (4, None, False, "real_general"),
+            (2, None, False, "real_simple"),
+            (3, None, False, "real_simple"),
+            (4, None, False, "real_simple"),
+            (2, None, True, "complex_general"),
+            (3, None, True, "complex_general"),
+            (4, None, True, "complex_general"),
+            (5, None, False, "real_general"),
+            (5, None, False, "real_simple"),
+            (5, None, True, "complex_general"),
+            (5, None, True, "complex_simple"),
         ],
     )
     def test_mera_backbone(
-        self, img_dims, layer_depth, complex_structure, parameterization, mera_circuit
+        self, num_qubits, layer_depth, complex_structure, parameterization, mera_circuit
     ):
         # pylint: disable=too-many-arguments
         """Tests the mera_backbone circuit with real and complex parameterization."""
         # Add test cases when layer_depth is not None.
-        num_qubits = int(math.prod(img_dims))
         parameterization_mapper = {
             "real_simple": [
                 ParameterVector("test", 10 * num_qubits - 1),
@@ -249,9 +247,9 @@ class TestMERA:
         }
 
         test_circuit = mera_circuit(
-            img_dims, parameterization_mapper[parameterization][0], parameterization
+            num_qubits, parameterization_mapper[parameterization][0], parameterization
         )
-        circuit = MERA(img_dims, layer_depth).mera_backbone(
+        circuit = MERA(num_qubits, layer_depth).mera_backbone(
             parameterization_mapper[parameterization][1],
             parameterization_mapper[parameterization][0],
             complex_structure,
