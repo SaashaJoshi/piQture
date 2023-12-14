@@ -6,7 +6,7 @@ from quantum_image_processing.models.neural_networks.layers.base_layer import Ba
 from quantum_image_processing.models.tensor_network_circuits.mera import MERA
 
 
-class QuantumConvolutionalLayer(BaseLayer, MERA):
+class QuantumConvolutionalLayer(BaseLayer):
     """
     Builds a convolutional layer in the neural network
     with the help of the MERA tensor network.
@@ -26,8 +26,8 @@ class QuantumConvolutionalLayer(BaseLayer, MERA):
         self,
         num_qubits: int,
         circuit: QuantumCircuit,
+        unmeasured_bits: Optional[list],
         mera_args: dict,
-        unmeasured_bits: Optional[dict] = None,
     ):
         """
         Initializes a convolutional layer from the MERA
@@ -47,19 +47,11 @@ class QuantumConvolutionalLayer(BaseLayer, MERA):
             unmeasured_bits (dict): a dictionary of unmeasured qubits
             and classical bits in the circuit.
         """
-        BaseLayer.__init__(self, num_qubits)
-        MERA.__init__(self, num_qubits, mera_args["layer_depth"])
+        BaseLayer.__init__(self, num_qubits, circuit, unmeasured_bits)
 
-        self.circuit = circuit
+        self.mera_depth = mera_args["layer_depth"]
         self.mera_instance = mera_args["mera_instance"]
         self.complex_structure = mera_args["complex_structure"]
-
-        self.unmeasured_bits = {}
-        if unmeasured_bits is None:
-            self.unmeasured_bits["qubits"] = self.circuit.qubits
-            self.unmeasured_bits["clbits"] = self.circuit.clbits
-        else:
-            self.unmeasured_bits = unmeasured_bits
 
     def build_layer(self) -> tuple[QuantumCircuit, dict]:
         """
@@ -75,18 +67,19 @@ class QuantumConvolutionalLayer(BaseLayer, MERA):
             and classical bits in the circuit.
         """
         self.circuit.barrier()
-        instance_mapping = {
-            0: self.mera_simple,
-            1: self.mera_general,
+        mera = MERA(self.num_qubits, self.mera_depth)
+
+        mera_instance_mapping = {
+            0: mera.mera_simple,
+            1: mera.mera_general,
             2: None,
         }
-        if self.mera_instance in instance_mapping:
-            method = instance_mapping[self.mera_instance]
+        if self.mera_instance in mera_instance_mapping:
+            method = mera_instance_mapping[self.mera_instance]
             if callable(method):
                 self.circuit.compose(
                     method(self.complex_structure),
                     qubits=self.circuit.qubits,
-                    clbits=self.circuit.clbits,
                     inplace=True,
                 )
         else:

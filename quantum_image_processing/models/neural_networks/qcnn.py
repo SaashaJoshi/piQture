@@ -49,11 +49,11 @@ class QCNN(QuantumNeuralNetwork):
             circuit (QuantumCircuit): final QNN circuit with all the
             layers.
         """
-        unmeasured_bits = {"qubits": self.circuit.qubits, "clbits": self.circuit.clbits}
+        unmeasured_bits = list(range(self.num_qubits))
         for layer, params in operations:
             layer_instance = layer(
-                circuit=self.circuit,
                 num_qubits=self.num_qubits,
+                circuit=self.circuit,
                 unmeasured_bits=unmeasured_bits,
                 **params,
             )
