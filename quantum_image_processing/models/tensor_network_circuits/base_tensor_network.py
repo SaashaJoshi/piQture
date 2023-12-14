@@ -16,9 +16,7 @@ class BaseTensorNetwork:
         Args:
             num_qubits (int): number of pixels in the input image data.
         """
-        if not isinstance(
-            num_qubits, int
-        ):
+        if not isinstance(num_qubits, int):
             raise TypeError("Input num_qubits must be of the type int.")
 
         if num_qubits <= 0:
