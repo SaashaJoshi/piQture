@@ -20,18 +20,18 @@ class TTN(BaseTensorNetwork):
         doi: https://doi.org/10.1038/s41534-018-0116-9.
     """
 
-    def __init__(self, img_dims: tuple[int, int]):
+    def __init__(self, num_qubits: int):
         """
         Initializes the TTN class with given input variables.
 
         Args:
-            img_dims (int): dimensions of the input image data.
+            num_qubits (int): number of qubits.
         """
-        BaseTensorNetwork.__init__(self, img_dims)
+        BaseTensorNetwork.__init__(self, num_qubits)
 
     def __repr__(self):
         """TTN class representation"""
-        return f"TreeTensorNetwork(img_dims={self.img_dims})"
+        return f"TreeTensorNetwork(num_qubits={self.num_qubits})"
 
     def ttn_simple(self, complex_structure: bool = True) -> QuantumCircuit:
         """

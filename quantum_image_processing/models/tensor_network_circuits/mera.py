@@ -29,17 +29,15 @@ class MERA(BaseTensorNetwork):
         doi: https://doi.org/10.1103/physrevlett.101.110501.
     """
 
-    def __init__(
-        self, img_dims: tuple[int, int], layer_depth: Optional[int] | None = None
-    ):
+    def __init__(self, num_qubits: int, layer_depth: Optional[int] = None):
         """
         Initializes the MERA class with given input variables.
 
         Args:
-            img_dims (int): dimensions of the input image data.
+            num_qubits (int): number of qubits.
             layer_depth (int): number of MERA layers to be built in a circuit.
         """
-        BaseTensorNetwork.__init__(self, img_dims)
+        BaseTensorNetwork.__init__(self, num_qubits)
 
         if not isinstance(layer_depth, int) and layer_depth is not None:
             raise TypeError("The input layer_depth must be of the type int or None.")
@@ -57,7 +55,7 @@ class MERA(BaseTensorNetwork):
         """MERA class representation"""
         return (
             f"MultiScaleEntanglementRenormalizationAnsatz("
-            f"img_dims={self.img_dims}, layer_depth={self.layer_depth}"
+            f"num_qubits={self.num_qubits}, layer_depth={self.layer_depth}"
             f")"
         )
 
