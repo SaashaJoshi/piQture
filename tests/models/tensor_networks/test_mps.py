@@ -81,6 +81,12 @@ def mps_circuit_fixture():
 class TestMPS:
     """Tests for MPS class"""
 
+    @pytest.mark.parametrize("img_dims", [(2, 4)])
+    def test_repr(self, img_dims):
+        """Tests the representation of the MPS class."""
+        test_representation = f"MatrixProductState(img_dims={img_dims})"
+        assert test_representation == repr(MPS(img_dims))
+
     @pytest.mark.parametrize("img_dims", [({"abc", "def"}), (2, 1.5), (None, None)])
     def test_img_dims(self, img_dims):
         """Tests the type of img_dims input."""

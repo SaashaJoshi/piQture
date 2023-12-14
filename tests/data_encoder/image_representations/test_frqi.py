@@ -130,9 +130,7 @@ class TestFRQI:
         "img_dims, pixel_vals",
         [((2, 2), list(range(4)))],
     )
-    def test_pixel_value(
-        self, img_dims, pixel_vals, circuit_pixel_value
-    ):
+    def test_pixel_value(self, img_dims, pixel_vals, circuit_pixel_value):
         """Tests the circuit received after pixel value embedding."""
         frqi_object = FRQI(img_dims, pixel_vals)
         mock_circuit = QuantumCircuit(int(math.prod(img_dims)))

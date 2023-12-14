@@ -1,12 +1,14 @@
 """Matrix Product State Tensor Network (MPS)"""
 from __future__ import annotations
 from typing import Callable
-import math
 from qiskit.circuit import QuantumCircuit, ParameterVector
+from quantum_image_processing.models.tensor_network_circuits.base_tensor_network import (
+    BaseTensorNetwork,
+)
 from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 
 
-class MPS:
+class MPS(BaseTensorNetwork):
     """
     Implements a Matrix Product State (MPS) tensor network
     structure class.
@@ -32,24 +34,11 @@ class MPS:
         Args:
             img_dims (int): dimensions of the input image data.
         """
-        if not all((isinstance(dims, int) for dims in img_dims)) or not isinstance(
-            img_dims, tuple
-        ):
-            raise TypeError("Input img_dims must be of the type tuple[int, int].")
+        BaseTensorNetwork.__init__(self, img_dims)
 
-        if math.prod(img_dims) <= 0:
-            raise ValueError("Image dimensions cannot be zero or negative.")
-
-        self.img_dims = img_dims
-        self.num_qubits = int(math.prod(self.img_dims))
-
-        self._circuit = QuantumCircuit(self.num_qubits)
-        self.q_reg = self._circuit.qubits
-
-    @property
-    def circuit(self):
-        """Returns the MPS circuit."""
-        return self._circuit
+    def __repr__(self):
+        """MPS class representation"""
+        return f"MatrixProductState(img_dims={self.img_dims})"
 
     def mps_simple(self, complex_structure: bool = True) -> QuantumCircuit:
         """
