@@ -3,6 +3,8 @@ from __future__ import annotations
 import math
 from qiskit.circuit import QuantumCircuit
 
+# pylint: disable=too-few-public-methods
+
 
 class BaseTensorNetwork:
     """Abstract Base Class for Tensor Network Circuits"""
