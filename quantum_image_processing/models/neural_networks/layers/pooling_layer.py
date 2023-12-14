@@ -39,7 +39,7 @@ class QuantumPoolingLayer2(BaseLayer):
         """
         BaseLayer.__init__(self, num_qubits, circuit, unmeasured_bits)
 
-    def build_layer(self) -> tuple[QuantumCircuit, dict]:
+    def build_layer(self) -> tuple[QuantumCircuit, list]:
         """
         Implements a pooling layer with alternating phase flips on
         qubits when the adjacent qubits measured in X-basis result
@@ -110,7 +110,7 @@ class QuantumPoolingLayer3(BaseLayer):
         """
         BaseLayer.__init__(self, num_qubits, circuit, unmeasured_bits)
 
-    def build_layer(self) -> tuple[QuantumCircuit, dict]:
+    def build_layer(self) -> tuple[QuantumCircuit, list]:
         """
         Implements a pooling layer with alternating phase flips on
         qubits when the adjacent qubits measured in X-basis result
@@ -127,13 +127,15 @@ class QuantumPoolingLayer3(BaseLayer):
         for phase_bit, measure_bit1, measure_bit2 in zip(
             itertools.islice(self.unmeasured_bits, 1, None, 3),
             itertools.islice(self.unmeasured_bits, 0, None, 3),
-            itertools.islice(self.unmeasured_bits, 2, None, 3)
+            itertools.islice(self.unmeasured_bits, 2, None, 3),
         ):
             unmeasured_bits.append(phase_bit)
 
             # Measurement in X-basis.
             self.circuit.h([measure_bit1, measure_bit2])
-            self.circuit.measure([measure_bit1, measure_bit2], [measure_bit1, measure_bit2])
+            self.circuit.measure(
+                [measure_bit1, measure_bit2], [measure_bit1, measure_bit2]
+            )
 
             # # Dynamic circuit - cannot be composed with another circuit if
             # # using context manager form (e.g. with).

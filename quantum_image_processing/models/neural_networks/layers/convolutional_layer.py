@@ -53,7 +53,7 @@ class QuantumConvolutionalLayer(BaseLayer):
         self.mera_instance = mera_args["mera_instance"]
         self.complex_structure = mera_args["complex_structure"]
 
-    def build_layer(self) -> tuple[QuantumCircuit, dict]:
+    def build_layer(self) -> tuple[QuantumCircuit, list]:
         """
         Implements the MERA tensor network with a restriction
         on the depth of the layers, specified by a

@@ -59,10 +59,10 @@ class BaseLayer(ABC):
             # YNY
             if unmeasured_bits is not None:
                 self._validate_unmeasured_bits(unmeasured_bits)
-                if num_qubits != len(unmeasured_bits):
-                    self._check_num_qubits(
-                        self.num_qubits, unmeasured_bits=unmeasured_bits
-                    )
+                # if num_qubits != len(unmeasured_bits):
+                #     self._check_num_qubits(
+                #         self.num_qubits, unmeasured_bits=unmeasured_bits
+                #     )
                 self.unmeasured_bits = unmeasured_bits
             else:
                 # YNN

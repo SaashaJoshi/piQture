@@ -23,7 +23,7 @@ Let's build a Quantum Convolutional Neural Network (QCNN) with Convolutional, Po
 ```python
 from quantum_image_processing.models.neural_networks.layers import (
     QuantumConvolutionalLayer,
-    QuantumPoolingLayer,
+    QuantumPoolingLayer2,
     FullyConnectedLayer,
 )
 from quantum_image_processing.models.neural_networks.qcnn import QCNN
@@ -40,7 +40,7 @@ convolutional_params = {"mera_args": mera_params}
 qcnn_circuit = qcnn_circuit.sequence(
     [
         (QuantumConvolutionalLayer, convolutional_params),
-        (QuantumPoolingLayer, {}),
+        (QuantumPoolingLayer2, {}),
         (FullyConnectedLayer, {})
     ]
 )
