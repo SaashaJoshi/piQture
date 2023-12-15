@@ -33,59 +33,59 @@ class BaseLayer(ABC):
             which the layer is built.
         """
         # None of the inputs are given (NNN).
-        if not num_qubits and circuit is None and unmeasured_bits is None:
+        if num_qubits is None and circuit is None and unmeasured_bits is None:
             raise ValueError(
                 "At least one of the inputs, num_qubits, circuit, "
                 "or unmeasured_bits, must be provided."
             )
 
         # If num_qubits is given.
-        if num_qubits:
+        if num_qubits is not None:
             if not isinstance(num_qubits, int):
                 raise TypeError("The input num_qubits must be of the type int.")
-            self.num_qubits = num_qubits
 
-            # YYN
-            if circuit is not None:
-                if not isinstance(circuit, QuantumCircuit):
-                    raise TypeError(
-                        "The input circuit must be of the type QuantumCircuit."
-                    )
-                self._circuit = circuit
-            else:
-                # YNN
-                self._circuit = QuantumCircuit(self.num_qubits, self.num_qubits)
+            if num_qubits <= 0:
+                raise ValueError("The input num_qubits must be greater than zero.")
+            self._num_qubits = num_qubits
 
-            # YNY
-            if unmeasured_bits is not None:
-                self._validate_unmeasured_bits(unmeasured_bits)
-                # if num_qubits != len(unmeasured_bits):
-                #     self._check_num_qubits(
-                #         self.num_qubits, unmeasured_bits=unmeasured_bits
-                #     )
-                self.unmeasured_bits = unmeasured_bits
-            else:
-                # YNN
-                self.unmeasured_bits = self.circuit.qubits
+            if circuit is None:
+                self._circuit = QuantumCircuit(self._num_qubits, self._num_qubits)
 
-        # If num_qubits is not given.
+        if circuit is not None:
+            if not isinstance(circuit, QuantumCircuit):
+                raise TypeError("The input circuit must be of the type QuantumCircuit.")
+            self._circuit = circuit
+
+        if unmeasured_bits is not None:
+            self._validate_unmeasured_bits(unmeasured_bits)
+            self._unmeasured_bits = unmeasured_bits
+
+            if circuit is None:
+                self._circuit = QuantumCircuit(
+                    len(self._unmeasured_bits), len(self._unmeasured_bits)
+                )
+            if num_qubits is None:
+                self._num_qubits = len(self._circuit.qubits)
         else:
-            # NYN
-            if circuit is not None:
-                self._circuit = circuit
-                self.unmeasured_bits = self.circuit.qubits
-                self.num_qubits = len(self.circuit.qubits)
+            self._unmeasured_bits = range(len(self._circuit.qubits))
 
-            # NNY
-            if unmeasured_bits is not None:
-                self.unmeasured_bits = unmeasured_bits
-                self.num_qubits = len(self.unmeasured_bits)
-                self._circuit = QuantumCircuit(self.num_qubits, self.num_qubits)
+        if num_qubits is None:
+            self._num_qubits = len(self._circuit.qubits)
 
     @property
     def circuit(self):
         """Returns a base_layer circuit."""
         return self._circuit
+
+    @property
+    def num_qubits(self):
+        """Returns number of qubits in base_layer circuit."""
+        return self._num_qubits
+
+    @property
+    def unmeasured_bits(self):
+        """Returns number of unmeasured bits in base_layer circuit."""
+        return self._unmeasured_bits
 
     @staticmethod
     def _validate_unmeasured_bits(unmeasured_bits: list):
@@ -98,16 +98,16 @@ class BaseLayer(ABC):
                 "Indices inside the unmeasured_bits list must be of the type int."
             )
 
-    @staticmethod
-    def _check_num_qubits(
-        num_qubits: int,
-        unmeasured_bits: list,
-    ):
-        """Checks if inputs are of equal length."""
-        if num_qubits != len(unmeasured_bits):
-            raise ValueError(
-                "The input num_qubits must be equal to the length of unmeasured_bits list."
-            )
+    # @staticmethod
+    # def _check_num_qubits(
+    #     num_qubits: int,
+    #     unmeasured_bits: list,
+    # ):
+    #     """Checks if inputs are of equal length."""
+    #     if num_qubits != len(unmeasured_bits):
+    #         raise ValueError(
+    #             "The input num_qubits must be equal to the length of unmeasured_bits list."
+    #         )
 
     @abstractmethod
     def build_layer(self):

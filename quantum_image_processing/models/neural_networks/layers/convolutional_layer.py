@@ -24,10 +24,10 @@ class QuantumConvolutionalLayer(BaseLayer):
 
     def __init__(
         self,
-        num_qubits: int,
-        circuit: QuantumCircuit,
-        unmeasured_bits: Optional[list],
-        mera_args: dict,
+        num_qubits: Optional[int] = None,
+        circuit: Optional[QuantumCircuit] = None,
+        unmeasured_bits: Optional[list] = None,
+        mera_args: Optional[dict] = None,
     ):
         """
         Initializes a convolutional layer from the MERA
@@ -49,9 +49,30 @@ class QuantumConvolutionalLayer(BaseLayer):
         """
         BaseLayer.__init__(self, num_qubits, circuit, unmeasured_bits)
 
-        self.mera_depth = mera_args["layer_depth"]
-        self.mera_instance = mera_args["mera_instance"]
-        self.complex_structure = mera_args["complex_structure"]
+        if mera_args is None:
+            mera_args = {}
+
+        if "mera_instance" not in mera_args:
+            mera_args["mera_instance"] = 0
+        else:
+            if not isinstance(mera_args["mera_instance"], int):
+                raise TypeError(
+                    "The value corresponding to mera_instance key in mera_args "
+                    "dictionary input must be of the type int."
+                )
+
+            if mera_args["mera_instance"] < 0 or mera_args["mera_instance"] > 2:
+                raise ValueError(
+                    "The value corresponding to mera_instance key in mera_args "
+                    "dictionary input must be in range(0, 2)."
+                )
+        if "layer_depth" not in mera_args:
+            mera_args["layer_depth"] = 1
+        if "complex_structure" not in mera_args:
+            mera_args["complex_structure"] = False
+
+        self.mera_args = mera_args
+        print(self.mera_args)
 
     def build_layer(self) -> tuple[QuantumCircuit, list]:
         """
@@ -67,22 +88,19 @@ class QuantumConvolutionalLayer(BaseLayer):
             and classical bits in the circuit.
         """
         self.circuit.barrier()
-        mera = MERA(self.num_qubits, self.mera_depth)
+        mera = MERA(self.num_qubits, self.mera_args["layer_depth"])
 
         mera_instance_mapping = {
             0: mera.mera_simple,
             1: mera.mera_general,
             2: None,
         }
-        if self.mera_instance in mera_instance_mapping:
-            method = mera_instance_mapping[self.mera_instance]
-            if callable(method):
-                self.circuit.compose(
-                    method(self.complex_structure),
-                    qubits=self.circuit.qubits,
-                    inplace=True,
-                )
-        else:
-            raise ValueError(f"Invalid mera_instance value: {self.mera_instance}")
+        method = mera_instance_mapping[self.mera_args["mera_instance"]]
 
+        if callable(method):
+            self.circuit.compose(
+                method(self.mera_args["complex_structure"]),
+                qubits=self.circuit.qubits,
+                inplace=True,
+            )
         return self.circuit, self.unmeasured_bits
