@@ -114,4 +114,3 @@ class BaseLayer(ABC):
         """
         Helps build the layer circuit.
         """
-        return NotImplementedError
