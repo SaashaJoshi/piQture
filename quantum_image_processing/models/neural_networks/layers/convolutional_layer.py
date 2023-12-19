@@ -87,7 +87,6 @@ class QuantumConvolutionalLayer(BaseLayer):
             unmeasured_bits (dict): a dictionary of unmeasured qubits
             and classical bits in the circuit.
         """
-        self.circuit.barrier()
         mera = MERA(self.num_qubits, self.mera_args["layer_depth"])
 
         mera_instance_mapping = {
