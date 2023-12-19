@@ -1,6 +1,7 @@
 """Tests for Quantum Convolutionall Neural Network structure"""
 from __future__ import annotations
 import re
+from unittest import mock
 import pytest
 from pytest import raises
 from qiskit.circuit import QuantumCircuit
@@ -101,5 +102,18 @@ class TestQCNN:
     )
     def test_sequence(self, num_qubits, operations):
         """Tests the sequence method of QCNN class."""
-
-        assert False
+        with mock.patch.multiple(
+            "quantum_image_processing.models.neural_networks.layers",
+            QuantumConvolutionalLayer=mock.DEFAULT,
+            QuantumPoolingLayer2=mock.DEFAULT,
+            QuantumPoolingLayer3=mock.DEFAULT,
+            FullyConnectedLayer=mock.DEFAULT,
+        ) as mock_layers:
+            _ = QCNN(num_qubits).sequence(operations)
+            layer_instance_called_once = any(
+                layer_mock.called_once_with(
+                    num_qubits=num_qubits, circuit=mock.ANY, unmeasured_bits=mock.ANY
+                )
+                for layer_name, layer_mock in mock_layers.items()
+            )
+            assert layer_instance_called_once
