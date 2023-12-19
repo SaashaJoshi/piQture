@@ -1,11 +1,12 @@
 """Base Tensor Network Circuit"""
 from __future__ import annotations
+from abc import ABC
 from qiskit.circuit import QuantumCircuit
 
 # pylint: disable=too-few-public-methods
 
 
-class BaseTensorNetwork:
+class BaseTensorNetwork(ABC):
     """Abstract Base Class for Tensor Network Circuits"""
 
     def __init__(self, num_qubits: int):

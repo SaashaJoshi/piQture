@@ -3,6 +3,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Callable
+from qiskit.circuit import QuantumCircuit
 
 # pylint: disable=too-few-public-methods
 
@@ -21,10 +22,21 @@ class QuantumNeuralNetwork(ABC):
         Initializes a Quantum Neural Network circuit with the given
         number of qubits.
         """
+        if not isinstance(num_qubits, int):
+            raise TypeError("The input num_qubits must be of the type int.")
+
+        if num_qubits <= 0:
+            raise ValueError("The input num_qubits must be at least 1.")
+
         self.num_qubits = num_qubits
-        # self.qr = QuantumRegister(self.num_qubits)
-        # self.cr = ClassicalRegister(self.num_qubits)
-        # self.circuit = QuantumCircuit(self.qr, self.cr)
+        self._circuit = QuantumCircuit(self.num_qubits, self.num_qubits)
+        self.qr = self._circuit.qubits
+        self.cr = self._circuit.clbits
+
+    @property
+    def circuit(self):
+        """Returns the QCNN circuit."""
+        return self._circuit
 
     @abstractmethod
     def sequence(self, operations: list[tuple[Callable, dict]]):
@@ -35,4 +47,3 @@ class QuantumNeuralNetwork(ABC):
             operations (list[tuple[Callable, dict]]: a tuple
             of a Layer object and a dictionary of its arguments.
         """
-        return NotImplementedError
