@@ -7,6 +7,7 @@ from quantum_image_processing.models.neural_networks.layers import (
     QuantumPoolingLayer2,
     QuantumPoolingLayer3,
 )
+
 # pylint: disable=not-context-manager
 
 
@@ -18,7 +19,7 @@ def circuit1():
     circuit.measure(1, 1)
     with circuit.if_test((1, 1)):
         circuit.z(0)
-    return circuit
+    return circuit, [0]
 
 
 @pytest.fixture
@@ -31,7 +32,7 @@ def circuit2():
         circuit.z(0)
     with circuit.if_test([3, 1]):
         circuit.z(2)
-    return circuit
+    return circuit, [0, 2]
 
 
 @pytest.fixture
@@ -44,7 +45,7 @@ def circuit3():
         circuit.z(2)
     with circuit.if_test([7, 1]):
         circuit.z(5)
-    return circuit
+    return circuit, [2, 5]
 
 
 @pytest.fixture
@@ -55,7 +56,7 @@ def circuit4():
     circuit.measure([3], [3])
     with circuit.if_test([3, 1]):
         circuit.z(2)
-    return circuit
+    return circuit, [2, 5]
 
 
 @pytest.fixture
@@ -67,7 +68,7 @@ def circuit5():
     with circuit.if_test([0, 1]):
         with circuit.if_test([2, 1]):
             circuit.z(1)
-    return circuit
+    return circuit, [1]
 
 
 @pytest.fixture
@@ -82,7 +83,7 @@ def circuit6():
     with circuit.if_test([3, 1]):
         with circuit.if_test([5, 1]):
             circuit.z(4)
-    return circuit
+    return circuit, [1, 4]
 
 
 @pytest.fixture
@@ -94,7 +95,7 @@ def circuit7():
     with circuit.if_test([2, 1]):
         with circuit.if_test([5, 1]):
             circuit.z(3)
-    return circuit
+    return circuit, [3, 7]
 
 
 class TestQuantumPoolingLayer2:
@@ -112,15 +113,18 @@ class TestQuantumPoolingLayer2:
         ],
     )
     def test_build_layer(
-            self, request, num_qubits, circuit, unmeasured_bits, resulting_circuit
+        self, request, num_qubits, circuit, unmeasured_bits, resulting_circuit
     ):
         # pylint: disable=too-many-arguments
         """Tests the build_layer method of QuantumPoolingLayer2 class."""
-        circuit, _ = QuantumPoolingLayer2(
+        circuit, new_unmeasured_bits = QuantumPoolingLayer2(
             num_qubits, circuit, unmeasured_bits
         ).build_layer()
-        resulting_circuit = request.getfixturevalue(resulting_circuit)
+        resulting_circuit, resulting_unmeasured_bits = request.getfixturevalue(
+            resulting_circuit
+        )
         assert circuit == resulting_circuit
+        assert new_unmeasured_bits == resulting_unmeasured_bits
 
 
 class TestQuantumPoolingLayer3:
@@ -128,11 +132,7 @@ class TestQuantumPoolingLayer3:
 
     @pytest.mark.parametrize(
         "num_qubits, circuit, unmeasured_bits",
-        [
-            (2, None, None),
-            (None, QuantumCircuit(2, 2), None),
-            (None, None, [2, 3])
-        ],
+        [(2, None, None), (None, QuantumCircuit(2, 2), None), (None, None, [2, 3])],
     )
     def test_three_qubits(self, num_qubits, circuit, unmeasured_bits):
         """Tests for presence of at least 3 qubits in the circuit."""
@@ -148,12 +148,15 @@ class TestQuantumPoolingLayer3:
         ],
     )
     def test_build_layer(
-            self, request, num_qubits, circuit, unmeasured_bits, resulting_circuit
+        self, request, num_qubits, circuit, unmeasured_bits, resulting_circuit
     ):
         # pylint: disable=too-many-arguments
         """Tests the build_layer method of QuantumPoolingLayer2 class."""
-        circuit, _ = QuantumPoolingLayer3(
+        circuit, new_unmeasured_bits = QuantumPoolingLayer3(
             num_qubits, circuit, unmeasured_bits
         ).build_layer()
-        resulting_circuit = request.getfixturevalue(resulting_circuit)
+        resulting_circuit, resulting_unmeasured_bits = request.getfixturevalue(
+            resulting_circuit
+        )
         assert circuit == resulting_circuit
+        assert new_unmeasured_bits == resulting_unmeasured_bits
