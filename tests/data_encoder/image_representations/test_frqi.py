@@ -101,8 +101,8 @@ class TestFRQI:
     @pytest.mark.parametrize("img_dims, pixel_vals", [((2, 2), list(range(4)))])
     def test_circuit_property(self, img_dims, pixel_vals):
         """Tests the FRQI circuits initialization."""
-        test_circuit = QuantumCircuit(int(math.prod(img_dims)))
-        assert FRQI(img_dims, pixel_vals).circuit.data == test_circuit.data
+        test_circuit = QuantumCircuit(int(np.sqrt(math.prod(img_dims))) + 1)
+        assert test_circuit == FRQI(img_dims, pixel_vals).circuit
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals, pixel_pos_binary_list",
@@ -124,7 +124,7 @@ class TestFRQI:
                 new_callable=lambda: mock_circuit,
             ):
                 frqi_object.pixel_position(pixel_pos_binary)
-                assert mock_circuit.data == test_circuit.data
+                assert mock_circuit == test_circuit
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals",
@@ -144,7 +144,7 @@ class TestFRQI:
                 new_callable=lambda: mock_circuit,
             ):
                 frqi_object.pixel_value(pixel)
-                assert mock_circuit.data == test_circuit.data
+                assert mock_circuit == test_circuit
 
     # pylint: disable=too-many-arguments
     @pytest.mark.parametrize(
@@ -181,4 +181,4 @@ class TestFRQI:
             new_callable=lambda: mock_circuit,
         ):
             frqi_object.frqi()
-            assert mock_circuit.data == test_circuit.data
+            assert mock_circuit == test_circuit

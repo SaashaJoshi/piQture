@@ -23,15 +23,15 @@ class NEQR(FRQI):
                 "Maximum color intensity cannot be less than 0 or greater than 255."
             )
 
-        self.feature_dim = int(np.sqrt(math.prod(self.img_dims)))
+        self.feature_dim = int(np.ceil(np.sqrt(math.prod(self.img_dims))))
         self.max_color_intensity = max_color_intensity + 1
 
         # number of qubits to encode color byte
-        self.color_qubits = int(math.log(self.max_color_intensity, 2))
+        self.color_qubits = int(np.ceil(math.log(self.max_color_intensity, 2)))
 
         # NEQR circuit
-        self.qr = QuantumRegister(self.feature_dim + self.color_qubits)
-        self._circuit = QuantumCircuit(self.qr)
+        self._circuit = QuantumCircuit(self.feature_dim + self.color_qubits)
+        self.qr = self._circuit.qubits
 
     @property
     def circuit(self):

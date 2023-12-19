@@ -50,9 +50,9 @@ class TestNEQR:
     )
     def test_circuit_property(self, img_dims, pixel_vals, max_color_intensity):
         """Tests the FRQI circuits initialization."""
-        color_qubits = int(math.log(max_color_intensity, 2))
-        test_circuit = QuantumCircuit(int(math.prod(img_dims)) + color_qubits)
-        assert NEQR(img_dims, pixel_vals).circuit.data == test_circuit.data
+        color_qubits = int(np.ceil(math.log(max_color_intensity, 2)))
+        test_circuit = QuantumCircuit(np.ceil(np.sqrt(math.prod(img_dims))) + color_qubits)
+        assert NEQR(img_dims, pixel_vals).circuit == test_circuit
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals, max_color_intensity",
@@ -75,7 +75,7 @@ class TestNEQR:
                 new_callable=lambda: mock_circuit,
             ):
                 neqr_object.pixel_value(index)
-                assert mock_circuit.data == test_circuit.data
+                assert mock_circuit == test_circuit
 
     # pylint: disable=too-many-arguments
     @pytest.mark.parametrize(
@@ -115,4 +115,4 @@ class TestNEQR:
             new_callable=lambda: mock_circuit,
         ):
             neqr_object.neqr()
-            assert mock_circuit.data == test_circuit.data
+            assert mock_circuit == test_circuit
