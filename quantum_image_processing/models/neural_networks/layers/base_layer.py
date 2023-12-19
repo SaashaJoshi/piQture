@@ -62,7 +62,7 @@ class BaseLayer(ABC):
 
             if circuit is None:
                 self._circuit = QuantumCircuit(
-                    max(self._unmeasured_bits), max(self._unmeasured_bits)
+                    max(self._unmeasured_bits) + 1, max(self._unmeasured_bits) + 1
                 )
             if num_qubits is None:
                 self._num_qubits = len(self._circuit.qubits)

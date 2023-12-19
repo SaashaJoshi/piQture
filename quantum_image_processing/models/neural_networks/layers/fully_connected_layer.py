@@ -46,27 +46,9 @@ class FullyConnectedLayer(BaseLayer):
             unmeasured_bits (dict): a dictionary of unmeasured qubits
             and classical bits in the circuit.
         """
-        self.circuit.barrier()
         for index, qubit in enumerate(self.unmeasured_bits[:-1]):
             self.circuit.cz(
                 qubit,
                 self.unmeasured_bits[index + 1],
             )
-        # Comment next line to skip implicit measurement.
-        # _, self.unmeasured_bits = self.final_measurement()
-        return self.circuit, self.unmeasured_bits
-
-    def final_measurement(self) -> tuple[QuantumCircuit, list]:
-        """
-        Implements a measurement in X-basis on the remaining qubits
-        after a fully connected layer is implemented.
-
-        Returns:
-            circuit (QuantumCircuit): final circuit with measurements
-        """
-        self.circuit.barrier()
-        # Measurement in X-basis
-        self.circuit.h(self.unmeasured_bits)
-        self.circuit.measure(self.unmeasured_bits, self.unmeasured_bits)
-        self.unmeasured_bits = []
         return self.circuit, self.unmeasured_bits
