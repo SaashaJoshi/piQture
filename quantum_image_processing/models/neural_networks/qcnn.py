@@ -23,8 +23,8 @@ class QCNN(QuantumNeuralNetwork):
 
     def __init__(self, num_qubits: int):
         """
-        Initializes a Quantum Neural Network circuit with the given
-        number of qubits.
+        Initializes a Quantum Convolutional Neural Network
+        circuit with the given number of qubits.
 
         Args:
             num_qubits (int): builds a quantum convolutional neural
@@ -35,7 +35,7 @@ class QCNN(QuantumNeuralNetwork):
 
     def sequence(self, operations: list[tuple[Callable, dict]]) -> QuantumCircuit:
         """
-        Builds a QNN circuit by composing the circuit with given
+        Builds a QCNN circuit by composing the circuit with given
         sequence of list of operations.
 
         Args:
