@@ -1,7 +1,7 @@
 """Quantum Convolutional Neural Network"""
 from __future__ import annotations
 from typing import Callable
-from qiskit.circuit import QuantumCircuit, QuantumRegister, ClassicalRegister
+from qiskit.circuit import QuantumCircuit
 from quantum_image_processing.models.neural_networks.quantum_neural_network import (
     QuantumNeuralNetwork,
 )
@@ -32,9 +32,6 @@ class QCNN(QuantumNeuralNetwork):
             dimensions.
         """
         QuantumNeuralNetwork.__init__(self, num_qubits)
-        self.qreg = QuantumRegister(self.num_qubits)
-        self.creg = ClassicalRegister(self.num_qubits)
-        self.circuit = QuantumCircuit(self.qreg, self.creg)
 
     def sequence(self, operations: list[tuple[Callable, dict]]) -> QuantumCircuit:
         """
@@ -51,12 +48,13 @@ class QCNN(QuantumNeuralNetwork):
         """
         unmeasured_bits = list(range(self.num_qubits))
         for layer, params in operations:
-            layer_instance = layer(
+            # Optionally collect circuit and unmeasured bits since
+            # these values are changed in place.
+            layer(
                 num_qubits=self.num_qubits,
                 circuit=self.circuit,
                 unmeasured_bits=unmeasured_bits,
                 **params,
-            )
-            self.circuit, unmeasured_bits = layer_instance.build_layer()
+            ).build_layer()
 
         return self.circuit
