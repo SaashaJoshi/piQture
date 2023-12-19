@@ -51,13 +51,12 @@ class QuantumPoolingLayer2(BaseLayer):
             unmeasured_bits (dict): a dictionary of unmeasured qubits
             and classical bits in the circuit.
         """
-        unmeasured_bits = []
-        self.circuit.barrier()
+        unmeasured_bits = self.unmeasured_bits.copy()
         for phase_bit, measure_bit in zip(
             itertools.islice(self.unmeasured_bits, 0, None, 2),
             itertools.islice(self.unmeasured_bits, 1, None, 2),
         ):
-            unmeasured_bits.append(phase_bit)
+            unmeasured_bits.remove(measure_bit)
 
             # Measurement in X-basis.
             self.circuit.h(measure_bit)
@@ -110,6 +109,17 @@ class QuantumPoolingLayer3(BaseLayer):
         """
         BaseLayer.__init__(self, num_qubits, circuit, unmeasured_bits)
 
+        if (
+            self.num_qubits < 3
+            or len(self.circuit.qubits) < 3
+            or len(self.unmeasured_bits) < 3
+        ):
+            raise ValueError(
+                "The value of input num_qubits must be at least 3 or there must be "
+                "at least 3 qubits in the provided circuit input or there must be at "
+                "least 3 unmeasured bits in the circuit. "
+            )
+
     def build_layer(self) -> tuple[QuantumCircuit, list]:
         """
         Implements a pooling layer with alternating phase flips on
@@ -122,14 +132,14 @@ class QuantumPoolingLayer3(BaseLayer):
             unmeasured_bits (dict): a dictionary of unmeasured qubits
             and classical bits in the circuit.
         """
-        unmeasured_bits = []
-        self.circuit.barrier()
+        unmeasured_bits = self.unmeasured_bits.copy()
         for phase_bit, measure_bit1, measure_bit2 in zip(
             itertools.islice(self.unmeasured_bits, 1, None, 3),
             itertools.islice(self.unmeasured_bits, 0, None, 3),
             itertools.islice(self.unmeasured_bits, 2, None, 3),
         ):
-            unmeasured_bits.append(phase_bit)
+            unmeasured_bits.remove(measure_bit1)
+            unmeasured_bits.remove(measure_bit2)
 
             # Measurement in X-basis.
             self.circuit.h([measure_bit1, measure_bit2])

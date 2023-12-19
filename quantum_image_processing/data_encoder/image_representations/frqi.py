@@ -2,7 +2,7 @@
 from __future__ import annotations
 import math
 import numpy as np
-from qiskit.circuit import QuantumCircuit, QuantumRegister
+from qiskit.circuit import QuantumCircuit
 from quantum_image_processing.data_encoder.image_representations.image_embedding import (
     ImageEmbedding,
 )
@@ -38,8 +38,8 @@ class FRQI(ImageEmbedding):
         self.feature_dim = int(np.sqrt(math.prod(self.img_dims)))
 
         # FRQI circuit
-        self.qr = QuantumRegister(self.feature_dim + 1)
-        self._circuit = QuantumCircuit(self.qr)
+        self._circuit = QuantumCircuit(self.feature_dim + 1)
+        self.qr = self._circuit.qubits
 
     @property
     def circuit(self):

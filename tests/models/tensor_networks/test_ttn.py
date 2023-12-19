@@ -81,7 +81,7 @@ class TestTTN:
     def test_circuit_property(self, num_qubits):
         """Tests the TTN circuit initialization."""
         test_circuit = QuantumCircuit(num_qubits)
-        assert test_circuit.data == TTN(num_qubits).circuit.data
+        assert test_circuit == TTN(num_qubits).circuit
 
     @pytest.mark.parametrize("num_qubits, complex_structure", [(4, False), (12, True)])
     def test_ttn_simple(self, num_qubits, complex_structure):
@@ -147,4 +147,4 @@ class TestTTN:
             parameterization_mapper[parameterization][0],
             complex_structure,
         )
-        assert circuit.data == test_circuit.data
+        assert circuit == test_circuit
