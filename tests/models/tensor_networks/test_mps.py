@@ -100,7 +100,7 @@ class TestMPS:
     def test_circuit_property(self, num_qubits):
         """Tests the MPS circuit initialization."""
         test_circuit = QuantumCircuit(num_qubits)
-        assert test_circuit.data == MPS(num_qubits).circuit.data
+        assert test_circuit == MPS(num_qubits).circuit
 
     @pytest.mark.parametrize("num_qubits, complex_structure", [(4, False), (12, True)])
     def test_mps_simple(self, num_qubits, complex_structure):
@@ -166,4 +166,4 @@ class TestMPS:
             parameterization_mapper[parameterization][0],
             complex_structure,
         )
-        assert circuit.data == test_circuit.data
+        assert circuit == test_circuit

@@ -165,7 +165,7 @@ class TestMERA:
     def test_circuit_property(self, num_qubits):
         """Tests the MERA circuit initialization."""
         test_circuit = QuantumCircuit(num_qubits)
-        assert test_circuit.data == MERA(num_qubits).circuit.data
+        assert test_circuit == MERA(num_qubits).circuit
 
     @pytest.mark.parametrize(
         "num_qubits, layer_depth, complex_structure",
@@ -254,4 +254,4 @@ class TestMERA:
             parameterization_mapper[parameterization][0],
             complex_structure,
         )
-        assert circuit.data == test_circuit.data
+        assert circuit == test_circuit
