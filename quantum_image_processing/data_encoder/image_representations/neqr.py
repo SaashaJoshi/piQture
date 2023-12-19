@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 from typing import Optional
 import numpy as np
-from qiskit.circuit import QuantumCircuit, QuantumRegister
+from qiskit.circuit import QuantumCircuit
 from quantum_image_processing.data_encoder.image_representations.frqi import FRQI
 
 

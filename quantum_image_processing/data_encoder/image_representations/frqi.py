@@ -2,7 +2,7 @@
 from __future__ import annotations
 import math
 import numpy as np
-from qiskit.circuit import QuantumCircuit, QuantumRegister
+from qiskit.circuit import QuantumCircuit
 from quantum_image_processing.data_encoder.image_representations.image_embedding import (
     ImageEmbedding,
 )
