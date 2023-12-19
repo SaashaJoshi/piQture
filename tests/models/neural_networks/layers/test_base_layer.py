@@ -85,6 +85,6 @@ class TestQuantumConvolutionalLayer:
         """
         qc_layer = QuantumConvolutionalLayer(unmeasured_bits=unmeasured_bits)
         assert qc_layer.circuit == QuantumCircuit(
-            max(unmeasured_bits), max(unmeasured_bits)
+            max(unmeasured_bits) + 1, max(unmeasured_bits) + 1
         )
-        assert qc_layer.num_qubits == max(unmeasured_bits)
+        assert qc_layer.num_qubits == max(unmeasured_bits) + 1

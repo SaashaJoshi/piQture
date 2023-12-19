@@ -51,7 +51,9 @@ class TestNEQR:
     def test_circuit_property(self, img_dims, pixel_vals, max_color_intensity):
         """Tests the FRQI circuits initialization."""
         color_qubits = int(np.ceil(math.log(max_color_intensity, 2)))
-        test_circuit = QuantumCircuit(np.ceil(np.sqrt(math.prod(img_dims))) + color_qubits)
+        test_circuit = QuantumCircuit(
+            np.ceil(np.sqrt(math.prod(img_dims))) + color_qubits
+        )
         assert NEQR(img_dims, pixel_vals).circuit == test_circuit
 
     @pytest.mark.parametrize(

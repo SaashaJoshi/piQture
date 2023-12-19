@@ -7,6 +7,7 @@ from quantum_image_processing.models.neural_networks.layers import FullyConnecte
 
 @pytest.fixture
 def circuit1():
+    """Fixture for fully connected layer circuit"""
     circuit = QuantumCircuit(2, 2)
     circuit.cz(0, 1)
     return circuit
@@ -14,6 +15,7 @@ def circuit1():
 
 @pytest.fixture
 def circuit2():
+    """Fixture for fully connected layer circuit"""
     circuit = QuantumCircuit(4, 4)
     circuit.cz(0, 1)
     circuit.cz(1, 2)
@@ -23,6 +25,7 @@ def circuit2():
 
 @pytest.fixture
 def circuit3():
+    """Fixture for fully connected layer circuit"""
     circuit = QuantumCircuit(8, 8)
     circuit.cz(2, 3)
     circuit.cz(3, 5)
@@ -30,27 +33,36 @@ def circuit3():
     return circuit
 
 
-CIRCUIT_FIXTURE_LIST = [circuit1, circuit2, circuit3]
+@pytest.fixture
+def circuit4():
+    """Fixture for fully connected layer circuit"""
+    circuit = QuantumCircuit(4, 4)
+    circuit.cz(2, 3)
+    return circuit
 
 
 class TestFullyConnectedLayer:
     """Tests for Fully Connected Layer class"""
 
+    # pylint: disable=too-few-public-methods
     @pytest.mark.parametrize(
         "num_qubits, circuit, unmeasured_bits, resulting_circuit",
         [
             (2, None, None, "circuit1"),
             (None, QuantumCircuit(4, 4), None, "circuit2"),
             (None, None, [2, 3, 5, 7], "circuit3"),
+            (6, None, [2, 3], "circuit4"),
         ],
     )
     def test_build_layer(
         self, request, num_qubits, circuit, unmeasured_bits, resulting_circuit
     ):
+        # pylint: disable=too-many-arguments
         """Tests the build_layer method of FullyConnectedLayer class."""
         circuit, _ = FullyConnectedLayer(
             num_qubits, circuit, unmeasured_bits
         ).build_layer()
-
         resulting_circuit = request.getfixturevalue(resulting_circuit)
+        print(circuit)
+        print(resulting_circuit)
         assert circuit.data == resulting_circuit.data

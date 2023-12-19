@@ -52,7 +52,6 @@ class QuantumPoolingLayer2(BaseLayer):
             and classical bits in the circuit.
         """
         unmeasured_bits = []
-        self.circuit.barrier()
         for phase_bit, measure_bit in zip(
             itertools.islice(self.unmeasured_bits, 0, None, 2),
             itertools.islice(self.unmeasured_bits, 1, None, 2),
@@ -110,6 +109,13 @@ class QuantumPoolingLayer3(BaseLayer):
         """
         BaseLayer.__init__(self, num_qubits, circuit, unmeasured_bits)
 
+        if self.num_qubits < 3 or len(self.circuit.qubits) < 3 or len(self.unmeasured_bits) < 3:
+            raise ValueError(
+                "The value of input num_qubits must be at least 3 or there must be "
+                "at least 3 qubits in the provided circuit input or there must be at "
+                "least 3 unmeasured bits in the circuit. "
+            )
+
     def build_layer(self) -> tuple[QuantumCircuit, list]:
         """
         Implements a pooling layer with alternating phase flips on
@@ -123,7 +129,6 @@ class QuantumPoolingLayer3(BaseLayer):
             and classical bits in the circuit.
         """
         unmeasured_bits = []
-        self.circuit.barrier()
         for phase_bit, measure_bit1, measure_bit2 in zip(
             itertools.islice(self.unmeasured_bits, 1, None, 3),
             itertools.islice(self.unmeasured_bits, 0, None, 3),
