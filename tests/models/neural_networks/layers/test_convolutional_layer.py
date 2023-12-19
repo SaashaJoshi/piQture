@@ -49,9 +49,7 @@ class TestQuantumConvolutionalLayer:
             (4, None, [1, 2, 3], {"layer_depth": 1, "complex_structure": False}),
         ],
     )
-    def test_build_layer(
-        self, num_qubits, circuit, unmeasured_bits, mera_args
-    ):
+    def test_build_layer(self, num_qubits, circuit, unmeasured_bits, mera_args):
         """Tests the build_layer method of QuantumConvolutionalLayer class."""
         qc_layer = QuantumConvolutionalLayer(
             num_qubits=num_qubits,
