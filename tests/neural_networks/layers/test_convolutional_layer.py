@@ -5,7 +5,7 @@ from unittest import mock
 import pytest
 from pytest import raises
 from qiskit.circuit import QuantumCircuit
-from quantum_image_processing.models.neural_networks.layers import (
+from quantum_image_processing.neural_networks.layers import (
     QuantumConvolutionalLayer,
 )
 
@@ -59,7 +59,7 @@ class TestQuantumConvolutionalLayer:
         )
         mock_circuit = QuantumCircuit(qc_layer.num_qubits)
         with mock.patch(
-            "quantum_image_processing.models.tensor_network_circuits.mera.MERA.mera_backbone",
+            "quantum_image_processing.tensor_network_circuits.mera.MERA.mera_backbone",
             return_value=mock_circuit,
         ) as mock_mera:
             _, _ = qc_layer.build_layer()

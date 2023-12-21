@@ -4,7 +4,7 @@ from unittest import mock
 import pytest
 from pytest import raises
 from qiskit.circuit import QuantumCircuit, ParameterVector
-from quantum_image_processing.models.tensor_network_circuits.mps import MPS
+from quantum_image_processing.tensor_network_circuits import MPS
 from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 
 
@@ -107,7 +107,7 @@ class TestMPS:
         # pylint: disable=line-too-long
         """Tests the mps_backbone method call via the mps_simple function."""
         with mock.patch(
-            "quantum_image_processing.models.tensor_network_circuits.mps.MPS.mps_backbone"
+            "quantum_image_processing.tensor_network_circuits.mps.MPS.mps_backbone"
         ) as mock_mps_simple:
             with mock.patch(
                 "quantum_image_processing.gates.two_qubit_unitary.TwoQubitUnitary.simple_parameterization"
@@ -122,7 +122,7 @@ class TestMPS:
         # pylint: disable=line-too-long
         """Tests the mps_backbone method call via the mps_general function."""
         with mock.patch(
-            "quantum_image_processing.models.tensor_network_circuits.mps.MPS.mps_backbone"
+            "quantum_image_processing.tensor_network_circuits.mps.MPS.mps_backbone"
         ) as mock_mps_general:
             with mock.patch(
                 "quantum_image_processing.gates.two_qubit_unitary.TwoQubitUnitary.general_parameterization"
