@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 from pytest import raises
 from qiskit.circuit import QuantumCircuit, ParameterVector
-from quantum_image_processing.models.tensor_network_circuits.mera import MERA
+from quantum_image_processing.tensor_network_circuits import MERA
 from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 
 
@@ -175,7 +175,7 @@ class TestMERA:
         # pylint: disable=line-too-long
         """Tests the mera_backbone method call via the mera_simple function."""
         with mock.patch(
-            "quantum_image_processing.models.tensor_network_circuits.mera.MERA.mera_backbone"
+            "quantum_image_processing.tensor_network_circuits.mera.MERA.mera_backbone"
         ) as mock_mera_simple:
             with mock.patch(
                 "quantum_image_processing.gates.two_qubit_unitary.TwoQubitUnitary.simple_parameterization"
@@ -193,7 +193,7 @@ class TestMERA:
         # pylint: disable=line-too-long
         """Tests the mera_backbone method call via the mera_general function."""
         with mock.patch(
-            "quantum_image_processing.models.tensor_network_circuits.mera.MERA.mera_backbone"
+            "quantum_image_processing.tensor_network_circuits.mera.MERA.mera_backbone"
         ) as mock_mera_general:
             with mock.patch(
                 "quantum_image_processing.gates.two_qubit_unitary.TwoQubitUnitary.general_parameterization"
