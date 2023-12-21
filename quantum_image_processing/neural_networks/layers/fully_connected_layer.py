@@ -33,6 +33,7 @@ class FullyConnectedLayer(BaseLayer):
             qubits are used to create the FC layer.
         """
         BaseLayer.__init__(self, num_qubits, circuit, unmeasured_bits)
+        print(self.unmeasured_bits)
 
     def build_layer(self) -> tuple[QuantumCircuit, list]:
         """

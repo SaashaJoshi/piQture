@@ -1,6 +1,7 @@
 """Quantum Pooling Layer Structure"""
 from __future__ import annotations
 import itertools
+from typing import Optional
 from qiskit.circuit import QuantumCircuit
 from quantum_image_processing.neural_networks.layers.base_layer import BaseLayer
 
@@ -25,6 +26,7 @@ class QuantumPoolingLayer2(BaseLayer):
         num_qubits: int,
         circuit: QuantumCircuit,
         unmeasured_bits: list,
+        conditional: Optional[bool] = False,
     ):
         """
         Initializes a pooling layer object.
@@ -36,8 +38,15 @@ class QuantumPoolingLayer2(BaseLayer):
 
             unmeasured_bits (dict): a dictionary of unmeasured qubits
             and classical bits in the circuit.
+
+            conditional (bool): boolean to determine if mid-circuit
+            measurements should be performed or not.
         """
         BaseLayer.__init__(self, num_qubits, circuit, unmeasured_bits)
+
+        if not isinstance(conditional, bool):
+            raise TypeError("The input conditional must be of the type bool.")
+        self.conditional = conditional
 
     def build_layer(self) -> tuple[QuantumCircuit, list]:
         """
@@ -58,23 +67,22 @@ class QuantumPoolingLayer2(BaseLayer):
         ):
             unmeasured_bits.remove(measure_bit)
 
-            # Measurement in X-basis.
-            self.circuit.h(measure_bit)
-            self.circuit.measure(measure_bit, measure_bit)
+            if self.conditional:
+                # Measurement in X-basis.
+                self.circuit.h(measure_bit)
+                self.circuit.measure(measure_bit, measure_bit)
 
-            # # Dynamic circuit - cannot be composed with another circuit if
-            # # using context manager form (e.g. with).
-            # # Also, dynamic circuits don't work with runtime primitives.
-            with self.circuit.if_test((measure_bit, 1)):
-                self.circuit.z(phase_bit)
+                # # Dynamic circuit - cannot be composed with another circuit if
+                # # using context manager form (e.g. with).
+                # # Also, dynamic circuits don't work with runtime primitives.
+                with self.circuit.if_test((measure_bit, 1)):
+                    self.circuit.z(phase_bit)
+            else:
+                # Without if_test.
+                self.circuit.cz(measure_bit, phase_bit)
+        self.unmeasured_bits = unmeasured_bits
 
-            # Without if_test.
-            # self.circuit.cz(
-            #     measure_bit,
-            #     phase_bit,
-            # )
-
-        return self.circuit, unmeasured_bits
+        return self.circuit, self.unmeasured_bits
 
 
 class QuantumPoolingLayer3(BaseLayer):
@@ -95,6 +103,7 @@ class QuantumPoolingLayer3(BaseLayer):
         num_qubits: int,
         circuit: QuantumCircuit,
         unmeasured_bits: list,
+        conditional: Optional[bool] = False,
     ):
         """
         Initializes a pooling layer object.
@@ -106,6 +115,9 @@ class QuantumPoolingLayer3(BaseLayer):
 
             unmeasured_bits (dict): a dictionary of unmeasured qubits
             and classical bits in the circuit.
+
+            conditional (bool): boolean to determine if mid-circuit
+            measurements should be performed or not.
         """
         BaseLayer.__init__(self, num_qubits, circuit, unmeasured_bits)
 
@@ -119,6 +131,10 @@ class QuantumPoolingLayer3(BaseLayer):
                 "at least 3 qubits in the provided circuit input or there must be at "
                 "least 3 unmeasured bits in the circuit. "
             )
+
+        if not isinstance(conditional, bool):
+            raise TypeError("The input conditional must be of the type bool.")
+        self.conditional = conditional
 
     def build_layer(self) -> tuple[QuantumCircuit, list]:
         """
@@ -134,24 +150,34 @@ class QuantumPoolingLayer3(BaseLayer):
         """
         unmeasured_bits = self.unmeasured_bits.copy()
         for phase_bit, measure_bit1, measure_bit2 in zip(
-            itertools.islice(self.unmeasured_bits, 1, None, 3),
-            itertools.islice(self.unmeasured_bits, 0, None, 3),
-            itertools.islice(self.unmeasured_bits, 2, None, 3),
+            itertools.islice(self.unmeasured_bits, 1, None, 2),
+            itertools.islice(self.unmeasured_bits, 0, None, 2),
+            itertools.islice(self.unmeasured_bits, 2, None, 2),
         ):
-            unmeasured_bits.remove(measure_bit1)
-            unmeasured_bits.remove(measure_bit2)
+            if measure_bit1 in unmeasured_bits:
+                unmeasured_bits.remove(measure_bit1)
+                if self.conditional:
+                    # Measurement in X-basis.
+                    self.circuit.h(measure_bit1)
+                    self.circuit.measure(measure_bit1, measure_bit1)
+            if measure_bit2 in unmeasured_bits:
+                unmeasured_bits.remove(measure_bit2)
+                if self.conditional:
+                    # Measurement in X-basis.
+                    self.circuit.h(measure_bit2)
+                    self.circuit.measure(measure_bit2, measure_bit2)
 
-            # Measurement in X-basis.
-            self.circuit.h([measure_bit1, measure_bit2])
-            self.circuit.measure(
-                [measure_bit1, measure_bit2], [measure_bit1, measure_bit2]
-            )
+            if self.conditional:
+                # # Dynamic circuit - cannot be composed with another circuit if
+                # # using context manager form (e.g. with).
+                # # Also, dynamic circuits don't work with runtime primitives.
+                with self.circuit.if_test((measure_bit1, 1)):
+                    with self.circuit.if_test((measure_bit2, 1)):
+                        self.circuit.z(phase_bit)
+            else:
+                # Without if_test.
+                self.circuit.cz(measure_bit1, phase_bit)
+                self.circuit.cz(measure_bit2, phase_bit)
+        self.unmeasured_bits = unmeasured_bits
 
-            # # Dynamic circuit - cannot be composed with another circuit if
-            # # using context manager form (e.g. with).
-            # # Also, dynamic circuits don't work with runtime primitives.
-            with self.circuit.if_test((measure_bit1, 1)):
-                with self.circuit.if_test((measure_bit2, 1)):
-                    self.circuit.z(phase_bit)
-
-        return self.circuit, unmeasured_bits
+        return self.circuit, self.unmeasured_bits

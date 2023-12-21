@@ -66,13 +66,14 @@ class QCNN(QuantumNeuralNetwork):
 
         unmeasured_bits = list(range(self.num_qubits))
         for layer, params in operations:
-            # Optionally collect circuit and unmeasured bits since
-            # these values are changed in place.
-            layer(
+            layer_instance = layer(
                 num_qubits=self.num_qubits,
                 circuit=self.circuit,
                 unmeasured_bits=unmeasured_bits,
                 **params,
-            ).build_layer()
+            )
+            # Optionally collect circuit since it is
+            # composed in place.
+            _, unmeasured_bits = layer_instance.build_layer()
 
         return self.circuit
