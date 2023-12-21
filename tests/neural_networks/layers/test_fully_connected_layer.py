@@ -2,7 +2,7 @@
 from __future__ import annotations
 import pytest
 from qiskit.circuit import QuantumCircuit
-from quantum_image_processing.models.neural_networks.layers import FullyConnectedLayer
+from quantum_image_processing.neural_networks.layers import FullyConnectedLayer
 
 
 @pytest.fixture

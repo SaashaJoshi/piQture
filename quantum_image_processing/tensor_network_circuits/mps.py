@@ -2,7 +2,7 @@
 from __future__ import annotations
 from typing import Callable
 from qiskit.circuit import QuantumCircuit, ParameterVector
-from quantum_image_processing.models.tensor_network_circuits.base_tensor_network import (
+from quantum_image_processing.tensor_network_circuits.base_tensor_network import (
     BaseTensorNetwork,
 )
 from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary

@@ -3,7 +3,7 @@ from __future__ import annotations
 from unittest import mock
 import pytest
 from qiskit.circuit import QuantumCircuit
-from quantum_image_processing.models.tensor_network_circuits.ttn import TTN
+from quantum_image_processing.tensor_network_circuits.ttn import TTN
 from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 
 

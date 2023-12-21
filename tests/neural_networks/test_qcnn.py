@@ -5,8 +5,8 @@ from unittest import mock
 import pytest
 from pytest import raises
 from qiskit.circuit import QuantumCircuit
-from quantum_image_processing.models.neural_networks.qcnn import QCNN
-from quantum_image_processing.models.neural_networks.layers import (
+from quantum_image_processing.neural_networks import QCNN
+from quantum_image_processing.neural_networks.layers import (
     QuantumConvolutionalLayer,
     QuantumPoolingLayer2,
     QuantumPoolingLayer3,

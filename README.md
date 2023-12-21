@@ -21,12 +21,12 @@
 Let's build a Quantum Convolutional Neural Network (QCNN) with Convolutional, Pooling, and Fully-Connected layers.
 
 ```python
-from quantum_image_processing.models.neural_networks.layers import (
+from quantum_image_processing.neural_networks.layers import (
     QuantumConvolutionalLayer,
     QuantumPoolingLayer2,
     FullyConnectedLayer,
 )
-from quantum_image_processing.models.neural_networks.qcnn import QCNN
+from quantum_image_processing.neural_networks import QCNN
 
 # Initializing a QCNN circuit with given image dimensions.
 image_dimensions = 4
