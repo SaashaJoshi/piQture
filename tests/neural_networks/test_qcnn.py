@@ -103,7 +103,7 @@ class TestQCNN:
     def test_sequence(self, num_qubits, operations):
         """Tests the sequence method of QCNN class."""
         with mock.patch.multiple(
-            "quantum_image_processing.models.neural_networks.layers",
+            "quantum_image_processing.neural_networks.layers",
             QuantumConvolutionalLayer=mock.DEFAULT,
             QuantumPoolingLayer2=mock.DEFAULT,
             QuantumPoolingLayer3=mock.DEFAULT,

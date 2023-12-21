@@ -88,7 +88,7 @@ class TestTTN:
         # pylint: disable=line-too-long
         """Tests the ttn_backbone method call via the ttn_simple function."""
         with mock.patch(
-            "quantum_image_processing.models.tensor_network_circuits.ttn.TTN.ttn_backbone"
+            "quantum_image_processing.tensor_network_circuits.ttn.TTN.ttn_backbone"
         ) as mock_ttn_simple:
             with mock.patch(
                 "quantum_image_processing.gates.two_qubit_unitary.TwoQubitUnitary.simple_parameterization"
@@ -103,7 +103,7 @@ class TestTTN:
         # pylint: disable=line-too-long
         """Tests the ttn_backbone method call via the ttn_general function."""
         with mock.patch(
-            "quantum_image_processing.models.tensor_network_circuits.ttn.TTN.ttn_backbone"
+            "quantum_image_processing.tensor_network_circuits.ttn.TTN.ttn_backbone"
         ) as mock_ttn_general:
             with mock.patch(
                 "quantum_image_processing.gates.two_qubit_unitary.TwoQubitUnitary.general_parameterization"
