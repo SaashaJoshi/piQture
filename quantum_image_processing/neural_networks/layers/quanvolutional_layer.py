@@ -32,6 +32,7 @@ class QuanvolutionalLayer(BaseLayer):
 
             unmeasured_bits (dict): a dictionary of unmeasured qubits
             and classical bits in the circuit.
+
         """
         BaseLayer.__init__(self, num_qubits, circuit, unmeasured_bits)
 
@@ -41,6 +42,7 @@ class QuanvolutionalLayer(BaseLayer):
 
         Returns:
             circuit (QuantumCircuit): circuit with a quanvolutional layer.
+
             unmeasured_bits (dict): a dictionary of unmeasured qubits
             and classical bits in the circuit.
         """
