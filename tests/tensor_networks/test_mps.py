@@ -4,7 +4,7 @@ from unittest import mock
 import pytest
 from pytest import raises
 from qiskit.circuit import QuantumCircuit, ParameterVector
-from quantum_image_processing.models.tensor_network_circuits.mps import MPS
+from quantum_image_processing.tensor_network_circuits import MPS
 from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
 
 

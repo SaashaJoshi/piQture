@@ -2,7 +2,7 @@
 from __future__ import annotations
 from typing import Callable
 from qiskit.circuit import QuantumCircuit
-from quantum_image_processing.models.neural_networks.quantum_neural_network import (
+from quantum_image_processing.neural_networks.quantum_neural_network import (
     QuantumNeuralNetwork,
 )
 
