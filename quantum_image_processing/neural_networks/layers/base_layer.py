@@ -87,6 +87,10 @@ class BaseLayer(ABC):
         """Returns number of unmeasured bits in base_layer circuit."""
         return self._unmeasured_bits
 
+    @unmeasured_bits.setter
+    def unmeasured_bits(self, value):
+        self._unmeasured_bits = value
+
     @staticmethod
     def _validate_unmeasured_bits(unmeasured_bits: list):
         """Validates the input unmeasured_bits and index values in the list."""
@@ -97,17 +101,6 @@ class BaseLayer(ABC):
             raise TypeError(
                 "Indices inside the unmeasured_bits list must be of the type int."
             )
-
-    # @staticmethod
-    # def _check_num_qubits(
-    #     num_qubits: int,
-    #     unmeasured_bits: list,
-    # ):
-    #     """Checks if inputs are of equal length."""
-    #     if num_qubits != len(unmeasured_bits):
-    #         raise ValueError(
-    #             "The input num_qubits must be equal to the length of unmeasured_bits list."
-    #         )
 
     @abstractmethod
     def build_layer(self):

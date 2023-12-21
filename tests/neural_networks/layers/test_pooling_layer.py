@@ -12,7 +12,7 @@ from quantum_image_processing.neural_networks.layers import (
 
 
 @pytest.fixture
-def circuit1():
+def circuit1a():
     """Fixture for fully connected layer circuit"""
     circuit = QuantumCircuit(2, 2)
     circuit.h(1)
@@ -23,7 +23,15 @@ def circuit1():
 
 
 @pytest.fixture
-def circuit2():
+def circuit1b():
+    """Fixture for fully connected layer circuit with False conditional"""
+    circuit = QuantumCircuit(2, 2)
+    circuit.cz(1, 0)
+    return circuit, [0]
+
+
+@pytest.fixture
+def circuit2a():
     """Fixture for fully connected layer circuit"""
     circuit = QuantumCircuit(4, 4)
     circuit.h([1, 3])
@@ -36,7 +44,16 @@ def circuit2():
 
 
 @pytest.fixture
-def circuit3():
+def circuit2b():
+    """Fixture for fully connected layer circuit with False conditional"""
+    circuit = QuantumCircuit(4, 4)
+    circuit.cz(1, 0)
+    circuit.cz(3, 2)
+    return circuit, [0, 2]
+
+
+@pytest.fixture
+def circuit3a():
     """Fixture for fully connected layer circuit"""
     circuit = QuantumCircuit(8, 8)
     circuit.h([3, 7])
@@ -49,7 +66,16 @@ def circuit3():
 
 
 @pytest.fixture
-def circuit4():
+def circuit3b():
+    """Fixture for fully connected layer circuit"""
+    circuit = QuantumCircuit(8, 8)
+    circuit.cz(3, 2)
+    circuit.cz(7, 5)
+    return circuit, [2, 5]
+
+
+@pytest.fixture
+def circuit4a():
     """Fixture for fully connected layer circuit"""
     circuit = QuantumCircuit(6, 6)
     circuit.h([3])
@@ -60,7 +86,15 @@ def circuit4():
 
 
 @pytest.fixture
-def circuit5():
+def circuit4b():
+    """Fixture for fully connected layer circuit"""
+    circuit = QuantumCircuit(6, 6)
+    circuit.cz(3, 2)
+    return circuit, [2, 5]
+
+
+@pytest.fixture
+def circuit5a():
     """Fixture for fully connected layer circuit"""
     circuit = QuantumCircuit(3, 3)
     circuit.h([0, 2])
@@ -72,22 +106,42 @@ def circuit5():
 
 
 @pytest.fixture
-def circuit6():
+def circuit5b():
     """Fixture for fully connected layer circuit"""
-    circuit = QuantumCircuit(6, 6)
-    circuit.h([0, 2, 3, 5])
-    circuit.measure([0, 2, 3, 5], [0, 2, 3, 5])
-    with circuit.if_test([0, 1]):
-        with circuit.if_test([2, 1]):
-            circuit.z(1)
-    with circuit.if_test([3, 1]):
-        with circuit.if_test([5, 1]):
-            circuit.z(4)
-    return circuit, [1, 4]
+    circuit = QuantumCircuit(3, 3)
+    circuit.cz(0, 1)
+    circuit.cz(2, 1)
+    return circuit, [1]
 
 
 @pytest.fixture
-def circuit7():
+def circuit6a():
+    """Fixture for fully connected layer circuit"""
+    circuit = QuantumCircuit(6, 6)
+    circuit.h([0, 2, 4])
+    circuit.measure([0, 2, 4], [0, 2, 4])
+    with circuit.if_test([0, 1]):
+        with circuit.if_test([2, 1]):
+            circuit.z(1)
+    with circuit.if_test([2, 1]):
+        with circuit.if_test([4, 1]):
+            circuit.z(3)
+    return circuit, [1, 3, 5]
+
+
+@pytest.fixture
+def circuit6b():
+    """Fixture for fully connected layer circuit"""
+    circuit = QuantumCircuit(6, 6)
+    circuit.cz(0, 1)
+    circuit.cz(2, 1)
+    circuit.cz(2, 3)
+    circuit.cz(4, 3)
+    return circuit, [1, 3, 5]
+
+
+@pytest.fixture
+def circuit7a():
     """Fixture for fully connected layer circuit"""
     circuit = QuantumCircuit(8, 8)
     circuit.h([2, 5])
@@ -98,31 +152,68 @@ def circuit7():
     return circuit, [3, 7]
 
 
+@pytest.fixture
+def circuit7b():
+    """Fixture for fully connected layer circuit"""
+    circuit = QuantumCircuit(8, 8)
+    circuit.cz(2, 3)
+    circuit.cz(5, 3)
+    return circuit, [3, 7]
+
+
 class TestQuantumPoolingLayer2:
     """Tests for Quantum Pooling Layer (2) class"""
 
     # pylint: disable=too-few-public-methods
 
     @pytest.mark.parametrize(
-        "num_qubits, circuit, unmeasured_bits, resulting_circuit",
+        "num_qubits, circuit, unmeasured_bits, conditional",
         [
-            (2, None, None, "circuit1"),
-            (None, QuantumCircuit(4, 4), None, "circuit2"),
-            (None, None, [2, 3, 5, 7], "circuit3"),
-            (None, None, [2, 3, 5], "circuit4"),
+            (2, None, None, None),
+            (None, QuantumCircuit(2, 2), None, 2.5),
+            (None, None, [2, 5], "abc"),
+        ],
+    )
+    def test_conditional(self, num_qubits, circuit, unmeasured_bits, conditional):
+        """Tests for the type of conditional input."""
+        with raises(TypeError, match="The input conditional must be of the type bool."):
+            _ = QuantumPoolingLayer2(num_qubits, circuit, unmeasured_bits, conditional)
+
+    @pytest.mark.parametrize(
+        "num_qubits, circuit, unmeasured_bits, conditional, resulting_circuit",
+        [
+            (2, None, None, False, "circuit1b"),
+            (2, None, None, True, "circuit1a"),
+            (None, QuantumCircuit(4, 4), None, False, "circuit2b"),
+            (None, QuantumCircuit(4, 4), None, True, "circuit2a"),
+            (None, None, [2, 3, 5, 7], False, "circuit3b"),
+            (None, None, [2, 3, 5, 7], True, "circuit3a"),
+            (None, None, [2, 3, 5], False, "circuit4b"),
+            (None, None, [2, 3, 5], True, "circuit4a"),
         ],
     )
     def test_build_layer(
-        self, request, num_qubits, circuit, unmeasured_bits, resulting_circuit
+        self,
+        request,
+        num_qubits,
+        circuit,
+        unmeasured_bits,
+        conditional,
+        resulting_circuit,
     ):
         # pylint: disable=too-many-arguments
         """Tests the build_layer method of QuantumPoolingLayer2 class."""
         circuit, new_unmeasured_bits = QuantumPoolingLayer2(
-            num_qubits, circuit, unmeasured_bits
+            num_qubits,
+            circuit,
+            unmeasured_bits,
+            conditional,
         ).build_layer()
         resulting_circuit, resulting_unmeasured_bits = request.getfixturevalue(
             resulting_circuit
         )
+        print(circuit)
+        print(resulting_circuit)
         assert circuit == resulting_circuit
         assert new_unmeasured_bits == resulting_unmeasured_bits
 
@@ -140,23 +231,47 @@ class TestQuantumPoolingLayer3:
             _ = QuantumPoolingLayer3(num_qubits, circuit, unmeasured_bits)
 
     @pytest.mark.parametrize(
-        "num_qubits, circuit, unmeasured_bits, resulting_circuit",
+        "num_qubits, circuit, unmeasured_bits, conditional",
         [
-            (3, None, None, "circuit5"),
-            (None, QuantumCircuit(6, 6), None, "circuit6"),
-            (None, None, [2, 3, 5, 7], "circuit7"),
+            (3, None, None, None),
+            (None, QuantumCircuit(3, 3), None, 2.5),
+            (None, None, [2, 3, 5], "abc"),
+        ],
+    )
+    def test_conditional(self, num_qubits, circuit, unmeasured_bits, conditional):
+        """Tests for the type of conditional input."""
+        with raises(TypeError, match="The input conditional must be of the type bool."):
+            _ = QuantumPoolingLayer3(num_qubits, circuit, unmeasured_bits, conditional)
+
+    @pytest.mark.parametrize(
+        "num_qubits, circuit, unmeasured_bits, conditional, resulting_circuit",
+        [
+            (3, None, None, False, "circuit5b"),
+            (3, None, None, True, "circuit5a"),
+            (None, QuantumCircuit(6, 6), None, False, "circuit6b"),
+            (None, QuantumCircuit(6, 6), None, True, "circuit6a"),
+            (None, None, [2, 3, 5, 7], False, "circuit7b"),
+            (None, None, [2, 3, 5, 7], True, "circuit7a"),
         ],
     )
     def test_build_layer(
-        self, request, num_qubits, circuit, unmeasured_bits, resulting_circuit
+        self,
+        request,
+        num_qubits,
+        circuit,
+        unmeasured_bits,
+        conditional,
+        resulting_circuit,
     ):
         # pylint: disable=too-many-arguments
         """Tests the build_layer method of QuantumPoolingLayer2 class."""
         circuit, new_unmeasured_bits = QuantumPoolingLayer3(
-            num_qubits, circuit, unmeasured_bits
+            num_qubits, circuit, unmeasured_bits, conditional
         ).build_layer()
         resulting_circuit, resulting_unmeasured_bits = request.getfixturevalue(
             resulting_circuit
         )
+        print(circuit, new_unmeasured_bits)
+        print(resulting_circuit)
         assert circuit == resulting_circuit
         assert new_unmeasured_bits == resulting_unmeasured_bits
