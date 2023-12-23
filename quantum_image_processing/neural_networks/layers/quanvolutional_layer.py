@@ -22,9 +22,7 @@ class QuanvolutionalLayer(BaseLayer):
 
     def __init__(
         self,
-        num_qubits: int,
-        circuit: QuantumCircuit,
-        unmeasured_bits: list,
+        img_dims: tuple[int, int],
         filter_size: tuple[int, int],
         stride: Optional[int] = 1,
         random: Optional[bool] = True,
@@ -45,7 +43,14 @@ class QuanvolutionalLayer(BaseLayer):
             unmeasured_bits (dict): a dictionary of unmeasured qubits
             and classical bits in the circuit.
         """
-        BaseLayer.__init__(self, num_qubits, circuit, unmeasured_bits)
+        if not all((isinstance(dims, int) for dims in img_dims)) or not isinstance(
+            img_dims, tuple
+        ):
+            raise TypeError("Input img_dims must be of the type tuple[int, ...].")
+
+        self.img_dims = img_dims
+        num_qubits = int(math.prod(self.img_dims))
+        BaseLayer.__init__(self, num_qubits)
 
         if not isinstance(filter_size, tuple) or not all(
             isinstance(size, int) for size in filter_size
@@ -54,15 +59,17 @@ class QuanvolutionalLayer(BaseLayer):
                 "The input filter_size must be of the type tuple[int, int]."
             )
 
-        # Check max filter_size dimensions
+        if filter_size[0] > min(self.img_dims):
+            raise ValueError("The filter_size must be less than or equal "
+                             "to the minimum image dimension.")
         self.filter_size = filter_size
 
         if not isinstance(stride, int):
             raise TypeError("The input stride must be of the type int.")
 
-        # Also need to check the max stride value
-        if stride <= 0:
-            raise ValueError("The input stride must be at least 1.")
+        if stride <= 0 or stride > min(img_dims):
+            raise ValueError("The input stride must be at least 1 and less than "
+                             "or equal to the minimum image dimension.")
         self.stride = stride
 
         if not isinstance(random, bool):

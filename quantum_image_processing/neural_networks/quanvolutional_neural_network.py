@@ -21,7 +21,7 @@ class QuanvolutionalNeuralNetwork(QuantumNeuralNetwork):
         Available: https://arxiv.org/abs/1904.04767
     """
 
-    def __init__(self, num_qubits: int):
+    def __init__(self, img_dims: tuple[int, int]):
         """
         Initializes a Quanvolutional Neural Network
         circuit with the given number of qubits.
@@ -31,19 +31,26 @@ class QuanvolutionalNeuralNetwork(QuantumNeuralNetwork):
             network circuit with the given number of qubits or image
             dimensions.
         """
+        if not all((isinstance(dims, int) for dims in img_dims)) or not isinstance(
+            img_dims, tuple
+        ):
+            raise TypeError("Input img_dims must be of the type tuple[int, ...].")
+
+        self.img_dims = img_dims
+        num_qubits = int(math.prod(self.img_dims))
         QuantumNeuralNetwork.__init__(self, num_qubits)
 
-    def pre_quanvolutional_layer(self, params) -> list[QuantumCircuit]:
+    def pre_quanvolutional_layer(self, params: dict) -> list[QuantumCircuit]:
         """
-        Helps in setting up the circuits for quanvolutional layers.
+        Calls data pre-processing methods before embedding data for
+        quanvolutional layer circuits.
         """
+        # Take origin and create sub-images.
         # Produce n sub_circuits.
 
         sub_circuits = []
         layer_instance = QuanvolutionalLayer(
-            num_qubits=,
-            circuit=,
-            unmeasured_bits=unmeasured_bits,
+            img_dims=self.img_dims,
             **params,
         )
         # Optionally collect circuit since it is
@@ -51,6 +58,7 @@ class QuanvolutionalNeuralNetwork(QuantumNeuralNetwork):
         sub_circuit, _ = layer_instance.build_layer()
         sub_circuits.append(sub_circuit)
         print(sub_circuits)
+        sub_circuit.draw("mpl")
 
         return sub_circuits
 
