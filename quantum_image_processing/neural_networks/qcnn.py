@@ -46,24 +46,6 @@ class QCNN(QuantumNeuralNetwork):
             circuit (QuantumCircuit): final QNN circuit with all the
             layers.
         """
-        if not isinstance(operations, list):
-            raise TypeError("The input operations must be of the type list.")
-
-        if not all(isinstance(operation, tuple) for operation in operations):
-            raise TypeError(
-                "The input operations list must contain tuple[operation, params]."
-            )
-
-        if not callable(operations[0][0]):
-            raise TypeError(
-                "Operation in input operations list must be Callable functions/classes."
-            )
-
-        if not isinstance(operations[0][1], dict):
-            raise TypeError(
-                "Parameters of operation in input operations list must be in a dictionary."
-            )
-
         unmeasured_bits = list(range(self.num_qubits))
         for layer, params in operations:
             layer_instance = layer(

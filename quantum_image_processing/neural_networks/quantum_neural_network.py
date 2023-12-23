@@ -47,3 +47,20 @@ class QuantumNeuralNetwork(ABC):
             operations (list[tuple[Callable, dict]]: a tuple
             of a Layer object and a dictionary of its arguments.
         """
+        if not isinstance(operations, list):
+            raise TypeError("The input operations must be of the type list.")
+
+        if not all(isinstance(operation, tuple) for operation in operations):
+            raise TypeError(
+                "The input operations list must contain tuple[operation, params]."
+            )
+
+        if not callable(operations[0][0]):
+            raise TypeError(
+                "Operation in input operations list must be Callable functions/classes."
+            )
+
+        if not isinstance(operations[0][1], dict):
+            raise TypeError(
+                "Parameters of operation in input operations list must be in a dictionary."
+            )
