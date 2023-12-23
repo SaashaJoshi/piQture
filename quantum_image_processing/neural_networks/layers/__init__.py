@@ -12,5 +12,5 @@ __all__ = [
     "QuantumPoolingLayer2",
     "QuantumPoolingLayer3",
     "FullyConnectedLayer",
-    "QuanvolutionalLayer"
+    "QuanvolutionalLayer",
 ]
