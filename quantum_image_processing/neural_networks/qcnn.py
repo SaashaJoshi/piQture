@@ -46,6 +46,9 @@ class QCNN(QuantumNeuralNetwork):
             circuit (QuantumCircuit): final QNN circuit with all the
             layers.
         """
+        # Call sequence from ABC for error handling.
+        super().sequence(operations)
+
         unmeasured_bits = list(range(self.num_qubits))
         for layer, params in operations:
             layer_instance = layer(
