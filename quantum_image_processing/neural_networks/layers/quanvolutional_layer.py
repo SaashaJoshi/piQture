@@ -5,6 +5,8 @@ from typing import Optional
 from qiskit.circuit import QuantumCircuit
 from qiskit.circuit.random import random_circuit
 from quantum_image_processing.neural_networks.layers.base_layer import BaseLayer
+from quantum_image_processing.data_encoder.image_representations.image_embedding import ImageEmbedding
+from quantum_image_processing.data_processing.sub_images import produce_sub_images
 
 
 class QuanvolutionalLayer(BaseLayer):
@@ -24,8 +26,10 @@ class QuanvolutionalLayer(BaseLayer):
         self,
         img_dims: tuple[int, int],
         filter_size: tuple[int, int],
-        stride: Optional[int] = 1,
+        stride: Optional[int],
+        pixel_vals: list,
         random: Optional[bool] = True,
+        embedding: Optional[str] = "AngleEmbedding",
     ):
         """
         Initializes a Quanvolutional Layer circuit
@@ -49,6 +53,7 @@ class QuanvolutionalLayer(BaseLayer):
             raise TypeError("Input img_dims must be of the type tuple[int, ...].")
 
         self.img_dims = img_dims
+
         num_qubits = int(math.prod(self.img_dims))
         BaseLayer.__init__(self, num_qubits)
 
@@ -60,23 +65,45 @@ class QuanvolutionalLayer(BaseLayer):
             )
 
         if filter_size[0] > min(self.img_dims):
-            raise ValueError("The filter_size must be less than or equal "
-                             "to the minimum image dimension.")
+            raise ValueError(
+                "The filter_size must be less than or equal "
+                "to the minimum image dimension."
+            )
         self.filter_size = filter_size
 
         if not isinstance(stride, int):
             raise TypeError("The input stride must be of the type int.")
 
         if stride <= 0 or stride > min(img_dims):
-            raise ValueError("The input stride must be at least 1 and less than "
-                             "or equal to the minimum image dimension.")
+            raise ValueError(
+                "The input stride must be at least 1 and less than "
+                "or equal to the minimum image dimension."
+            )
         self.stride = stride
 
         if not isinstance(random, bool):
             raise TypeError("The input random must be of the type bool.")
         self.random = random
 
-    def build_layer(self) -> tuple[QuantumCircuit, list]:
+        self.pixel_vals = pixel_vals
+
+    def build_sub_circuits(self, sub_image):
+        """
+        Collects a sub-image and its dimensions to produce a
+        corresponding quanvolutional layer circuit.
+        """
+
+        # Apply random circuit with measurements
+        if self.random:
+            sub_circuit = random_circuit(
+                num_qubits=1,
+                depth=2,
+                max_operands=3,
+                measure=True,
+            )
+            return sub_circuit
+
+    def build_layer(self) -> tuple[list[QuantumCircuit, ...], list]:
         """
         Builds the Quanvolutional layer circuit
 
@@ -86,13 +113,11 @@ class QuanvolutionalLayer(BaseLayer):
             unmeasured_bits (dict): a dictionary of unmeasured qubits
             and classical bits in the circuit.
         """
-        sub_image_qubits = int(math.prod(self.filter_size))
-        # Apply random circuit with measurements
-        if self.random:
-            sub_circuit = random_circuit(
-                num_qubits=sub_image_qubits,
-                depth=2,
-                max_operands=3,
-                measure=True,
-            )
-            return sub_circuit, []
+        # Pre-process images to create list of sub-images
+        sub_images = produce_sub_images(self.filter_size, self.pixel_vals)
+
+        # Embedd sub-images into sub-circuits
+
+        # Build quanvolutional layer from sub-circuits (and measure).
+
+        return circuit_list, []

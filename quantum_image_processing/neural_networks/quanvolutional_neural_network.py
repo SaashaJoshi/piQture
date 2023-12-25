@@ -106,7 +106,6 @@ class QuanvolutionalNeuralNetwork(QuantumNeuralNetwork):
                 # composed in place.
                 _, unmeasured_bits = layer_instance.build_layer()
 
-
         # Continue normally (similar to QCNN) when QuanvLayer is the
         # only layer or the last layer in operations.
         # unmeasured_bits = list(range(self.num_qubits))
