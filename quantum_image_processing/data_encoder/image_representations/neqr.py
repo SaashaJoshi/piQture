@@ -14,7 +14,7 @@ class NEQR(FRQI):
         self,
         img_dims: tuple[int, int],
         pixel_vals: list,
-        max_color_intensity: Optional[int] = 255,
+        max_color_intensity: int = 255,
     ):
         FRQI.__init__(self, img_dims, pixel_vals)
 
