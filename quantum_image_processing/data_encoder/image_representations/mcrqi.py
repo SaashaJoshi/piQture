@@ -3,9 +3,7 @@ from __future__ import annotations
 import math
 import numpy as np
 from qiskit.circuit import QuantumCircuit
-from quantum_image_processing.data_encoder.image_representations.image_embedding import ImageEmbedding
 from quantum_image_processing.data_encoder.image_representations.frqi import FRQI
-
 
 
 class MCRQI(FRQI):
@@ -37,8 +35,8 @@ class MCRQI(FRQI):
     def circuit(self):
         return self._circuit
 
-    # def pixel_value(self, pixel_pos: int):
-    #     """Embeds pixel (color) values in a circuit"""
+    def pixel_value(self, pixel_pos: int):
+        """Embeds pixel (color) values in a circuit"""
 
     def mcrqi(self) -> QuantumCircuit:
         """
