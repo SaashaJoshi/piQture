@@ -1,6 +1,7 @@
 """Abstract Base Class for Image Embedding"""
 from __future__ import annotations
 from abc import ABC, abstractmethod
+import math
 
 
 class ImageEmbedding(ABC):
@@ -19,6 +20,18 @@ class ImageEmbedding(ABC):
 
         if not isinstance(pixel_vals, list):
             raise TypeError("Input pixel_vals must be of the type list.")
+
+        if len(pixel_vals) != math.prod(img_dims):
+            raise ValueError(
+                f"No. of pixel values {len(pixel_vals)} must be equal to "
+                f"the product of image dimensions {math.prod(img_dims)}."
+            )
+
+        for val in pixel_vals:
+            if val < 0 or val > 255:
+                raise ValueError(
+                    "Pixel values cannot be less than 0 or greater than 255."
+                )
 
         self.img_dims = img_dims
         self.pixel_vals = pixel_vals
