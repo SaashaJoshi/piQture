@@ -22,18 +22,6 @@ class FRQI(ImageEmbedding):
                 f"Input img_dims must have same dimensions."
             )
 
-        if len(pixel_vals) != math.prod(self.img_dims):
-            raise ValueError(
-                f"No. of pixel values {len(pixel_vals)} must be equal to "
-                f"the product of image dimensions {math.prod(self.img_dims)}."
-            )
-
-        for val in pixel_vals:
-            if val < 0 or val > 255:
-                raise ValueError(
-                    "Pixel values cannot be less than 0 or greater than 255."
-                )
-
         # feature_dim = no. of qubits for pixel position embedding
         self.feature_dim = int(np.sqrt(math.prod(self.img_dims)))
 

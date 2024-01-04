@@ -66,7 +66,7 @@ class TestFRQI:
         with raises(TypeError, match=r"Input pixel_vals must be of the type list."):
             _ = FRQI(img_dims, pixel_vals)
 
-    @pytest.mark.parametrize("img_dims, pixel_vals", [((2, 3), [range(6)])])
+    @pytest.mark.parametrize("img_dims, pixel_vals", [((2, 3), list(range(6)))])
     def test_init_square_images(self, img_dims, pixel_vals):
         """Tests if the input img_dims represents a square image."""
         with raises(
