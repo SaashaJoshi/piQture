@@ -39,6 +39,16 @@ class ImageEmbedding(ABC):
         self.img_dims = img_dims
         self.pixel_vals = pixel_vals
 
+    def validate_square_images(self):
+        """
+        Validates img_dims input for square images.
+        """
+        if len(set(self.img_dims)) > 1:
+            raise ValueError(
+                f"{self.__class__.__name__} supports square images only. "
+                f"Input img_dims must have same dimensions."
+            )
+
     @abstractmethod
     def pixel_position(self, pixel_pos_binary: str):
         """
