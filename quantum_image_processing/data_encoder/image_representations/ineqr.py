@@ -4,14 +4,15 @@ import math
 import numpy as np
 from qiskit.circuit import QuantumCircuit
 
-# from quantum_image_processing.data_encoder.image_representations.neqr import NEQR
-from quantum_image_processing.data_encoder.image_representations.image_embedding import (
-    ImageEmbedding,
-)
-from quantum_image_processing.mixin.image_embedding_mixin import ImageMixin
+# from quantum_image_processing.data_encoder.image_representations.image_embedding import (
+#     ImageEmbedding,
+# )
+from quantum_image_processing.data_encoder.image_representations.neqr import NEQR
+
+# from quantum_image_processing.mixin.image_embedding_mixin import ImageMixin
 
 
-class INEQR(ImageEmbedding, ImageMixin):
+class INEQR(NEQR):
     """
     Represents images in INEQR representation format.
     It is an enhanced version of the existing NEQR image
@@ -32,7 +33,7 @@ class INEQR(ImageEmbedding, ImageMixin):
         pixel_vals: list,
         max_color_intensity: int = 255,
     ):
-        ImageEmbedding.__init__(self, img_dims, pixel_vals)
+        NEQR.__init__(self, img_dims, pixel_vals)
 
         if len(set(img_dims)) > 2:
             raise ValueError(
@@ -62,32 +63,32 @@ class INEQR(ImageEmbedding, ImageMixin):
         """Returns INEQR circuit."""
         return self._circuit
 
-    def pixel_position(self, pixel_pos_binary: str):
-        """Embeds pixel position values in a circuit."""
-        ImageMixin.pixel_position(self.circuit, pixel_pos_binary)
-
-    def pixel_value(self, pixel_pos: int):
-        """Embeds pixel (color) values in a circuit"""
+    def validate_square_images(self):
+        """Override existing method in ABC."""
+        # Override validation of square images
 
     def ineqr(self) -> QuantumCircuit:
         """
         Builds the INEQR image representation on a circuit.
 
         Returns:
-            QuantumCircuit: final circuit with the frqi image
+            QuantumCircuit: final circuit with the INEQR image
             representation.
         """
+        for i in range(self.feature_dim):
+            self.circuit.h(i)
+
         for y_index, y_val in enumerate(self.pixel_vals):
             for x_index, x_val in enumerate(y_val):
-                self.circuit.barrier()
                 pixel_pos_binary = (
                     f"{y_index:0>{self.y_coord}b}{x_index:0>{self.x_coord}b}"
                 )
+                color_byte = f"{x_val:0>8b}"
 
                 # Embed pixel position on qubits
                 self.pixel_position(pixel_pos_binary)
                 # Embed color information on qubits
-                self.pixel_value(x_val)
+                self.pixel_value(color_byte=color_byte)
                 # Remove pixel position embedding
                 self.pixel_position(pixel_pos_binary)
 
