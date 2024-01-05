@@ -52,7 +52,7 @@ class NEQR(ImageEmbedding, ImageMixin):
                     control_qubits=control_qubits, target_qubit=self.feature_dim + index
                 )
 
-    def build_circuit(self) -> QuantumCircuit:
+    def neqr(self) -> QuantumCircuit:
         # pylint: disable=duplicate-code
         """
         Builds the NEQR image representation on a circuit.
