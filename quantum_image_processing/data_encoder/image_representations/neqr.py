@@ -41,6 +41,10 @@ class NEQR(ImageEmbedding, ImageMixin):
         """Returns NEQR circuit."""
         return self._circuit
 
+    def pixel_position(self, pixel_pos_binary: str):
+        """Embeds pixel position values in a circuit."""
+        ImageMixin.pixel_position(self.circuit, pixel_pos_binary)
+
     def pixel_value(self, pixel_pos: int):
         """Embeds pixel (color) values in a circuit"""
         color_byte = f"{int(self.pixel_vals[pixel_pos]):0>8b}"
