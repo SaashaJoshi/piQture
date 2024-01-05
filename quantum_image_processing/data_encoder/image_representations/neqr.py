@@ -45,10 +45,13 @@ class NEQR(ImageEmbedding, ImageMixin):
         """Embeds pixel position values in a circuit."""
         ImageMixin.pixel_position(self.circuit, pixel_pos_binary)
 
-    def pixel_value(self, pixel_pos: int):
-        """Embeds pixel (color) values in a circuit"""
-        color_byte = f"{int(self.pixel_vals[pixel_pos]):0>8b}"
-
+    def pixel_value(self, *args, **kwargs):
+        """
+        Embeds pixel (color) values in a circuit
+        """
+        print("IN the pixel_val method.")
+        color_byte = kwargs.get("color_byte")
+        print(color_byte)
         control_qubits = list(range(self.feature_dim))
         for index, color in enumerate(color_byte):
             if color == "1":
@@ -71,11 +74,12 @@ class NEQR(ImageEmbedding, ImageMixin):
         num_theta = math.prod(self.img_dims)
         for pixel in range(num_theta):
             pixel_pos_binary = f"{pixel:0>2b}"
+            color_byte = f"{int(self.pixel_vals[pixel]):0>8b}"
 
             # Embed pixel position on qubits
             self.pixel_position(pixel_pos_binary)
             # Embed color information on qubits
-            self.pixel_value(pixel)
+            self.pixel_value(color_byte=color_byte)
             # Remove pixel position embedding
             self.pixel_position(pixel_pos_binary)
 

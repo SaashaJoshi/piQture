@@ -34,8 +34,9 @@ class FRQI(ImageEmbedding, ImageMixin):
         """Embeds pixel position values in a circuit."""
         ImageMixin.pixel_position(self.circuit, pixel_pos_binary)
 
-    def pixel_value(self, pixel_pos: int):
+    def pixel_value(self, *args, **kwargs):
         """Embeds pixel (color) values in a circuit"""
+        pixel_pos = kwargs.get("pixel_pos")
 
         self.circuit.cry(
             self.pixel_vals[pixel_pos],
@@ -74,7 +75,7 @@ class FRQI(ImageEmbedding, ImageMixin):
             # Embed pixel position on qubits
             self.pixel_position(pixel_pos_binary)
             # Embed color information on qubits
-            self.pixel_value(pixel)
+            self.pixel_value(pixel_pos=pixel)
             # Remove pixel position embedding
             self.pixel_position(pixel_pos_binary)
 

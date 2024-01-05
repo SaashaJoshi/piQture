@@ -76,7 +76,7 @@ class TestNEQR:
                 "quantum_image_processing.data_encoder.image_representations.neqr.NEQR.circuit",
                 new_callable=lambda: mock_circuit,
             ):
-                neqr_object.pixel_value(index)
+                neqr_object.pixel_value(color_byte=f"{pixel_val:0>8b}")
                 assert mock_circuit == test_circuit
 
     # pylint: disable=too-many-arguments

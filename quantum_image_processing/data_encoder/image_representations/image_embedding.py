@@ -22,6 +22,7 @@ class ImageEmbedding(ABC):
         if not isinstance(pixel_vals, list):
             raise TypeError("Input pixel_vals must be of the type list.")
         pixel_vals = np.array(pixel_vals)
+        print(pixel_vals)
 
         # pixel_vals can be a multi-dimensional list.
         if len(pixel_vals.flatten()) != math.prod(img_dims):
@@ -60,11 +61,8 @@ class ImageEmbedding(ABC):
         """
 
     @abstractmethod
-    def pixel_value(self, pixel_pos: int):
+    def pixel_value(self, *args, **kwargs):
         """
         Embeds pixel or color values on the qubits.
 
-        Args:
-            pixel_pos (int): takes as an input
-            the pixel position.
         """
