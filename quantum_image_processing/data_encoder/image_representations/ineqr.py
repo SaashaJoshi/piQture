@@ -1,17 +1,30 @@
 """Improved Novel Enhanced Quantum Representation (INEQR) of digital images"""
 from __future__ import annotations
 import math
-from typing import Optional
 import numpy as np
 from qiskit.circuit import QuantumCircuit
+
 # from quantum_image_processing.data_encoder.image_representations.neqr import NEQR
 from quantum_image_processing.data_encoder.image_representations.image_embedding import (
     ImageEmbedding,
 )
+from quantum_image_processing.mixin.image_embedding_mixin import ImageMixin
 
 
-class INEQR(ImageEmbedding):
-    """Represents images in INEQR representation format."""
+class INEQR(ImageEmbedding, ImageMixin):
+    """
+    Represents images in INEQR representation format.
+    It is an enhanced version of the existing NEQR image
+    representation method which helps in representing
+    rectangular images on a quantum circuit.
+
+    References:
+        [1] N. Jiang and L. Wang, “Quantum image scaling
+        using nearest neighbor interpolation,” Quantum
+        Information Processing, vol. 14, no. 5, pp. 1559–1571,
+        Sep. 2014, doi: https://doi.org/10.1007/s11128-014-0841-8.
+
+    """
 
     def __init__(
         self,
@@ -27,9 +40,9 @@ class INEQR(ImageEmbedding):
             )
 
         # Determine number of qubits for position embedding
-        x_coord = int(math.log(img_dims[0], 2))
-        y_coord = int(math.log(img_dims[1], 2))
-        self.feature_dim = x_coord + y_coord
+        self.x_coord = int(math.log(img_dims[0], 2))
+        self.y_coord = int(math.log(img_dims[1], 2))
+        self.feature_dim = self.x_coord + self.y_coord
 
         # Number of qubits to encode color byte
         if max_color_intensity < 0 or max_color_intensity > 255:
@@ -51,6 +64,7 @@ class INEQR(ImageEmbedding):
 
     def pixel_position(self, pixel_pos_binary: str):
         """Embeds pixel position values in a circuit."""
+        ImageMixin.pixel_position(self.circuit, pixel_pos_binary)
 
     def pixel_value(self, pixel_pos: int):
         """Embeds pixel (color) values in a circuit"""
@@ -63,3 +77,18 @@ class INEQR(ImageEmbedding):
             QuantumCircuit: final circuit with the frqi image
             representation.
         """
+        for y_index, y_val in enumerate(self.pixel_vals):
+            for x_index, x_val in enumerate(y_val):
+                self.circuit.barrier()
+                pixel_pos_binary = (
+                    f"{y_index:0>{self.y_coord}b}{x_index:0>{self.x_coord}b}"
+                )
+
+                # Embed pixel position on qubits
+                self.pixel_position(pixel_pos_binary)
+                # Embed color information on qubits
+                self.pixel_value(x_val)
+                # Remove pixel position embedding
+                self.pixel_position(pixel_pos_binary)
+
+        return self.circuit

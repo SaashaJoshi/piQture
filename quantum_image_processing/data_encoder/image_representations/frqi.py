@@ -16,12 +16,7 @@ class FRQI(ImageEmbedding, ImageMixin):
 
     def __init__(self, img_dims: tuple[int, int], pixel_vals: list):
         ImageEmbedding.__init__(self, img_dims, pixel_vals)
-
-        if len(set(img_dims)) > 1:
-            raise ValueError(
-                f"{self.__class__.__name__} supports square images only. "
-                f"Input img_dims must have same dimensions."
-            )
+        self.validate_square_images()
 
         # feature_dim = no. of qubits for pixel position embedding
         self.feature_dim = int(np.sqrt(math.prod(self.img_dims)))
@@ -61,6 +56,7 @@ class FRQI(ImageEmbedding, ImageMixin):
         )
 
     def frqi(self) -> QuantumCircuit:
+        # pylint: disable=duplicate-code
         """
         Builds the FRQI image representation on a circuit.
 
