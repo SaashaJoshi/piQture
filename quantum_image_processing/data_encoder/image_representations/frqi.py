@@ -6,9 +6,10 @@ from qiskit.circuit import QuantumCircuit
 from quantum_image_processing.data_encoder.image_representations.image_embedding import (
     ImageEmbedding,
 )
+from quantum_image_processing.mixin.image_embedding_mixin import ImageMixin
 
 
-class FRQI(ImageEmbedding):
+class FRQI(ImageEmbedding, ImageMixin):
     """
     Represents images in FRQI representation format
     """
@@ -36,10 +37,7 @@ class FRQI(ImageEmbedding):
 
     def pixel_position(self, pixel_pos_binary: str):
         """Embeds pixel position values in a circuit."""
-
-        for index, value in enumerate(pixel_pos_binary):
-            if value == "0":
-                self.circuit.x(index)
+        ImageMixin.pixel_position(self.circuit, pixel_pos_binary)
 
     def pixel_value(self, pixel_pos: int):
         """Embeds pixel (color) values in a circuit"""
