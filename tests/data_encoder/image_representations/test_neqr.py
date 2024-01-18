@@ -11,8 +11,8 @@ from quantum_image_processing.data_encoder.image_representations.neqr import NEQ
 MAX_COLOR_INTENSITY = 255
 
 
-@pytest.fixture(name="circuit_pixel_value")
-def circuit_pixel_value_fixture():
+@pytest.fixture(name="neqr_pixel_value")
+def neqr_pixel_value_fixture():
     """Fixture for embedding pixel values."""
 
     def _circuit(img_dims, pixel_val, color_qubits):
@@ -61,22 +61,22 @@ class TestNEQR:
         [((2, 2), list(range(235, 239)), MAX_COLOR_INTENSITY)],
     )
     def test_pixel_value(
-        self, img_dims, pixel_vals, max_color_intensity, circuit_pixel_value
+        self, img_dims, pixel_vals, max_color_intensity, neqr_pixel_value
     ):
         """Tests the circuit received after pixel value embedding."""
         neqr_object = NEQR(img_dims, pixel_vals, max_color_intensity)
-        color_qubits = int(math.log(max_color_intensity, 2))
+        color_qubits = int(np.ceil(math.log(max_color_intensity, 2)))
         mock_circuit = QuantumCircuit(int(math.prod(img_dims)) + color_qubits)
 
-        for index, pixel_val in enumerate(pixel_vals):
+        for _, pixel_val in enumerate(pixel_vals):
             mock_circuit.clear()
-            test_circuit = circuit_pixel_value(img_dims, pixel_val, color_qubits)
+            test_circuit = neqr_pixel_value(img_dims, pixel_val, color_qubits)
 
             with mock.patch(
                 "quantum_image_processing.data_encoder.image_representations.neqr.NEQR.circuit",
                 new_callable=lambda: mock_circuit,
             ):
-                neqr_object.pixel_value(index)
+                neqr_object.pixel_value(color_byte=f"{pixel_val:0>8b}")
                 assert mock_circuit == test_circuit
 
     # pylint: disable=too-many-arguments
@@ -90,11 +90,11 @@ class TestNEQR:
         pixel_vals,
         max_color_intensity,
         circuit_pixel_position,
-        circuit_pixel_value,
+        neqr_pixel_value,
     ):
         """Tests the final NEQR circuit."""
         neqr_object = NEQR(img_dims, pixel_vals, max_color_intensity)
-        color_qubits = int(math.log(max_color_intensity, 2))
+        color_qubits = int(np.ceil(math.log(max_color_intensity, 2)))
         mock_circuit = QuantumCircuit(int(math.prod(img_dims)) + color_qubits)
 
         test_circuit = QuantumCircuit(int(math.prod(img_dims)) + color_qubits)
@@ -106,7 +106,7 @@ class TestNEQR:
                 circuit_pixel_position(img_dims, pixel_pos_binary), inplace=True
             )
             test_circuit.compose(
-                circuit_pixel_value(img_dims, pixel_val, color_qubits), inplace=True
+                neqr_pixel_value(img_dims, pixel_val, color_qubits), inplace=True
             )
             test_circuit.compose(
                 circuit_pixel_position(img_dims, pixel_pos_binary), inplace=True

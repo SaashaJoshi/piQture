@@ -1,22 +1,24 @@
 """Novel Enhanced Quantum Representation (NEQR) of digital images"""
 from __future__ import annotations
 import math
-from typing import Optional
 import numpy as np
 from qiskit.circuit import QuantumCircuit
-from quantum_image_processing.data_encoder.image_representations.frqi import FRQI
+from quantum_image_processing.data_encoder.image_representations.image_embedding import (
+    ImageEmbedding,
+)
+from quantum_image_processing.mixin.image_embedding_mixin import ImageMixin
 
 
-class NEQR(FRQI):
+class NEQR(ImageEmbedding, ImageMixin):
     """Represents images in NEQR representation format."""
 
     def __init__(
         self,
         img_dims: tuple[int, int],
         pixel_vals: list,
-        max_color_intensity: Optional[int] = 255,
+        max_color_intensity: int = 255,
     ):
-        FRQI.__init__(self, img_dims, pixel_vals)
+        ImageEmbedding.__init__(self, img_dims, pixel_vals)
 
         if max_color_intensity < 0 or max_color_intensity > 255:
             raise ValueError(
@@ -35,12 +37,18 @@ class NEQR(FRQI):
 
     @property
     def circuit(self):
+        """Returns NEQR circuit."""
         return self._circuit
 
-    def pixel_value(self, pixel_pos: int):
-        """Embeds pixel (color) values in a circuit"""
-        color_byte = f"{int(self.pixel_vals[pixel_pos]):0>8b}"
+    def pixel_position(self, pixel_pos_binary: str):
+        """Embeds pixel position values in a circuit."""
+        ImageMixin.pixel_position(self.circuit, pixel_pos_binary)
 
+    def pixel_value(self, *args, **kwargs):
+        """
+        Embeds pixel (color) values in a circuit
+        """
+        color_byte = kwargs.get("color_byte")
         control_qubits = list(range(self.feature_dim))
         for index, color in enumerate(color_byte):
             if color == "1":
@@ -49,6 +57,7 @@ class NEQR(FRQI):
                 )
 
     def neqr(self) -> QuantumCircuit:
+        # pylint: disable=duplicate-code
         """
         Builds the NEQR image representation on a circuit.
 
@@ -56,4 +65,19 @@ class NEQR(FRQI):
             QuantumCircuit: final circuit with the frqi image
             representation.
         """
-        return self.frqi()
+        for i in range(self.feature_dim):
+            self.circuit.h(i)
+
+        num_theta = math.prod(self.img_dims)
+        for pixel in range(num_theta):
+            pixel_pos_binary = f"{pixel:0>2b}"
+            color_byte = f"{int(self.pixel_vals[pixel]):0>8b}"
+
+            # Embed pixel position on qubits
+            self.pixel_position(pixel_pos_binary)
+            # Embed color information on qubits
+            self.pixel_value(color_byte=color_byte)
+            # Remove pixel position embedding
+            self.pixel_position(pixel_pos_binary)
+
+        return self.circuit

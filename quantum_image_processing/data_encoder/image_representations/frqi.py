@@ -6,21 +6,16 @@ from qiskit.circuit import QuantumCircuit
 from quantum_image_processing.data_encoder.image_representations.image_embedding import (
     ImageEmbedding,
 )
+from quantum_image_processing.mixin.image_embedding_mixin import ImageMixin
 
 
-class FRQI(ImageEmbedding):
+class FRQI(ImageEmbedding, ImageMixin):
     """
     Represents images in FRQI representation format
     """
 
     def __init__(self, img_dims: tuple[int, int], pixel_vals: list):
         ImageEmbedding.__init__(self, img_dims, pixel_vals)
-
-        if len(set(img_dims)) > 1:
-            raise ValueError(
-                f"{self.__class__.__name__} supports square images only. "
-                f"Input img_dims must have same dimensions."
-            )
 
         # feature_dim = no. of qubits for pixel position embedding
         self.feature_dim = int(np.sqrt(math.prod(self.img_dims)))
@@ -36,13 +31,11 @@ class FRQI(ImageEmbedding):
 
     def pixel_position(self, pixel_pos_binary: str):
         """Embeds pixel position values in a circuit."""
+        ImageMixin.pixel_position(self.circuit, pixel_pos_binary)
 
-        for index, value in enumerate(pixel_pos_binary):
-            if value == "0":
-                self.circuit.x(index)
-
-    def pixel_value(self, pixel_pos: int):
+    def pixel_value(self, *args, **kwargs):
         """Embeds pixel (color) values in a circuit"""
+        pixel_pos = kwargs.get("pixel_pos")
 
         self.circuit.cry(
             self.pixel_vals[pixel_pos],
@@ -63,6 +56,7 @@ class FRQI(ImageEmbedding):
         )
 
     def frqi(self) -> QuantumCircuit:
+        # pylint: disable=duplicate-code
         """
         Builds the FRQI image representation on a circuit.
 
@@ -80,7 +74,7 @@ class FRQI(ImageEmbedding):
             # Embed pixel position on qubits
             self.pixel_position(pixel_pos_binary)
             # Embed color information on qubits
-            self.pixel_value(pixel)
+            self.pixel_value(pixel_pos=pixel)
             # Remove pixel position embedding
             self.pixel_position(pixel_pos_binary)
 

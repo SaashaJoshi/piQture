@@ -143,7 +143,7 @@ class TestFRQI:
                 "quantum_image_processing.data_encoder.image_representations.frqi.FRQI.circuit",
                 new_callable=lambda: mock_circuit,
             ):
-                frqi_object.pixel_value(pixel)
+                frqi_object.pixel_value(pixel_pos=pixel)
                 assert mock_circuit == test_circuit
 
     # pylint: disable=too-many-arguments

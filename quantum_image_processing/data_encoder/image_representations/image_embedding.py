@@ -2,6 +2,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 import math
+import numpy as np
 
 
 class ImageEmbedding(ABC):
@@ -17,17 +18,20 @@ class ImageEmbedding(ABC):
             img_dims, tuple
         ):
             raise TypeError("Input img_dims must be of the type tuple[int, ...].")
+        self.validate_image_dimensions(img_dims)
 
         if not isinstance(pixel_vals, list):
             raise TypeError("Input pixel_vals must be of the type list.")
+        pixel_vals = np.array(pixel_vals)
 
-        if len(pixel_vals) != math.prod(img_dims):
+        # pixel_vals can be a multi-dimensional list.
+        if len(pixel_vals.flatten()) != math.prod(img_dims):
             raise ValueError(
                 f"No. of pixel values {len(pixel_vals)} must be equal to "
                 f"the product of image dimensions {math.prod(img_dims)}."
             )
 
-        for val in pixel_vals:
+        for val in pixel_vals.flatten():
             if val < 0 or val > 255:
                 raise ValueError(
                     "Pixel values cannot be less than 0 or greater than 255."
@@ -35,6 +39,19 @@ class ImageEmbedding(ABC):
 
         self.img_dims = img_dims
         self.pixel_vals = pixel_vals
+
+    def validate_image_dimensions(self, img_dims):
+        """
+        Validates img_dims input.
+
+        Here, checks for square images. This
+        function can be overriden.
+        """
+        if len(set(img_dims)) > 1:
+            raise ValueError(
+                f"{self.__class__.__name__} supports square images only. "
+                f"Input img_dims must have same dimensions."
+            )
 
     @abstractmethod
     def pixel_position(self, pixel_pos_binary: str):
@@ -47,11 +64,8 @@ class ImageEmbedding(ABC):
         """
 
     @abstractmethod
-    def pixel_value(self, pixel_pos: int):
+    def pixel_value(self, *args, **kwargs):
         """
         Embeds pixel or color values on the qubits.
 
-        Args:
-            pixel_pos (int): takes as an input
-            the pixel position.
         """
