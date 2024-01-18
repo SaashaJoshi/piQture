@@ -3,13 +3,7 @@ from __future__ import annotations
 import math
 import numpy as np
 from qiskit.circuit import QuantumCircuit
-
-# from quantum_image_processing.data_encoder.image_representations.image_embedding import (
-#     ImageEmbedding,
-# )
 from quantum_image_processing.data_encoder.image_representations.neqr import NEQR
-
-# from quantum_image_processing.mixin.image_embedding_mixin import ImageMixin
 
 
 class INEQR(NEQR):
@@ -34,15 +28,12 @@ class INEQR(NEQR):
         max_color_intensity: int = 255,
     ):
         NEQR.__init__(self, img_dims, pixel_vals)
-
-        if len(set(img_dims)) > 2:
-            raise ValueError(
-                f"{self.__class__.__name__} supports 2-dimensional images only. "
-            )
+        self.validate_image_dimensions(img_dims)
+        self.img_dims = img_dims
 
         # Determine number of qubits for position embedding
-        self.x_coord = int(math.log(img_dims[0], 2))
-        self.y_coord = int(math.log(img_dims[1], 2))
+        self.x_coord = int(math.log(img_dims[1], 2))
+        self.y_coord = int(math.log(img_dims[0], 2))
         self.feature_dim = self.x_coord + self.y_coord
 
         # Number of qubits to encode color byte
@@ -56,16 +47,26 @@ class INEQR(NEQR):
         # INEQR circuit
         self._circuit = QuantumCircuit(self.feature_dim + self.color_qubits)
         self.qr = self._circuit.qubits
-        print(f"Total qubits: {self.feature_dim + self.color_qubits}")
 
     @property
     def circuit(self):
         """Returns INEQR circuit."""
         return self._circuit
 
-    def validate_square_images(self):
+    def validate_image_dimensions(self, img_dims):
         """Override existing method in ABC."""
         # Override validation of square images
+
+        # Checks for 2-D images
+        if len(set(img_dims)) > 2:
+            raise ValueError(
+                f"{self.__class__.__name__} supports 2-dimensional images only."
+            )
+
+        # Checks for img_dims as powers of 2.
+        for dim in img_dims:
+            if math.ceil(math.log(dim, 2)) != math.floor(math.log(dim, 2)):
+                raise ValueError("Image dimensions must be powers of 2.")
 
     def ineqr(self) -> QuantumCircuit:
         """

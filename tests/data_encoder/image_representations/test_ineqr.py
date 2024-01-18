@@ -4,71 +4,151 @@ import math
 from unittest import mock
 import numpy as np
 import pytest
-# from pytest import raises
+from pytest import raises
 from qiskit.circuit import QuantumCircuit
 from quantum_image_processing.data_encoder.image_representations.ineqr import INEQR
 
 MAX_COLOR_INTENSITY = 255
+COLOR_QUBITS = int(np.ceil(math.log(MAX_COLOR_INTENSITY, 2)))
 
 
-@pytest.fixture(name="ineqr_pixel_value")
-def ineqr_pixel_value_fixture():
-    """Fixture for embedding pixel values."""
+@pytest.fixture
+def circuit_2_2():
+    """Circuit fixture for img_dims (2, 2)"""
+    circuit = QuantumCircuit(2 + COLOR_QUBITS)
+    circuit.h(range(2))
+    # Pixel vals = [[40, 128], [65, 2]]
+    # Pixel-00
+    circuit.x([0, 1])
+    circuit.mct(control_qubits=list(range(2)), target_qubit=2 + 2)
+    circuit.mct(control_qubits=list(range(2)), target_qubit=2 + 4)
+    circuit.x([0, 1])
+    # Pixel-01
+    circuit.x(0)
+    circuit.mct(control_qubits=list(range(2)), target_qubit=2)
+    circuit.x(0)
+    # Pixel-10
+    circuit.x(1)
+    circuit.mct(control_qubits=list(range(2)), target_qubit=2 + 1)
+    circuit.mct(control_qubits=list(range(2)), target_qubit=2 + 7)
+    circuit.x(1)
+    # Pixel-11
+    circuit.mct(control_qubits=list(range(2)), target_qubit=2 + 6)
 
-    def _circuit(img_dims, pixel_val, color_qubits):
-        feature_dim = int(math.log(img_dims[1], 2)) + int(math.log(img_dims[0], 2))
-        pixel_val_bin = f"{int(pixel_val):0>8b}"
-        test_circuit = QuantumCircuit(feature_dim + color_qubits)
+    return circuit
 
-        # Add gates to test_circuit
-        for index, color in enumerate(pixel_val_bin):
-            if color == "1":
-                test_circuit.mct(list(range(feature_dim)), feature_dim + index)
-        return test_circuit
 
-    return _circuit
+@pytest.fixture
+def circuit_2_4():
+    """Circuit fixture for img_dims (2, 4)"""
+    circuit = QuantumCircuit(3 + COLOR_QUBITS)
+    circuit.h(range(3))
+    # Pixel vals = [[128, 64, 1, 2], [0, 0, 0, 1]]
+    # Pixel-000
+    circuit.x([0, 1, 2])
+    circuit.mct(control_qubits=list(range(3)), target_qubit=3)
+    circuit.x([0, 1, 2])
+    # Pixel-001
+    circuit.x([0, 1])
+    circuit.mct(control_qubits=list(range(3)), target_qubit=3 + 1)
+    circuit.x([0, 1])
+    # Pixel-010
+    circuit.x([0, 2])
+    circuit.mct(control_qubits=list(range(3)), target_qubit=3 + 7)
+    circuit.x([0, 2])
+    # Pixel-011
+    circuit.x(0)
+    circuit.mct(control_qubits=list(range(3)), target_qubit=3 + 6)
+    circuit.x(0)
+    # Pixel-100
+    circuit.x([1, 2])
+    circuit.x([1, 2])
+    # Pixel-101
+    circuit.x(1)
+    circuit.x(1)
+    # Pixel-110
+    circuit.x(2)
+    circuit.x(2)
+    # Pixel-111
+    circuit.mct(control_qubits=list(range(3)), target_qubit=3 + 7)
+
+    return circuit
 
 
 class TestINEQR:
     """Tests for FRQI image representation class"""
 
-    @staticmethod
-    def setup_mock_circuit(img_dims, max_color_intensity):
-        """Setups params for mock circuit."""
-        color_qubits = int(np.ceil(math.log(max_color_intensity, 2)))
-        feature_dims = int(math.log(img_dims[1], 2)) + int(math.log(img_dims[0], 2))
-        mock_circuit = QuantumCircuit(feature_dims + color_qubits)
-
-        return mock_circuit, feature_dims, color_qubits
-
     @pytest.mark.parametrize(
-        "img_dims, pixel_vals, max_color_intensity",
-        [((2, 4), [list(range(251, 255)), list(range(251, 255))], MAX_COLOR_INTENSITY)],
+        "img_dims, pixel_vals",
+        [((2, 4), [list(range(251, 255)), list(range(251, 255))])],
     )
-    def test_circuit_property(self, img_dims, pixel_vals, max_color_intensity):
+    def test_circuit_property(self, img_dims, pixel_vals):
         """Tests the INEQR circuits initialization."""
-        color_qubits = int(np.ceil(math.log(max_color_intensity, 2)))
+
         feature_dims = int(math.log(img_dims[1], 2)) + int(math.log(img_dims[0], 2))
-        test_circuit = QuantumCircuit(feature_dims + color_qubits)
+        test_circuit = QuantumCircuit(feature_dims + COLOR_QUBITS)
         assert INEQR(img_dims, pixel_vals).circuit == test_circuit
 
     @pytest.mark.parametrize(
+        "img_dims, pixel_vals",
+        [((2, 4, 5), [list(range(251, 255)), list(range(251, 255))])],
+    )
+    def test_2d_image(self, img_dims, pixel_vals):
+        """Tests if images are 2-dimensional"""
+        with raises(ValueError, match=r"(.*) supports 2-dimensional images only."):
+            _ = INEQR(img_dims, pixel_vals)
+
+    @pytest.mark.parametrize(
+        "img_dims, pixel_vals",
+        [((3, 7), [list(range(251, 255)), list(range(251, 255))])],
+    )
+    def test_img_dim_power_of_2(self, img_dims, pixel_vals):
+        """Tests if image dimensions are powers of 2."""
+        with raises(ValueError, match="Image dimensions must be powers of 2."):
+            _ = INEQR(img_dims, pixel_vals)
+
+    @pytest.mark.parametrize(
         "img_dims, pixel_vals, max_color_intensity",
-        [((2, 4), [list(range(251, 255)), list(range(251, 255))], MAX_COLOR_INTENSITY)],
+        [
+            ((2, 4), [list(range(251, 255)), list(range(251, 255))], 257),
+            ((2, 4), [list(range(251, 255)), list(range(251, 255))], -10),
+        ],
+    )
+    def test_max_color_intensity(self, img_dims, pixel_vals, max_color_intensity):
+        """Tests value of maximum color intensity."""
+        with raises(
+            ValueError,
+            match=r"Maximum color intensity cannot be less than \d or greater than \d.",
+        ):
+            _ = INEQR(img_dims, pixel_vals, max_color_intensity)
+
+    @pytest.mark.parametrize(
+        "img_dims, pixel_vals",
+        [((2, 4), [[128, 64, 1, 2], [0, 0, 0, 1]])],
     )
     def test_pixel_value(
-        self, img_dims, pixel_vals, max_color_intensity, ineqr_pixel_value
+        self,
+        img_dims,
+        pixel_vals,
     ):
         """Tests the circuit received after pixel value embedding."""
-        ineqr_object = INEQR(img_dims, pixel_vals, max_color_intensity)
-        mock_circuit, _, color_qubits = self.setup_mock_circuit(
-            img_dims, max_color_intensity
-        )
+        ineqr_object = INEQR(img_dims, pixel_vals)
+        feature_dims = int(math.log(img_dims[1], 2)) + int(math.log(img_dims[0], 2))
+
+        mock_circuit = QuantumCircuit(feature_dims + COLOR_QUBITS)
+        test_circuit = QuantumCircuit(feature_dims + COLOR_QUBITS)
 
         for _, y_val in enumerate(pixel_vals):
             for _, x_val in enumerate(y_val):
                 mock_circuit.clear()
-                test_circuit = ineqr_pixel_value(img_dims, x_val, color_qubits)
+                test_circuit.clear()
+
+                pixel_val_bin = f"{int(x_val):0>8b}"
+                for index, val in enumerate(pixel_val_bin):
+                    if val == "1":
+                        test_circuit.mct(
+                            control_qubits=list(range(3)), target_qubit=3 + index
+                        )
 
                 with mock.patch(
                     "quantum_image_processing.data_encoder.image_representations."
@@ -79,46 +159,22 @@ class TestINEQR:
                     assert mock_circuit == test_circuit
 
     @pytest.mark.parametrize(
-        "img_dims, pixel_vals, max_color_intensity",
-        [((2, 4), [list(range(1, 5)), list(range(1, 5))], MAX_COLOR_INTENSITY)],
+        "img_dims, pixel_vals, resulting_circuit",
+        [
+            ((2, 4), [[128, 64, 1, 2], [0, 0, 0, 1]], "circuit_2_4"),
+            ((2, 2), [[40, 128], [65, 2]], "circuit_2_2"),
+        ],
     )
-    def test_ineqr(
-        self,
-        img_dims,
-        pixel_vals,
-        max_color_intensity,
-        circuit_pixel_position,
-        ineqr_pixel_value,
-    ):
-        # pylint: disable=too-many-arguments
+    def test_ineqr(self, request, img_dims, pixel_vals, resulting_circuit):
         """Tests the final INEQR circuit."""
-        ineqr_object = INEQR(img_dims, pixel_vals, max_color_intensity)
-        mock_circuit, feature_dims, color_qubits = self.setup_mock_circuit(
-            img_dims, max_color_intensity
-        )
+        ineqr_object = INEQR(img_dims, pixel_vals)
+        feature_dims = int(math.log(img_dims[1], 2)) + int(math.log(img_dims[0], 2))
+        mock_circuit = QuantumCircuit(feature_dims + COLOR_QUBITS)
 
-        test_circuit = QuantumCircuit(feature_dims + color_qubits)
-        test_circuit.h(list(range(feature_dims)))
-        for y_index, y_val in enumerate(pixel_vals):
-            for x_index, x_val in enumerate(y_val):
-                pixel_pos_binary = (
-                    f"{y_index:0>{int(math.log(img_dims[1], 2))}b}"
-                    f"{x_index:0>{int(math.log(img_dims[0], 2))}b}"
-                )
-                mock_circuit.clear()
-                test_circuit.compose(
-                    circuit_pixel_position(img_dims, pixel_pos_binary), inplace=True
-                )
-                test_circuit.compose(
-                    ineqr_pixel_value(img_dims, x_val, color_qubits), inplace=True
-                )
-                test_circuit.compose(
-                    circuit_pixel_position(img_dims, pixel_pos_binary), inplace=True
-                )
-
+        resulting_circuit = request.getfixturevalue(resulting_circuit)
         with mock.patch(
             "quantum_image_processing.data_encoder.image_representations.ineqr.INEQR.circuit",
             new_callable=lambda: mock_circuit,
         ):
             ineqr_object.ineqr()
-            assert mock_circuit == test_circuit
+            assert mock_circuit == resulting_circuit
