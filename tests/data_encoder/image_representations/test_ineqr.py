@@ -108,21 +108,6 @@ class TestINEQR:
             _ = INEQR(img_dims, pixel_vals)
 
     @pytest.mark.parametrize(
-        "img_dims, pixel_vals, max_color_intensity",
-        [
-            ((2, 4), [list(range(251, 255)), list(range(251, 255))], 257),
-            ((2, 4), [list(range(251, 255)), list(range(251, 255))], -10),
-        ],
-    )
-    def test_max_color_intensity(self, img_dims, pixel_vals, max_color_intensity):
-        """Tests value of maximum color intensity."""
-        with raises(
-            ValueError,
-            match=r"Maximum color intensity cannot be less than \d or greater than \d.",
-        ):
-            _ = INEQR(img_dims, pixel_vals, max_color_intensity)
-
-    @pytest.mark.parametrize(
         "img_dims, pixel_vals",
         [((2, 4), [[128, 64, 1, 2], [0, 0, 0, 1]])],
     )

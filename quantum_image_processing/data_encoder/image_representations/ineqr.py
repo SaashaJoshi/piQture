@@ -1,7 +1,6 @@
 """Improved Novel Enhanced Quantum Representation (INEQR) of digital images"""
 from __future__ import annotations
 import math
-import numpy as np
 from qiskit.circuit import QuantumCircuit
 from quantum_image_processing.data_encoder.image_representations.neqr import NEQR
 
@@ -27,7 +26,7 @@ class INEQR(NEQR):
         pixel_vals: list,
         max_color_intensity: int = 255,
     ):
-        NEQR.__init__(self, img_dims, pixel_vals)
+        NEQR.__init__(self, img_dims, pixel_vals, max_color_intensity)
         self.validate_image_dimensions(img_dims)
         self.img_dims = img_dims
 
@@ -35,14 +34,6 @@ class INEQR(NEQR):
         self.x_coord = int(math.log(img_dims[1], 2))
         self.y_coord = int(math.log(img_dims[0], 2))
         self.feature_dim = self.x_coord + self.y_coord
-
-        # Number of qubits to encode color byte
-        if max_color_intensity < 0 or max_color_intensity > 255:
-            raise ValueError(
-                "Maximum color intensity cannot be less than 0 or greater than 255."
-            )
-        self.max_color_intensity = max_color_intensity + 1
-        self.color_qubits = int(np.ceil(math.log(self.max_color_intensity, 2)))
 
         # INEQR circuit
         self._circuit = QuantumCircuit(self.feature_dim + self.color_qubits)
