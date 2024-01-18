@@ -18,11 +18,11 @@ class ImageEmbedding(ABC):
             img_dims, tuple
         ):
             raise TypeError("Input img_dims must be of the type tuple[int, ...].")
+        self.validate_image_dimensions(img_dims)
 
         if not isinstance(pixel_vals, list):
             raise TypeError("Input pixel_vals must be of the type list.")
         pixel_vals = np.array(pixel_vals)
-        print(pixel_vals)
 
         # pixel_vals can be a multi-dimensional list.
         if len(pixel_vals.flatten()) != math.prod(img_dims):
@@ -40,14 +40,14 @@ class ImageEmbedding(ABC):
         self.img_dims = img_dims
         self.pixel_vals = pixel_vals
 
-    def validate_image_dimensions(self):
+    def validate_image_dimensions(self, img_dims):
         """
         Validates img_dims input.
 
         Here, checks for square images. This
         function can be overriden.
         """
-        if len(set(self.img_dims)) > 1:
+        if len(set(img_dims)) > 1:
             raise ValueError(
                 f"{self.__class__.__name__} supports square images only. "
                 f"Input img_dims must have same dimensions."

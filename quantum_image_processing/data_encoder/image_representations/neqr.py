@@ -19,7 +19,6 @@ class NEQR(ImageEmbedding, ImageMixin):
         max_color_intensity: int = 255,
     ):
         ImageEmbedding.__init__(self, img_dims, pixel_vals)
-        self.validate_image_dimensions()
 
         if max_color_intensity < 0 or max_color_intensity > 255:
             raise ValueError(
