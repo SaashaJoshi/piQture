@@ -19,7 +19,7 @@ class NEQR(ImageEmbedding, ImageMixin):
         max_color_intensity: int = 255,
     ):
         ImageEmbedding.__init__(self, img_dims, pixel_vals)
-        self.validate_square_images()
+        self.validate_image_dimensions()
 
         if max_color_intensity < 0 or max_color_intensity > 255:
             raise ValueError(
@@ -49,9 +49,7 @@ class NEQR(ImageEmbedding, ImageMixin):
         """
         Embeds pixel (color) values in a circuit
         """
-        print("IN the pixel_val method.")
         color_byte = kwargs.get("color_byte")
-        print(color_byte)
         control_qubits = list(range(self.feature_dim))
         for index, color in enumerate(color_byte):
             if color == "1":
