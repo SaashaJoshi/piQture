@@ -39,8 +39,8 @@ def circuit_2_2():
 
 
 @pytest.fixture
-def circuit_2_4():
-    """Circuit fixture for img_dims (2, 4)"""
+def circuit_4_2():
+    """Circuit fixture for img_dims (4, 2)"""
     circuit = QuantumCircuit(3 + COLOR_QUBITS)
     circuit.h(range(3))
     # Pixel vals = [[128, 64, 1, 2], [0, 0, 0, 1]]
@@ -109,7 +109,7 @@ class TestINEQR:
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals",
-        [((2, 4), [[128, 64, 1, 2], [0, 0, 0, 1]])],
+        [((4, 2), [[128, 64, 1, 2], [0, 0, 0, 1]])],
     )
     def test_pixel_value(
         self,
@@ -146,7 +146,8 @@ class TestINEQR:
     @pytest.mark.parametrize(
         "img_dims, pixel_vals, resulting_circuit",
         [
-            ((2, 4), [[128, 64, 1, 2], [0, 0, 0, 1]], "circuit_2_4"),
+            ((4, 2), [[128, 64, 1, 2], [0, 0, 0, 1]], "circuit_4_2"),
+            ((2, 4), [[128, 64], [1, 2], [0, 0], [0, 1]], "circuit_4_2"),
             ((2, 2), [[40, 128], [65, 2]], "circuit_2_2"),
         ],
     )

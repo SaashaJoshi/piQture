@@ -31,8 +31,8 @@ class INEQR(NEQR):
         self.img_dims = img_dims
 
         # Determine number of qubits for position embedding
-        self.x_coord = int(math.log(img_dims[1], 2))
-        self.y_coord = int(math.log(img_dims[0], 2))
+        self.x_coord = int(math.log(img_dims[0], 2))
+        self.y_coord = int(math.log(img_dims[1], 2))
         self.feature_dim = self.x_coord + self.y_coord
 
         # INEQR circuit
