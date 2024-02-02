@@ -132,3 +132,10 @@ dmypy.json
 
 .xml
 .iml
+
+# Mlflow
+mlruns/
+mlartifacts/
+outputs/
+mlruns.db
+**/basic_auth.db
