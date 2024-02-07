@@ -127,7 +127,7 @@ if __name__ == "__main__":
         mlflow.log_param("Test Score", test_score)
 
         # Save the quantum circuit structure as an artifact
-        estimator_qcnn.circuit.draw("mpl", filename="../scripts/estimator_qcnn_circuit.png")
+        estimator_qcnn.circuit.draw("mpl", filename="../mlflow_scripts/estimator_qcnn_circuit.png")
         mlflow.log_artifact('estimator_qcnn_circuit.png')
         mlflow.pyfunc.save_model(path="..", python_model=classifier)
 
