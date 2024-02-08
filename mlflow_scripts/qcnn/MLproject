@@ -1,7 +1,7 @@
 name: MLflow Workflow
 
-python_env: ../.github/workflows/python-package.yml
+python_env: python_env.yaml
 
 entry_points:
   main:
-    command: "python ../scripts/qcnn_estimator_script.py"
+    command: "python qcnn_estimator_script.py"
