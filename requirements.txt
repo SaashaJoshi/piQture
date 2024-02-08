@@ -8,4 +8,4 @@ setuptools==69.0.3
 torch==2.2.0
 torchvision==0.17.0
 mlflow==2.10.1
-pytest=8.0.0
+pytest==8.0.0
