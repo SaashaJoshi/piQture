@@ -5,6 +5,6 @@ qiskit_algorithms==0.2.2
 qiskit_ibmq_provider==0.20.2
 qiskit_machine_learning==0.7.1
 setuptools==69.0.3
-torch==1.13.1
-torchvision==0.14.1
+torch==2.2.0
+torchvision==0.17.0
 mlflow==2.10.1
