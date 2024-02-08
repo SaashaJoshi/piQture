@@ -1,16 +1,16 @@
+"""MLflow script for running a QCNN model."""
+
+import math
 import mlflow
 import numpy as np
 import matplotlib.pyplot as plt
+# from qiskit_aer import AerSimulator
 from qiskit_ibm_provider import IBMProvider
 from qiskit.quantum_info import SparsePauliOp
-from qiskit_aer import AerSimulator
-from qiskit.primitives import BackendEstimator
-from qiskit.visualization import circuit_drawer
+# from qiskit.primitives import BackendEstimator
 from qiskit_machine_learning.neural_networks.estimator_qnn import EstimatorQNN
 from qiskit_machine_learning.algorithms.classifiers import NeuralNetworkClassifier
 from qiskit_algorithms.optimizers.cobyla import COBYLA
-from qiskit_algorithms.utils import algorithm_globals
-from IPython.display import clear_output
 from quantum_image_processing.data_loader.mnist_data_loader import load_mnist_data
 from quantum_image_processing.data_encoder.angle_encoder import angle_encoding
 from quantum_image_processing.neural_networks.layers import (
@@ -27,7 +27,8 @@ mlflow.set_tracking_uri("http://127.0.0.1:5000")
 mlflow.set_experiment("qcnn_estimator")
 
 
-def callback_graph(weights, obj_func_eval):
+def callback_graph(_, obj_func_eval):
+    """Appends losses after each epoch to a list."""
     # clear_output(wait=False)
     objective_func_vals.append(obj_func_eval)
 
@@ -35,7 +36,6 @@ def callback_graph(weights, obj_func_eval):
 if __name__ == "__main__":
 
     with mlflow.start_run():
-        seed = 100
         # Load data
         _, __, train, test = load_mnist_data()
         train_data = iter(train)
@@ -47,7 +47,7 @@ if __name__ == "__main__":
         # print("Length of data:", len(train_img), len(train_labels))
 
         train_labels = np.array(train_labels)
-        for i in range(len(train_labels)):
+        for i, _ in enumerate(train_labels):
             if train_labels[i] == 1:
                 train_labels[i] = -1
             elif train_labels[i] == 7:
@@ -60,9 +60,11 @@ if __name__ == "__main__":
         # ??
 
         # Build QCNN
-        img_dim = 4
-        qcnn_circ = QCNN(num_qubits=img_dim)
-        mlflow.log_param("num_qubits", img_dim)
+        img_dim = (2, 2)
+        num_qubits = int(math.prod(img_dim))
+        qcnn_circ = QCNN(num_qubits)
+        mlflow.log_param("image dimensions", img_dim)
+        mlflow.log_param("num_qubits", num_qubits)
         mlflow.log_param("initial qcnn circuit data", qcnn_circ.circuit.data)
 
         # Data Embedding - Angle Embedding/Encoding
@@ -81,7 +83,7 @@ if __name__ == "__main__":
             [
                 (QuantumConvolutionalLayer, convolutional_params),
                 (QuantumPoolingLayer2, {}),
-                (FullyConnectedLayer, {})
+                (FullyConnectedLayer, {}),
             ]
         )
         final_circuit = embedding.compose(qcnn_circuit, qubits=range(img_dim))
@@ -93,15 +95,17 @@ if __name__ == "__main__":
         # IBMProvider.save_account()
         provider = IBMProvider()
         # provider = IBMProvider('pinq-quebec-hub/ecole-dhiver/qml-workshop')
-        ibm_simulator = provider.get_backend('ibmq_qasm_simulator')
-        estimator = BackendEstimator(backend=ibm_simulator, options=options)
+        # ibm_simulator = provider.get_backend('ibmq_qasm_simulator')
+        # estimator = BackendEstimator(backend=ibm_simulator, options=options)
         estimator_qcnn = EstimatorQNN(
-            estimator=estimator,
+            # estimator=estimator,
             circuit=final_circuit,
             observables=observable,
             input_params=feature_params.params,
             weight_params=qcnn_circuit.parameters,
         )
+        estimator_qcnn.circuit.draw("mpl")
+        plt.savefig("estimator_qcnn_circuit.png")
         mlflow.log_param("input_params", estimator_qcnn.input_params)
         mlflow.log_param("weight_params", estimator_qcnn.weight_params)
 
@@ -119,16 +123,17 @@ if __name__ == "__main__":
         objective_func_vals = []
         classifier.fit(train_img, train_labels)
         train_score = classifier.score(train_img, train_labels)
-        mlflow.log_param("Train Score", train_score)
-        mlflow.log_param("Loss", objective_func_vals)
+        mlflow.log_metric("Train Score", train_score)
+
+        for index, loss in enumerate(objective_func_vals):
+            mlflow.log_metric(f"Loss at epoch {index}", loss)
 
         y_predict = classifier.predict(test_img)
         test_score = classifier.score(test_img, test_label)
-        mlflow.log_param("Test Score", test_score)
+        mlflow.log_metric("Test Score", test_score)
 
         # Save the quantum circuit structure as an artifact
-        estimator_qcnn.circuit.draw("mpl", filename="../mlflow_scripts/estimator_qcnn_circuit.png")
-        mlflow.log_artifact('estimator_qcnn_circuit.png')
+        mlflow.log_artifact("estimator_qcnn_circuit.png")
         mlflow.pyfunc.save_model(path="..", python_model=classifier)
 
         plt.title("Objective function value against iteration")
