@@ -1,6 +1,5 @@
 ipython==8.12.3
 matplotlib==3.7.4
-qiskit==0.39.5
 qiskit==0.44
 qiskit_ibmq_provider==0.20.2
 qiskit_machine_learning==0.7.0
