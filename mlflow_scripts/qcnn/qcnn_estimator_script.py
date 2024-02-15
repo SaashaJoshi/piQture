@@ -4,9 +4,11 @@ import math
 import mlflow
 import numpy as np
 import matplotlib.pyplot as plt
+
 # from qiskit_aer import AerSimulator
 from qiskit_ibm_provider import IBMProvider
 from qiskit.quantum_info import SparsePauliOp
+
 # from qiskit.primitives import BackendEstimator
 from qiskit_machine_learning.neural_networks.estimator_qnn import EstimatorQNN
 from qiskit_machine_learning.algorithms.classifiers import NeuralNetworkClassifier
@@ -19,6 +21,7 @@ from quantum_image_processing.neural_networks.layers import (
     FullyConnectedLayer,
 )
 from quantum_image_processing.neural_networks import QCNN
+from mlflow_scripts.py_wrapper import QuantumModel
 
 global objective_func_vals
 
@@ -86,7 +89,7 @@ if __name__ == "__main__":
                 (FullyConnectedLayer, {}),
             ]
         )
-        final_circuit = embedding.compose(qcnn_circuit, qubits=range(img_dim))
+        final_circuit = embedding.compose(qcnn_circuit, qubits=range(num_qubits))
         observable = SparsePauliOp(["IZIZ"])
         mlflow.log_param("final qcnn circuit data", final_circuit.data)
         mlflow.log_param("Observable", observable)
@@ -124,20 +127,33 @@ if __name__ == "__main__":
         classifier.fit(train_img, train_labels)
         train_score = classifier.score(train_img, train_labels)
         mlflow.log_metric("Train Score", train_score)
+        mlflow.log_param("Training Loss", objective_func_vals)
 
-        for index, loss in enumerate(objective_func_vals):
-            mlflow.log_metric(f"Loss at epoch {index}", loss)
-
-        y_predict = classifier.predict(test_img)
-        test_score = classifier.score(test_img, test_label)
-        mlflow.log_metric("Test Score", test_score)
+        # Save model
+        python_classifier = QuantumModel(classifier)
+        # classifier.save(file_name="qcnn_model.pkl")
+        # classifier.save(file_name="qcnn_model.json")
 
         # Save the quantum circuit structure as an artifact
         mlflow.log_artifact("estimator_qcnn_circuit.png")
-        mlflow.pyfunc.save_model(path="..", python_model=classifier)
+        mlflow.pyfunc.save_model(
+            path="qcnn_trained_model", python_model=python_classifier
+        )
+        mlflow.pyfunc.log_model(
+            "model",
+            python_model=python_classifier,
+            artifacts={"model_path": "qcnn_trained_model"},
+        )
 
-        plt.title("Objective function value against iteration")
-        plt.xlabel("Iteration")
-        plt.ylabel("Objective function value")
-        plt.plot(range(len(objective_func_vals)), objective_func_vals)
-        plt.show()
+        # Predictions from trained model
+        loaded_model = mlflow.pyfunc.load_model("qcnn_trained_model")
+        y_predict = loaded_model.predict(test_img)
+        mlflow.log_param("Prediction", y_predict)
+        test_score = loaded_model.score(test_img, test_label)
+        mlflow.log_metric("Test Score", test_score)
+
+        # plt.title("Objective function value against iteration")
+        # plt.xlabel("Iteration")
+        # plt.ylabel("Objective function value")
+        # plt.plot(range(len(objective_func_vals)), objective_func_vals)
+        # plt.show()
