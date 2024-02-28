@@ -1,4 +1,5 @@
 """Data Loader for MNIST images"""
+
 import torch.utils.data
 import torchvision
 from torchvision import datasets

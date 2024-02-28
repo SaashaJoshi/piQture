@@ -1,4 +1,5 @@
 """Unit test for INEQR class"""
+
 from __future__ import annotations
 import math
 from unittest import mock

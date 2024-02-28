@@ -1,4 +1,5 @@
 """Tests for Quantum Convolutional Layer"""
+
 from __future__ import annotations
 import re
 from unittest import mock

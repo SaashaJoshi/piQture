@@ -1,4 +1,5 @@
 """Quantum Image Processing setup file."""
+
 from setuptools import setup
 
 setup(

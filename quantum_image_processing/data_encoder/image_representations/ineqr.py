@@ -1,4 +1,5 @@
 """Improved Novel Enhanced Quantum Representation (INEQR) of digital images"""
+
 from __future__ import annotations
 import math
 from qiskit.circuit import QuantumCircuit

@@ -1,4 +1,5 @@
 """Quantum Fully Connected Layer Structure"""
+
 from __future__ import annotations
 from qiskit.circuit import QuantumCircuit
 from quantum_image_processing.neural_networks.layers.base_layer import BaseLayer
@@ -33,7 +34,6 @@ class FullyConnectedLayer(BaseLayer):
             qubits are used to create the FC layer.
         """
         BaseLayer.__init__(self, num_qubits, circuit, unmeasured_bits)
-        print(self.unmeasured_bits)
 
     def build_layer(self) -> tuple[QuantumCircuit, list]:
         """

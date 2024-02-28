@@ -1,4 +1,5 @@
 """Quantum Convolutional Neural Network"""
+
 from __future__ import annotations
 from typing import Callable
 from qiskit.circuit import QuantumCircuit
