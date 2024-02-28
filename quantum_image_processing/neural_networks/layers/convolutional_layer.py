@@ -72,7 +72,6 @@ class QuantumConvolutionalLayer(BaseLayer):
             mera_args["complex_structure"] = False
 
         self.mera_args = mera_args
-        print(self.mera_args)
 
     def build_layer(self) -> tuple[QuantumCircuit, list]:
         """
