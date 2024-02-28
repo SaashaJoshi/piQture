@@ -1,4 +1,5 @@
 """Flexible Representation of Quantum Images (FRQI)"""
+
 from __future__ import annotations
 import math
 import numpy as np

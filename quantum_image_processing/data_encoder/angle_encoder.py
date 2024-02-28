@@ -1,4 +1,5 @@
 """Angle Encoder"""
+
 from qiskit.circuit import QuantumCircuit, ParameterVector
 
 

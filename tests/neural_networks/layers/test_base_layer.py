@@ -1,4 +1,5 @@
 """Tests for Base Layer abstract class"""
+
 from __future__ import annotations
 import pytest
 from pytest import raises

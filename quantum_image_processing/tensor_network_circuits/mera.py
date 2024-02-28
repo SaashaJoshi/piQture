@@ -1,4 +1,5 @@
 """Multiscale Entanglement Renormalization Ansatz (MERA) Tensor Network"""
+
 from __future__ import annotations
 import uuid
 from typing import Callable, Optional

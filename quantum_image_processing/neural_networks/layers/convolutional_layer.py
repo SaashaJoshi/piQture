@@ -1,4 +1,5 @@
 """Quantum Convolutional Layer Structure"""
+
 from __future__ import annotations
 from typing import Optional
 from qiskit.circuit import QuantumCircuit

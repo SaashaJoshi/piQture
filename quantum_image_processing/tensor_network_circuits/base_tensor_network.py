@@ -1,4 +1,5 @@
 """Base Tensor Network Circuit"""
+
 from __future__ import annotations
 from abc import ABC
 from qiskit.circuit import QuantumCircuit

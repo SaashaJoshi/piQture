@@ -1,4 +1,5 @@
 """Unit test for FRQI class"""
+
 from __future__ import annotations
 import re
 import math

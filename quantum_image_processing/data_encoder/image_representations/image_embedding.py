@@ -1,4 +1,5 @@
 """Abstract Base Class for Image Embedding"""
+
 from __future__ import annotations
 from abc import ABC, abstractmethod
 import math

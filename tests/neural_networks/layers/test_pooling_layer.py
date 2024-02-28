@@ -1,4 +1,5 @@
 """Tests for Quantum Pooling Layer classes"""
+
 from __future__ import annotations
 import pytest
 from pytest import raises
