@@ -9,11 +9,15 @@
 # that they have been altered from the originals.
 
 """
-Data Loader (module: quantum_image_processing.data_loader)
+Tensor Network Quantum Circuits (module: piqture.models.tensor_network_circuits)
 """
 
-from .mnist_data_loader import load_mnist_data
+from .ttn import TTN
+from .mera import MERA
+from .mps import MPS
 
 __all__ = [
-    "load_mnist_data",
+    "TTN",
+    "MERA",
+    "MPS",
 ]

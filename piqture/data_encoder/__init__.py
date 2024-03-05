@@ -9,7 +9,7 @@
 # that they have been altered from the originals.
 
 """
-Data Encoders (module: quantum_image_processing.data_encoder)
+Data Encoders (module: piqture.data_encoder)
 """
 
 from .angle_encoder import angle_encoding

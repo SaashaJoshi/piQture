@@ -13,7 +13,7 @@
 from __future__ import annotations
 import numpy as np
 from qiskit.circuit import QuantumCircuit, ParameterVector, Parameter
-from quantum_image_processing.gates.unitary_block import UnitaryBlock
+from piqture.gates.unitary_block import UnitaryBlock
 
 
 class TwoQubitUnitary(UnitaryBlock):

@@ -14,7 +14,7 @@ from __future__ import annotations
 import pytest
 from pytest import raises
 from qiskit.circuit import QuantumCircuit
-from quantum_image_processing.neural_networks.layers import (
+from piqture.neural_networks.layers import (
     QuantumPoolingLayer2,
     QuantumPoolingLayer3,
 )

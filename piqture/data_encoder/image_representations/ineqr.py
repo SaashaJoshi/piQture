@@ -13,7 +13,7 @@
 from __future__ import annotations
 import math
 from qiskit.circuit import QuantumCircuit
-from quantum_image_processing.data_encoder.image_representations.neqr import NEQR
+from piqture.data_encoder.image_representations.neqr import NEQR
 
 
 class INEQR(NEQR):

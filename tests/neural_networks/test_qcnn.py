@@ -16,8 +16,8 @@ from unittest import mock
 import pytest
 from pytest import raises
 from qiskit.circuit import QuantumCircuit
-from quantum_image_processing.neural_networks import QCNN
-from quantum_image_processing.neural_networks.layers import (
+from piqture.neural_networks import QCNN
+from piqture.neural_networks.layers import (
     QuantumConvolutionalLayer,
     QuantumPoolingLayer2,
     QuantumPoolingLayer3,
@@ -114,7 +114,7 @@ class TestQCNN:
     def test_sequence(self, num_qubits, operations):
         """Tests the sequence method of QCNN class."""
         with mock.patch.multiple(
-            "quantum_image_processing.neural_networks.layers",
+            "piqture.neural_networks.layers",
             QuantumConvolutionalLayer=mock.DEFAULT,
             QuantumPoolingLayer2=mock.DEFAULT,
             QuantumPoolingLayer3=mock.DEFAULT,

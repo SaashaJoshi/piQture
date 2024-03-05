@@ -9,14 +9,7 @@
 # that they have been altered from the originals.
 
 """
-Gate implementations, including unitary gates and their alternative parameterization.
-(module: quantum_image_processing.gates)
+Quantum Variational Classifiers, including kernel estimator, and
+data re-uploader.
+(module: piqture.models.variational_classifiers)
 """
-
-from .unitary_block import UnitaryBlock
-from .two_qubit_unitary import TwoQubitUnitary
-
-__all__ = [
-    "UnitaryBlock",
-    "TwoQubitUnitary",
-]
