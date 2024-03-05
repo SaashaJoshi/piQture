@@ -17,7 +17,7 @@ from unittest import mock
 import numpy as np
 import pytest
 from pytest import raises
-from qiskit.circuit import QuantumCircuit
+from qiskit.circuit import QuantumCircuit, ParameterVector
 from quantum_image_processing.data_encoder.image_representations.frqi import FRQI
 
 PIXEL_POS_BINARY2 = ["00", "01", "10", "11"]
@@ -73,6 +73,15 @@ class TestFRQI:
         [((2, 2), tuple(range(4))), ((2, 2), {1.0, 2.35, 4.5, 8.9})],
     )
     def test_abc_type_pixel_vals(self, img_dims, pixel_vals):
+        """Tests the type of pixel_vals input."""
+        with raises(TypeError, match=r"Input pixel_vals must be of the type list."):
+            _ = FRQI(img_dims, pixel_vals)
+
+    @pytest.mark.parametrize(
+        "img_dims, pixel_vals",
+        [((4, 4), None), ((2, 2), None)],
+    )
+    def test_abc_none_pixel_vals(self, img_dims, pixel_vals):
         """Tests the type of pixel_vals input."""
         with raises(TypeError, match=r"Input pixel_vals must be of the type list."):
             _ = FRQI(img_dims, pixel_vals)

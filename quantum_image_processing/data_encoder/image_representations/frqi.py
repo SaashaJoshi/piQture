@@ -25,7 +25,7 @@ class FRQI(ImageEmbedding, ImageMixin):
     Represents images in FRQI representation format
     """
 
-    def __init__(self, img_dims: tuple[int, int], pixel_vals: list):
+    def __init__(self, img_dims: tuple[int, int], pixel_vals: list = None):
         ImageEmbedding.__init__(self, img_dims, pixel_vals)
 
         # feature_dim = no. of qubits for pixel position embedding
