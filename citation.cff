@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Joshi"
+  given-names: "Saasha"
+  orcid: "https://orcid.org/0000-0001-9928-9796"
+title: "piQture: A QML Pipeline for Image Processing"
+version: 0.1.0
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.1234
+    description: piQture v0.1.0
+date-released: 2024-01-01
+url: "https://github.com/SaashaJoshi/quantum-image-processing"
+
+# preferred-citation:
+#   type: article
+#   authors:
+#     - family-names: "Joshi"
+#       given-names: "Saasha"
+#       orcid: "https://orcid.org/0000-0001-9928-9796"
+#   doi: ""
+#   journal: ""
+#   month: 9
+#   start: 1 # First page number
+#   end: 10 # Last page number
+#   title: ""
+#   issue: 1
+#   volume: 1
+#   year: 2021
