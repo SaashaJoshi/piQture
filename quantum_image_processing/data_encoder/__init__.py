@@ -12,8 +12,8 @@
 Data Encoders (module: quantum_image_processing.data_encoder)
 """
 
-from .angle_encoder import angle_encoding
+from .angle_encoding import AngleEncoding
 
 __all__ = [
-    "angle_encoding",
+    "AngleEncoding",
 ]
