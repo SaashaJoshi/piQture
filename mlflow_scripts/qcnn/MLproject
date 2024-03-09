@@ -1,7 +1,29 @@
-name: MLflow Workflow
+name: MLflow Workflow for QCNN
 
 python_env: python_env.yaml
 
 entry_points:
-  main:
-    command: "python qcnn_estimator_script.py"
+    # Data Processing Stage
+    # load_mnist_data:
+    #     command: "python qcnn_estimator_script.py"
+
+    # Quantum Circuit Preparation Stage
+    data_embedding:
+        parameters:
+
+        command: "python "
+
+    model_selection:
+        command: "python"
+
+    # Quantum Circuit Processing Stage
+    model_training_and_evaluation:
+        command: "python"
+
+    # Model Performance
+    model_performance:
+        command: "python"
+
+    # Driver
+    main:
+        command: "python"
