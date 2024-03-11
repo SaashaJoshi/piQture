@@ -17,7 +17,7 @@ import numpy as np
 import pytest
 from pytest import raises
 from qiskit.circuit import QuantumCircuit
-from quantum_image_processing.data_encoder.image_representations.ineqr import INEQR
+from piqture.data_encoder.image_representations.ineqr import INEQR
 
 MAX_COLOR_INTENSITY = 255
 COLOR_QUBITS = int(np.ceil(math.log(MAX_COLOR_INTENSITY, 2)))
@@ -147,7 +147,7 @@ class TestINEQR:
                         )
 
                 with mock.patch(
-                    "quantum_image_processing.data_encoder.image_representations."
+                    "piqture.data_encoder.image_representations."
                     "ineqr.INEQR.circuit",
                     new_callable=lambda: mock_circuit,
                 ):
@@ -170,7 +170,7 @@ class TestINEQR:
 
         resulting_circuit = request.getfixturevalue(resulting_circuit)
         with mock.patch(
-            "quantum_image_processing.data_encoder.image_representations.ineqr.INEQR.circuit",
+            "piqture.data_encoder.image_representations.ineqr.INEQR.circuit",
             new_callable=lambda: mock_circuit,
         ):
             ineqr_object.ineqr()

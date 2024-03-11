@@ -9,11 +9,7 @@
 # that they have been altered from the originals.
 
 """
-Data Encoders (module: quantum_image_processing.data_encoder)
+Quantum Variational Classifiers, including kernel estimator, and
+data re-uploader.
+(module: piqture.models.variational_classifiers)
 """
-
-from .angle_encoding import AngleEncoding
-
-__all__ = [
-    "AngleEncoding",
-]

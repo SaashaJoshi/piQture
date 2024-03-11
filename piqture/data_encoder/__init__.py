@@ -9,11 +9,11 @@
 # that they have been altered from the originals.
 
 """
-Data Loader (module: quantum_image_processing.data_loader)
+Data Encoders (module: piqture.data_encoder)
 """
 
-from .mnist_data_loader import load_mnist_data
+from .angle_encoding import AngleEncoding
 
 __all__ = [
-    "load_mnist_data",
+    "AngleEncoding",
 ]
