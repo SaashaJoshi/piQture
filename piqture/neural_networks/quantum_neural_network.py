@@ -39,9 +39,10 @@ class QuantumNeuralNetwork(ABC):
             raise ValueError("The input num_qubits must be at least 1.")
 
         self.num_qubits = num_qubits
-        self._circuit = QuantumCircuit(self.num_qubits, self.num_qubits)
+        self._circuit = QuantumCircuit(self.num_qubits)
         self.qr = self._circuit.qubits
-        self.cr = self._circuit.clbits
+        # Remove clbits as Sampler cannot take clbits.
+        # self.cr = self._circuit.clbits
 
     @property
     def circuit(self):

@@ -44,7 +44,7 @@ class TestQCNN:
     def test_circuit_property(self, num_qubits):
         """Tests the QCNN circuit."""
         qcnn = QCNN(num_qubits)
-        assert qcnn.circuit == QuantumCircuit(num_qubits, num_qubits)
+        assert qcnn.circuit == QuantumCircuit(num_qubits)
 
     @pytest.mark.parametrize(
         "num_qubits, operations",
