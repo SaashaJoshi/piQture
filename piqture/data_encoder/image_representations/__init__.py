@@ -7,3 +7,15 @@
 # Any modifications or derivative works of this code must retain this
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
+
+"""
+Quantum Image Representations (module: piqture.data_encoder.image_representations)
+"""
+
+from .frqi import FRQI
+from .neqr import NEQR
+
+__all__ = [
+    "FRQI",
+    "NEQR",
+]
