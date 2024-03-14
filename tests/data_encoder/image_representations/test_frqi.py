@@ -1,4 +1,15 @@
+# (C) Copyright SaashaJoshi 2024.
+#
+# This code is licensed under the Apache License, Version 2.0. You may
+# obtain a copy of this license in the LICENSE.txt file in the root directory
+# of this source tree or at http://www.apache.org/licenses/LICENSE-2.0.
+#
+# Any modifications or derivative works of this code must retain this
+# copyright notice, and modified files need to carry a notice indicating
+# that they have been altered from the originals.
+
 """Unit test for FRQI class"""
+
 from __future__ import annotations
 import re
 import math
@@ -7,7 +18,7 @@ import numpy as np
 import pytest
 from pytest import raises
 from qiskit.circuit import QuantumCircuit
-from quantum_image_processing.data_encoder.image_representations.frqi import FRQI
+from piqture.data_encoder.image_representations.frqi import FRQI
 
 PIXEL_POS_BINARY2 = ["00", "01", "10", "11"]
 
@@ -120,7 +131,7 @@ class TestFRQI:
             test_circuit = circuit_pixel_position(img_dims, pixel_pos_binary)
 
             with mock.patch(
-                "quantum_image_processing.data_encoder.image_representations.frqi.FRQI.circuit",
+                "piqture.data_encoder.image_representations.frqi.FRQI.circuit",
                 new_callable=lambda: mock_circuit,
             ):
                 frqi_object.pixel_position(pixel_pos_binary)
@@ -140,7 +151,7 @@ class TestFRQI:
             test_circuit = circuit_pixel_value(img_dims, pixel_vals, pixel)
 
             with mock.patch(
-                "quantum_image_processing.data_encoder.image_representations.frqi.FRQI.circuit",
+                "piqture.data_encoder.image_representations.frqi.FRQI.circuit",
                 new_callable=lambda: mock_circuit,
             ):
                 frqi_object.pixel_value(pixel_pos=pixel)
@@ -177,7 +188,7 @@ class TestFRQI:
             )
 
         with mock.patch(
-            "quantum_image_processing.data_encoder.image_representations.frqi.FRQI.circuit",
+            "piqture.data_encoder.image_representations.frqi.FRQI.circuit",
             new_callable=lambda: mock_circuit,
         ):
             frqi_object.frqi()

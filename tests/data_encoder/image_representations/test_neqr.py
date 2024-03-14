@@ -1,4 +1,15 @@
+# (C) Copyright SaashaJoshi 2024.
+#
+# This code is licensed under the Apache License, Version 2.0. You may
+# obtain a copy of this license in the LICENSE.txt file in the root directory
+# of this source tree or at http://www.apache.org/licenses/LICENSE-2.0.
+#
+# Any modifications or derivative works of this code must retain this
+# copyright notice, and modified files need to carry a notice indicating
+# that they have been altered from the originals.
+
 """Unit test for NEQR class"""
+
 from __future__ import annotations
 import math
 from unittest import mock
@@ -6,7 +17,7 @@ import numpy as np
 import pytest
 from pytest import raises
 from qiskit.circuit import QuantumCircuit
-from quantum_image_processing.data_encoder.image_representations.neqr import NEQR
+from piqture.data_encoder.image_representations.neqr import NEQR
 
 MAX_COLOR_INTENSITY = 255
 
@@ -73,7 +84,7 @@ class TestNEQR:
             test_circuit = neqr_pixel_value(img_dims, pixel_val, color_qubits)
 
             with mock.patch(
-                "quantum_image_processing.data_encoder.image_representations.neqr.NEQR.circuit",
+                "piqture.data_encoder.image_representations.neqr.NEQR.circuit",
                 new_callable=lambda: mock_circuit,
             ):
                 neqr_object.pixel_value(color_byte=f"{pixel_val:0>8b}")
@@ -113,7 +124,7 @@ class TestNEQR:
             )
 
         with mock.patch(
-            "quantum_image_processing.data_encoder.image_representations.neqr.NEQR.circuit",
+            "piqture.data_encoder.image_representations.neqr.NEQR.circuit",
             new_callable=lambda: mock_circuit,
         ):
             neqr_object.neqr()

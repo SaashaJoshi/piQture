@@ -7,3 +7,9 @@
 # Any modifications or derivative works of this code must retain this
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
+
+"""
+Quantum Variational Classifiers, including kernel estimator, and
+data re-uploader.
+(module: piqture.models.variational_classifiers)
+"""

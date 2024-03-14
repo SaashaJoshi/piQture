@@ -1,4 +1,15 @@
+# (C) Copyright SaashaJoshi 2024.
+#
+# This code is licensed under the Apache License, Version 2.0. You may
+# obtain a copy of this license in the LICENSE.txt file in the root directory
+# of this source tree or at http://www.apache.org/licenses/LICENSE-2.0.
+#
+# Any modifications or derivative works of this code must retain this
+# copyright notice, and modified files need to carry a notice indicating
+# that they have been altered from the originals.
+
 """Unit test for INEQR class"""
+
 from __future__ import annotations
 import math
 from unittest import mock
@@ -6,7 +17,7 @@ import numpy as np
 import pytest
 from pytest import raises
 from qiskit.circuit import QuantumCircuit
-from quantum_image_processing.data_encoder.image_representations.ineqr import INEQR
+from piqture.data_encoder.image_representations.ineqr import INEQR
 
 MAX_COLOR_INTENSITY = 255
 COLOR_QUBITS = int(np.ceil(math.log(MAX_COLOR_INTENSITY, 2)))
@@ -136,7 +147,7 @@ class TestINEQR:
                         )
 
                 with mock.patch(
-                    "quantum_image_processing.data_encoder.image_representations."
+                    "piqture.data_encoder.image_representations."
                     "ineqr.INEQR.circuit",
                     new_callable=lambda: mock_circuit,
                 ):
@@ -159,7 +170,7 @@ class TestINEQR:
 
         resulting_circuit = request.getfixturevalue(resulting_circuit)
         with mock.patch(
-            "quantum_image_processing.data_encoder.image_representations.ineqr.INEQR.circuit",
+            "piqture.data_encoder.image_representations.ineqr.INEQR.circuit",
             new_callable=lambda: mock_circuit,
         ):
             ineqr_object.ineqr()
