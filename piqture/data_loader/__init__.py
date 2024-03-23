@@ -7,3 +7,13 @@
 # Any modifications or derivative works of this code must retain this
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
+
+"""
+Data Loader (module: piqture.data_loader)
+"""
+
+from .mnist_data_loader import load_mnist_data
+
+__all__ = [
+    "load_mnist_data",
+]

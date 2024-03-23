@@ -1,4 +1,4 @@
-# Quantum Image Processing Library (QIPL)
+# _**piQture**_: QML Library for Image Processing
 
 <p align="center">
     <img src="graphics/QuIPL-svg.svg" alt="QIPL-logo" width="350"/>
@@ -10,23 +10,30 @@
     <img alt="Static Badge" src="https://img.shields.io/badge/coverage-91%25-yellow?link=https%3A%2F%2Fgithub.com%2FSaashaJoshi%2Fquantum-image-processing%2Factions">
 </p>
 
-**Quantum Image Processing Library (QIPL)** is an open-source Python toolkit designed to simplify the development, execution, and training of Quantum Machine Learning (QML) models tailored for image processing tasks. This library seamlessly integrates with the Qiskit SDK, providing a convenient and user-friendly workflow for leveraging the potential of quantum computing for advanced image processing.
+_**piQture**_ is an open-source Python toolkit designed to simplify the development, execution, and training of Quantum Machine Learning (QML) models tailored for image processing tasks. This library seamlessly integrates with the Qiskit SDK, providing a convenient and user-friendly workflow for leveraging the potential of quantum computing for advanced image processing.
 
 ## Installation
+
+How to import piQture?
+
+```python
+import piqture as pq
+```
 
 ### Dependencies
 
 ### Getting Started
 
+
 Let's build a Quantum Convolutional Neural Network (QCNN) with Convolutional, Pooling, and Fully-Connected layers.
 
 ```python
-from quantum_image_processing.neural_networks.layers import (
+from piqture.neural_networks.layers import (
     QuantumConvolutionalLayer,
     QuantumPoolingLayer2,
     FullyConnectedLayer,
 )
-from quantum_image_processing.neural_networks import QCNN
+from piqture.neural_networks import QCNN
 
 # Initializing a QCNN circuit with given image dimensions.
 image_dimensions = 4

@@ -1,4 +1,15 @@
+# (C) Copyright SaashaJoshi 2024.
+#
+# This code is licensed under the Apache License, Version 2.0. You may
+# obtain a copy of this license in the LICENSE.txt file in the root directory
+# of this source tree or at http://www.apache.org/licenses/LICENSE-2.0.
+#
+# Any modifications or derivative works of this code must retain this
+# copyright notice, and modified files need to carry a notice indicating
+# that they have been altered from the originals.
+
 """Unit test for FRQI class"""
+
 from __future__ import annotations
 import re
 import math
@@ -7,7 +18,7 @@ import numpy as np
 import pytest
 from pytest import raises
 from qiskit.circuit import QuantumCircuit
-from quantum_image_processing.data_encoder.image_representations.frqi import FRQI
+from piqture.data_encoder.image_representations.frqi import FRQI
 
 PIXEL_POS_BINARY2 = ["00", "01", "10", "11"]
 
@@ -66,7 +77,7 @@ class TestFRQI:
         with raises(TypeError, match=r"Input pixel_vals must be of the type list."):
             _ = FRQI(img_dims, pixel_vals)
 
-    @pytest.mark.parametrize("img_dims, pixel_vals", [((2, 3), [range(6)])])
+    @pytest.mark.parametrize("img_dims, pixel_vals", [((2, 3), list(range(6)))])
     def test_init_square_images(self, img_dims, pixel_vals):
         """Tests if the input img_dims represents a square image."""
         with raises(
@@ -120,7 +131,7 @@ class TestFRQI:
             test_circuit = circuit_pixel_position(img_dims, pixel_pos_binary)
 
             with mock.patch(
-                "quantum_image_processing.data_encoder.image_representations.frqi.FRQI.circuit",
+                "piqture.data_encoder.image_representations.frqi.FRQI.circuit",
                 new_callable=lambda: mock_circuit,
             ):
                 frqi_object.pixel_position(pixel_pos_binary)
@@ -140,10 +151,10 @@ class TestFRQI:
             test_circuit = circuit_pixel_value(img_dims, pixel_vals, pixel)
 
             with mock.patch(
-                "quantum_image_processing.data_encoder.image_representations.frqi.FRQI.circuit",
+                "piqture.data_encoder.image_representations.frqi.FRQI.circuit",
                 new_callable=lambda: mock_circuit,
             ):
-                frqi_object.pixel_value(pixel)
+                frqi_object.pixel_value(pixel_pos=pixel)
                 assert mock_circuit == test_circuit
 
     # pylint: disable=too-many-arguments
@@ -177,7 +188,7 @@ class TestFRQI:
             )
 
         with mock.patch(
-            "quantum_image_processing.data_encoder.image_representations.frqi.FRQI.circuit",
+            "piqture.data_encoder.image_representations.frqi.FRQI.circuit",
             new_callable=lambda: mock_circuit,
         ):
             frqi_object.frqi()

@@ -1,11 +1,22 @@
+# (C) Copyright SaashaJoshi 2024.
+#
+# This code is licensed under the Apache License, Version 2.0. You may
+# obtain a copy of this license in the LICENSE.txt file in the root directory
+# of this source tree or at http://www.apache.org/licenses/LICENSE-2.0.
+#
+# Any modifications or derivative works of this code must retain this
+# copyright notice, and modified files need to carry a notice indicating
+# that they have been altered from the originals.
+
 """Unit test for TwoQubitUnitary class"""
+
 from __future__ import annotations
 import re
 from unittest import mock
 import pytest
 from pytest import raises
 from qiskit.circuit import ParameterVector
-from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
+from piqture.gates.two_qubit_unitary import TwoQubitUnitary
 
 
 class TestTwoQubitUnitary:
@@ -52,7 +63,7 @@ class TestTwoQubitUnitary:
     ):
         """Tests the complex simple parameterization method call."""
         with mock.patch(
-            "quantum_image_processing.gates.two_qubit_unitary.TwoQubitUnitary.real_simple_block",
+            "piqture.gates.two_qubit_unitary.TwoQubitUnitary.real_simple_block",
         ) as mock_real:
             _ = TwoQubitUnitary().simple_parameterization(
                 parameter_vector, complex_structure
@@ -67,7 +78,7 @@ class TestTwoQubitUnitary:
         # pylint: disable=line-too-long
         """Tests the complex simple parameterization method call."""
         with mock.patch(
-            "quantum_image_processing.gates.two_qubit_unitary.TwoQubitUnitary.complex_simple_block",
+            "piqture.gates.two_qubit_unitary.TwoQubitUnitary.complex_simple_block",
         ) as mock_complex:
             _ = TwoQubitUnitary().simple_parameterization(
                 parameter_vector, complex_structure
@@ -81,7 +92,7 @@ class TestTwoQubitUnitary:
     def test_real_general_parameterization(self, parameter_vector, complex_structure):
         """Tests the real general parameterization method call."""
         with mock.patch(
-            "quantum_image_processing.gates.two_qubit_unitary.TwoQubitUnitary.real_general_block",
+            "piqture.gates.two_qubit_unitary.TwoQubitUnitary.real_general_block",
         ) as mock_real:
             _ = TwoQubitUnitary().general_parameterization(
                 parameter_vector, complex_structure
@@ -98,7 +109,7 @@ class TestTwoQubitUnitary:
         # pylint: disable=line-too-long
         """Tests the complex general parameterization method call."""
         with mock.patch(
-            "quantum_image_processing.gates.two_qubit_unitary.TwoQubitUnitary.complex_general_block",
+            "piqture.gates.two_qubit_unitary.TwoQubitUnitary.complex_general_block",
         ) as mock_complex:
             _ = TwoQubitUnitary().general_parameterization(
                 parameter_vector, complex_structure

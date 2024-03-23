@@ -7,3 +7,10 @@
 # Any modifications or derivative works of this code must retain this
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
+
+"""Neural Network Structures"""
+
+from .quantum_neural_network import QuantumNeuralNetwork
+from .qcnn import QCNN
+
+__all__ = ["QuantumNeuralNetwork", "QCNN"]
