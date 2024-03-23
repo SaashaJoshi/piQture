@@ -70,11 +70,18 @@ class TestFRQI:
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals",
-        [((2, 2), [tuple(range(4))]), ((2, 2), [{1.0, 2.35, 4.5, 8.9}]), ((2, 2), {tuple(range(4))})],
+        [
+            ((2, 2), [tuple(range(4))]),
+            ((2, 2), [{1.0, 2.35, 4.5, 8.9}]),
+            ((2, 2), {tuple(range(4))}),
+        ],
     )
     def test_abc_type_pixel_vals(self, img_dims, pixel_vals):
         """Tests the type of pixel_vals input."""
-        with raises(TypeError, match=re.escape("Input pixel_vals must be of the type list[list].")):
+        with raises(
+            TypeError,
+            match=re.escape("Input pixel_vals must be of the type list[list]."),
+        ):
             _ = FRQI(img_dims, pixel_vals)
 
     @pytest.mark.parametrize("img_dims, pixel_vals", [((2, 3), [list(range(6))])])
@@ -93,8 +100,8 @@ class TestFRQI:
         with raises(
             ValueError,
             match=r"No. of pixels \(\[\d+\]\) "
-                r"in each pixel_lists in pixel_vals must be equal to the "
-                r"product of image dimensions \d."
+            r"in each pixel_lists in pixel_vals must be equal to the "
+            r"product of image dimensions \d.",
         ):
             _ = FRQI(img_dims, pixel_vals)
 
