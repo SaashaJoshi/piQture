@@ -38,8 +38,11 @@ class INEQR(NEQR):
         max_color_intensity: int = 255,
     ):
         NEQR.__init__(self, img_dims, pixel_vals, max_color_intensity)
-        self.validate_image_dimensions(img_dims)
-        self.img_dims = img_dims
+        # self.validate_image_dimensions(img_dims)
+        # self.img_dims = img_dims
+        #
+        # self.validate_number_pixels(img_dims, self.pixel_vals)
+        # self.pixel_vals = pixel_vals
 
         # Determine number of qubits for position embedding
         self.x_coord = int(math.log(img_dims[0], 2))

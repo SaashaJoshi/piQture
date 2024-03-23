@@ -120,6 +120,20 @@ class TestINEQR:
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals",
+        [((4, 2), [[list(range(250, 255)), list(range(251, 253))]])],
+    )
+    def test_number_pixels(self, img_dims, pixel_vals):
+        """Tests if the number of pixels is the same as the image dimension."""
+        with raises(
+            ValueError,
+            match=r"No. of pixels \(\[\d+\]\) "
+            r"in each pixel_lists in pixel_vals must be equal to the "
+            r"product of image dimensions \d.",
+        ):
+            _ = INEQR(img_dims, pixel_vals)
+
+    @pytest.mark.parametrize(
+        "img_dims, pixel_vals",
         [((4, 2), [[[128, 64, 1, 2], [0, 0, 0, 1]]])],
     )
     def test_pixel_value(

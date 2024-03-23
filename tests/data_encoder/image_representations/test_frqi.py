@@ -96,6 +96,7 @@ class TestFRQI:
 
     @pytest.mark.parametrize("img_dims, pixel_vals", [((2, 2), [[1, 2, 3]])])
     def test_init_len_pixel_values(self, img_dims, pixel_vals):
+        # pylint: disable=duplicate-code
         """Tests if the length of pixel_vals input is the same as the image dimension."""
         with raises(
             ValueError,
