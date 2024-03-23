@@ -34,7 +34,7 @@ class INEQR(NEQR):
     def __init__(
         self,
         img_dims: tuple[int, int],
-        pixel_vals: list[list],
+        pixel_vals: list[list[list]],
         max_color_intensity: int = 255,
     ):
         NEQR.__init__(self, img_dims, pixel_vals, max_color_intensity)
@@ -70,6 +70,20 @@ class INEQR(NEQR):
             if math.ceil(math.log(dim, 2)) != math.floor(math.log(dim, 2)):
                 raise ValueError("Image dimensions must be powers of 2.")
 
+    def validate_number_pixels(self, img_dims, pixel_vals):
+        """
+        Validates the number of pixels in pixel_lists
+        in pixel_vals input.
+        """
+        # INEQR supports multi-dimensional lists to adjust for
+        # unequal horizontal and vertical image dimensions.
+        if all(len(pixel_lists.flatten()) != math.prod(img_dims) for pixel_lists in pixel_vals):
+            raise ValueError(
+                f"No. of pixels ({[len(pixel_lists.flatten()) for pixel_lists in pixel_vals]}) "
+                f"in each pixel_lists in pixel_vals must be equal to the "
+                f"product of image dimensions {math.prod(img_dims)}."
+            )
+
     def ineqr(self) -> QuantumCircuit:
         """
         Builds the INEQR image representation on a circuit.
@@ -81,9 +95,9 @@ class INEQR(NEQR):
         for i in range(self.feature_dim):
             self.circuit.h(i)
 
-        for y_index, y_val in enumerate(self.pixel_vals):
+        for y_index, y_val in enumerate(self.pixel_vals[0]):
             for x_index, x_val in enumerate(y_val):
-                # print(y_val, x_val)
+                print(y_val, x_val)
                 pixel_pos_binary = (
                     f"{y_index:0>{self.y_coord}b}{x_index:0>{self.x_coord}b}"
                 )

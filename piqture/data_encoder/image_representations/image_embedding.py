@@ -40,7 +40,8 @@ class ImageEmbedding(ABC):
         pixel_vals = np.array(pixel_vals)
 
         self.colored = colored
-        self.validate_pixel_vals(img_dims, pixel_vals)
+        self.validate_number_pixel_lists(pixel_vals)
+        self.validate_number_pixels(img_dims, pixel_vals)
 
         for val in pixel_vals.flatten():
             if val < 0 or val > 255:
@@ -64,10 +65,10 @@ class ImageEmbedding(ABC):
                 f"Input img_dims must have same dimensions."
             )
 
-    def validate_pixel_vals(self, img_dims, pixel_vals):
+    def validate_number_pixel_lists(self, pixel_vals):
         """
-        Validates the pixel_vals input.
-        By default validates for grayscale images.
+        Validates the number of pixel_lists in
+        pixel_vals input.
         """
         if self.colored:
             if len(pixel_vals) != 3:
@@ -84,6 +85,12 @@ class ImageEmbedding(ABC):
                     f"No. of pixel_lists in pixel_vals must be 1."
                 )
 
+    @staticmethod
+    def validate_number_pixels(img_dims, pixel_vals):
+        """
+        Validates the number of pixels in pixel_lists
+        in pixel_vals input.
+        """
         if all(len(pixel_lists) != math.prod(img_dims) for pixel_lists in pixel_vals):
             raise ValueError(
                 f"No. of pixels ({[len(pixel_lists) for pixel_lists in pixel_vals]}) "
