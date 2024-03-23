@@ -45,7 +45,10 @@ class TestNEQR:
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals, max_color_intensity",
-        [((2, 2), list(range(251, 255)), 300), ((2, 2), list(range(251, 255)), -20)],
+        [
+            ((2, 2), [list(range(251, 255))], 300),
+            ((2, 2), [list(range(251, 255))], -20),
+        ],
     )
     def test_max_color_intensity(self, img_dims, pixel_vals, max_color_intensity):
         """Tests value of maximum color intensity."""
@@ -57,7 +60,7 @@ class TestNEQR:
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals, max_color_intensity",
-        [((2, 2), list(range(251, 255)), MAX_COLOR_INTENSITY)],
+        [((2, 2), [list(range(251, 255))], MAX_COLOR_INTENSITY)],
     )
     def test_circuit_property(self, img_dims, pixel_vals, max_color_intensity):
         """Tests the FRQI circuits initialization."""
@@ -69,7 +72,7 @@ class TestNEQR:
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals, max_color_intensity",
-        [((2, 2), list(range(235, 239)), MAX_COLOR_INTENSITY)],
+        [((2, 2), [list(range(235, 239))], MAX_COLOR_INTENSITY)],
     )
     def test_pixel_value(
         self, img_dims, pixel_vals, max_color_intensity, neqr_pixel_value
@@ -79,7 +82,7 @@ class TestNEQR:
         color_qubits = int(np.ceil(math.log(max_color_intensity, 2)))
         mock_circuit = QuantumCircuit(int(math.prod(img_dims)) + color_qubits)
 
-        for _, pixel_val in enumerate(pixel_vals):
+        for _, pixel_val in enumerate(pixel_vals[0]):
             mock_circuit.clear()
             test_circuit = neqr_pixel_value(img_dims, pixel_val, color_qubits)
 
@@ -93,7 +96,7 @@ class TestNEQR:
     # pylint: disable=too-many-arguments
     @pytest.mark.parametrize(
         "img_dims, pixel_vals, max_color_intensity",
-        [((2, 2), list(range(1, 5)), MAX_COLOR_INTENSITY)],
+        [((2, 2), [list(range(1, 5))], MAX_COLOR_INTENSITY)],
     )
     def test_neqr(
         self,
@@ -110,7 +113,7 @@ class TestNEQR:
 
         test_circuit = QuantumCircuit(int(math.prod(img_dims)) + color_qubits)
         test_circuit.h(list(range(int(np.sqrt(math.prod(img_dims))))))
-        for index, pixel_val in enumerate(pixel_vals):
+        for index, pixel_val in enumerate(pixel_vals[0]):
             pixel_pos_binary = f"{index:0>2b}"
             mock_circuit.clear()
             test_circuit.compose(

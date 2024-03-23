@@ -91,7 +91,7 @@ class TestINEQR:
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals",
-        [((2, 4), [list(range(251, 255)), list(range(251, 255))])],
+        [((2, 4), [[list(range(251, 255)), list(range(251, 255))]])],
     )
     def test_circuit_property(self, img_dims, pixel_vals):
         """Tests the INEQR circuits initialization."""
@@ -102,7 +102,7 @@ class TestINEQR:
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals",
-        [((2, 4, 5), [list(range(251, 255)), list(range(251, 255))])],
+        [((2, 4, 5), [[list(range(251, 255)), list(range(251, 255))]])],
     )
     def test_2d_image(self, img_dims, pixel_vals):
         """Tests if images are 2-dimensional"""
@@ -111,7 +111,7 @@ class TestINEQR:
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals",
-        [((3, 7), [list(range(251, 255)), list(range(251, 255))])],
+        [((3, 7), [[list(range(251, 255)), list(range(251, 255))]])],
     )
     def test_img_dim_power_of_2(self, img_dims, pixel_vals):
         """Tests if image dimensions are powers of 2."""
@@ -120,7 +120,21 @@ class TestINEQR:
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals",
-        [((4, 2), [[128, 64, 1, 2], [0, 0, 0, 1]])],
+        [((4, 2), [[list(range(250, 255)), list(range(251, 253))]])],
+    )
+    def test_number_pixels(self, img_dims, pixel_vals):
+        """Tests if the number of pixels is the same as the image dimension."""
+        with raises(
+            ValueError,
+            match=r"No. of pixels \(\[\d+\]\) "
+            r"in each pixel_lists in pixel_vals must be equal to the "
+            r"product of image dimensions \d.",
+        ):
+            _ = INEQR(img_dims, pixel_vals)
+
+    @pytest.mark.parametrize(
+        "img_dims, pixel_vals",
+        [((4, 2), [[[128, 64, 1, 2], [0, 0, 0, 1]]])],
     )
     def test_pixel_value(
         self,
@@ -134,7 +148,7 @@ class TestINEQR:
         mock_circuit = QuantumCircuit(feature_dims + COLOR_QUBITS)
         test_circuit = QuantumCircuit(feature_dims + COLOR_QUBITS)
 
-        for _, y_val in enumerate(pixel_vals):
+        for _, y_val in enumerate(pixel_vals[0]):
             for _, x_val in enumerate(y_val):
                 mock_circuit.clear()
                 test_circuit.clear()
@@ -147,8 +161,7 @@ class TestINEQR:
                         )
 
                 with mock.patch(
-                    "piqture.data_encoder.image_representations."
-                    "ineqr.INEQR.circuit",
+                    "piqture.data_encoder.image_representations.ineqr.INEQR.circuit",
                     new_callable=lambda: mock_circuit,
                 ):
                     ineqr_object.pixel_value(color_byte=f"{x_val:0>8b}")
@@ -157,9 +170,9 @@ class TestINEQR:
     @pytest.mark.parametrize(
         "img_dims, pixel_vals, resulting_circuit",
         [
-            ((4, 2), [[128, 64, 1, 2], [0, 0, 0, 1]], "circuit_4_2"),
-            ((2, 4), [[128, 64], [1, 2], [0, 0], [0, 1]], "circuit_4_2"),
-            ((2, 2), [[40, 128], [65, 2]], "circuit_2_2"),
+            ((4, 2), [[[128, 64, 1, 2], [0, 0, 0, 1]]], "circuit_4_2"),
+            ((2, 4), [[[128, 64], [1, 2], [0, 0], [0, 1]]], "circuit_4_2"),
+            ((2, 2), [[[40, 128], [65, 2]]], "circuit_2_2"),
         ],
     )
     def test_ineqr(self, request, img_dims, pixel_vals, resulting_circuit):
