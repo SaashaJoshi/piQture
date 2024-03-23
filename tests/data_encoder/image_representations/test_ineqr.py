@@ -147,7 +147,7 @@ class TestINEQR:
                         )
 
                 with mock.patch(
-                    "piqture.data_encoder.image_representations." "ineqr.INEQR.circuit",
+                    "piqture.data_encoder.image_representations.ineqr.INEQR.circuit",
                     new_callable=lambda: mock_circuit,
                 ):
                     ineqr_object.pixel_value(color_byte=f"{x_val:0>8b}")

@@ -70,14 +70,18 @@ class INEQR(NEQR):
             if math.ceil(math.log(dim, 2)) != math.floor(math.log(dim, 2)):
                 raise ValueError("Image dimensions must be powers of 2.")
 
-    def validate_number_pixels(self, img_dims, pixel_vals):
+    @staticmethod
+    def validate_number_pixels(img_dims, pixel_vals):
         """
         Validates the number of pixels in pixel_lists
         in pixel_vals input.
         """
         # INEQR supports multi-dimensional lists to adjust for
         # unequal horizontal and vertical image dimensions.
-        if all(len(pixel_lists.flatten()) != math.prod(img_dims) for pixel_lists in pixel_vals):
+        if all(
+            len(pixel_lists.flatten()) != math.prod(img_dims)
+            for pixel_lists in pixel_vals
+        ):
             raise ValueError(
                 f"No. of pixels ({[len(pixel_lists.flatten()) for pixel_lists in pixel_vals]}) "
                 f"in each pixel_lists in pixel_vals must be equal to the "
