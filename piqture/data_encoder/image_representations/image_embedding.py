@@ -24,14 +24,18 @@ class ImageEmbedding(ABC):
     - Pixel value (color) embedding
     """
 
-    def __init__(self, img_dims: tuple[int, ...], pixel_vals: list[list], colored: bool = False):
+    def __init__(
+        self, img_dims: tuple[int, ...], pixel_vals: list[list], colored: bool = False
+    ):
         if not all((isinstance(dims, int) for dims in img_dims)) or not isinstance(
             img_dims, tuple
         ):
             raise TypeError("Input img_dims must be of the type tuple[int, ...].")
         self.validate_image_dimensions(img_dims)
 
-        if not all(isinstance(pixels, list) for pixels in pixel_vals) or not isinstance(pixel_vals, list):
+        if not all(isinstance(pixels, list) for pixels in pixel_vals) or not isinstance(
+            pixel_vals, list
+        ):
             raise TypeError("Input pixel_vals must be of the type list[list].")
         pixel_vals = np.array(pixel_vals)
 
