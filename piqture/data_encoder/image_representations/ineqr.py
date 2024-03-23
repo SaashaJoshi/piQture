@@ -34,7 +34,7 @@ class INEQR(NEQR):
     def __init__(
         self,
         img_dims: tuple[int, int],
-        pixel_vals: list,
+        pixel_vals: list[list],
         max_color_intensity: int = 255,
     ):
         NEQR.__init__(self, img_dims, pixel_vals, max_color_intensity)
@@ -83,6 +83,7 @@ class INEQR(NEQR):
 
         for y_index, y_val in enumerate(self.pixel_vals):
             for x_index, x_val in enumerate(y_val):
+                # print(y_val, x_val)
                 pixel_pos_binary = (
                     f"{y_index:0>{self.y_coord}b}{x_index:0>{self.x_coord}b}"
                 )
