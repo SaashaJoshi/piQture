@@ -34,7 +34,7 @@ def neqr_pixel_value_fixture():
         # Add gates to test_circuit
         for index, color in enumerate(pixel_val_bin):
             if color == "1":
-                test_circuit.mct(list(range(feature_dim)), feature_dim + index)
+                test_circuit.mcx(list(range(feature_dim)), feature_dim + index)
         return test_circuit
 
     return _circuit

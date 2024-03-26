@@ -63,7 +63,7 @@ class NEQR(ImageEmbedding, ImageMixin):
         control_qubits = list(range(self.feature_dim))
         for index, color in enumerate(color_byte):
             if color == "1":
-                self.circuit.mct(
+                self.circuit.mcx(
                     control_qubits=control_qubits, target_qubit=self.feature_dim + index
                 )
 

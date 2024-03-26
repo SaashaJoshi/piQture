@@ -31,20 +31,20 @@ def circuit_2_2():
     # Pixel vals = [[40, 128], [65, 2]]
     # Pixel-00
     circuit.x([0, 1])
-    circuit.mct(control_qubits=list(range(2)), target_qubit=2 + 2)
-    circuit.mct(control_qubits=list(range(2)), target_qubit=2 + 4)
+    circuit.mcx(control_qubits=list(range(2)), target_qubit=2 + 2)
+    circuit.mcx(control_qubits=list(range(2)), target_qubit=2 + 4)
     circuit.x([0, 1])
     # Pixel-01
     circuit.x(0)
-    circuit.mct(control_qubits=list(range(2)), target_qubit=2)
+    circuit.mcx(control_qubits=list(range(2)), target_qubit=2)
     circuit.x(0)
     # Pixel-10
     circuit.x(1)
-    circuit.mct(control_qubits=list(range(2)), target_qubit=2 + 1)
-    circuit.mct(control_qubits=list(range(2)), target_qubit=2 + 7)
+    circuit.mcx(control_qubits=list(range(2)), target_qubit=2 + 1)
+    circuit.mcx(control_qubits=list(range(2)), target_qubit=2 + 7)
     circuit.x(1)
     # Pixel-11
-    circuit.mct(control_qubits=list(range(2)), target_qubit=2 + 6)
+    circuit.mcx(control_qubits=list(range(2)), target_qubit=2 + 6)
 
     return circuit
 
@@ -57,19 +57,19 @@ def circuit_4_2():
     # Pixel vals = [[128, 64, 1, 2], [0, 0, 0, 1]]
     # Pixel-000
     circuit.x([0, 1, 2])
-    circuit.mct(control_qubits=list(range(3)), target_qubit=3)
+    circuit.mcx(control_qubits=list(range(3)), target_qubit=3)
     circuit.x([0, 1, 2])
     # Pixel-001
     circuit.x([0, 1])
-    circuit.mct(control_qubits=list(range(3)), target_qubit=3 + 1)
+    circuit.mcx(control_qubits=list(range(3)), target_qubit=3 + 1)
     circuit.x([0, 1])
     # Pixel-010
     circuit.x([0, 2])
-    circuit.mct(control_qubits=list(range(3)), target_qubit=3 + 7)
+    circuit.mcx(control_qubits=list(range(3)), target_qubit=3 + 7)
     circuit.x([0, 2])
     # Pixel-011
     circuit.x(0)
-    circuit.mct(control_qubits=list(range(3)), target_qubit=3 + 6)
+    circuit.mcx(control_qubits=list(range(3)), target_qubit=3 + 6)
     circuit.x(0)
     # Pixel-100
     circuit.x([1, 2])
@@ -81,7 +81,7 @@ def circuit_4_2():
     circuit.x(2)
     circuit.x(2)
     # Pixel-111
-    circuit.mct(control_qubits=list(range(3)), target_qubit=3 + 7)
+    circuit.mcx(control_qubits=list(range(3)), target_qubit=3 + 7)
 
     return circuit
 
@@ -156,7 +156,7 @@ class TestINEQR:
                 pixel_val_bin = f"{int(x_val):0>8b}"
                 for index, val in enumerate(pixel_val_bin):
                     if val == "1":
-                        test_circuit.mct(
+                        test_circuit.mcx(
                             control_qubits=list(range(3)), target_qubit=3 + index
                         )
 
