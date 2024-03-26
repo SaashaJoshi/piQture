@@ -1,9 +1,9 @@
 ipython==8.12.3
 matplotlib==3.7.5
-qiskit==1.0.0
+qiskit==1.0.2
 qiskit_algorithms==0.3.0
 qiskit_ibm_runtime==0.22.0
-qiskit_ibmq_provider==0.19.2
+qiskit_ibm_provider==0.10.0
 qiskit_machine_learning==0.7.2
 setuptools==69.2.0
 torch==2.2.1
