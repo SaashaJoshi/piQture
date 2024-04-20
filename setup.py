@@ -29,6 +29,6 @@ setup(
     author_email="saashajoshi08@gmail.com",
     url="https://github.com/SaashaJoshi/piQture",
     packages=["piqture", "tests"],
-    python_requires=">=3.6",
+    python_requires=">=3.8",
     install_requires=install_requires,
 )
