@@ -46,6 +46,6 @@ jobs:
         python -m pytest --cov=quantum_image_processing --cov-report=html:.pytest_cache/coverage_report
 
     - name: Upload coverage to Coveralls
-        run: coveralls
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+      run: coveralls
+      env:
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
