@@ -43,7 +43,7 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
-        python -m pytest --cov=quantum_image_processing --cov-report=html:.pytest_cache/coverage_report
+        python -m pytest --cov=piqture --cov-report=html:.pytest_cache/coverage_report
 
     - name: Upload coverage to Coveralls
       run: coveralls
