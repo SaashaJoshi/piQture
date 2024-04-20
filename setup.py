@@ -8,16 +8,28 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-"""Quantum Image Processing setup file."""
+"""piQture setup file."""
 
 from setuptools import setup
+import re
+
+# Read the contents of requirements.txt
+with open("requirements.txt", "r") as reqs_file:
+    install_requires = reqs_file.read().splitlines()
+
+# Version
+with open("piqture/version.txt", "r") as version_file:
+    version = version_file.read().strip()
 
 setup(
     name="piqture",
-    version="0.1",
-    description="Quantum Image Processing",
+    version=version,
+    description="piQture: A QML library for Image Processing",
+    # long_description=README,
     author="Saasha Joshi",
     author_email="saashajoshi08@gmail.com",
-    url="https://github.com/SaashaJoshi/quantum-image-processing",
+    url="https://github.com/SaashaJoshi/piQture",
     packages=["piqture"],
+    python_requires=">=3.8",
+    install_requires=install_requires,
 )
