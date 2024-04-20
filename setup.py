@@ -13,11 +13,11 @@
 from setuptools import setup
 
 # Read the contents of requirements.txt
-with open("requirements.txt", "r") as reqs_file:
+with open("requirements.txt", "r", encoding="utf-8") as reqs_file:
     install_requires = reqs_file.read().splitlines()
 
 # Version
-with open("piqture/version.txt", "r") as version_file:
+with open("piqture/version.txt", "r", encoding="utf-8") as version_file:
     version = version_file.read().strip()
 
 setup(
