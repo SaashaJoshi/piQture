@@ -26,9 +26,6 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Coveralls GitHub Action
-      uses: coverallsapp/github-action@v2.2.3
-
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -47,3 +44,8 @@ jobs:
       run: |
         pytest
         python -m pytest --cov=quantum_image_processing --cov-report=html:.pytest_cache/coverage_report
+
+    - name: Upload coverage to Coveralls
+        run: coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
