@@ -9,13 +9,11 @@
 # that they have been altered from the originals.
 
 """
-Quantum Image Representations (module: quantum_image_processing.data_encoder.image_representations)
+Data Loader (module: piqture.data_loader)
 """
 
-from .frqi import FRQI
-from .neqr import NEQR
+from .mnist_data_loader import load_mnist_data
 
 __all__ = [
-    "FRQI",
-    "NEQR",
+    "load_mnist_data",
 ]

@@ -10,7 +10,7 @@
 
 """
 Gate implementations, including unitary gates and their alternative parameterization.
-(module: quantum_image_processing.gates)
+(module: piqture.gates)
 """
 
 from .unitary_block import UnitaryBlock

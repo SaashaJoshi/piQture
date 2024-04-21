@@ -9,15 +9,13 @@
 # that they have been altered from the originals.
 
 """
-Tensor Network Quantum Circuits (module: quantum_image_processing.models.tensor_network_circuits)
+Quantum Image Representations (module: piqture.data_encoder.image_representations)
 """
 
-from .ttn import TTN
-from .mera import MERA
-from .mps import MPS
+from .frqi import FRQI
+from .neqr import NEQR
 
 __all__ = [
-    "TTN",
-    "MERA",
-    "MPS",
+    "FRQI",
+    "NEQR",
 ]

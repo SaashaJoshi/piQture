@@ -13,7 +13,7 @@
 from __future__ import annotations
 import numpy as np
 from qiskit.circuit import QuantumCircuit, ParameterVector, Parameter
-from quantum_image_processing.gates.unitary_block import UnitaryBlock
+from piqture.gates.unitary_block import UnitaryBlock
 
 
 class TwoQubitUnitary(UnitaryBlock):
@@ -151,7 +151,7 @@ class TwoQubitUnitary(UnitaryBlock):
         block.rz(np.pi / 2, 0)
         block.rz(np.pi / 2, 1)
         block.ry(np.pi / 2, 1)
-        block.cnot(1, 0)
+        block.cx(1, 0)
 
         block.rz(parameter_vector[0], 0)
         block.ry(parameter_vector[1], 0)
@@ -161,7 +161,7 @@ class TwoQubitUnitary(UnitaryBlock):
         block.ry(parameter_vector[4], 1)
         block.rz(parameter_vector[5], 1)
 
-        block.cnot(1, 0)
+        block.cx(1, 0)
         block.ry(-np.pi / 2, 1)
         block.rz(-np.pi / 2, 0)
         block.rz(-np.pi / 2, 1)
@@ -195,14 +195,14 @@ class TwoQubitUnitary(UnitaryBlock):
         block.rz(parameter_vector[3], 1)
         block.ry(parameter_vector[4], 1)
         block.rz(parameter_vector[5] + np.pi / 2, 1)
-        block.cnot(1, 0)
+        block.cx(1, 0)
 
         block.rz((2 * parameter_vector[6]) - np.pi / 2, 0)
         block.ry(np.pi / 2 - (2 * parameter_vector[7]), 1)
-        block.cnot(0, 1)
+        block.cx(0, 1)
         block.ry((2 * parameter_vector[8]) - np.pi / 2, 1)
 
-        block.cnot(1, 0)
+        block.cx(1, 0)
         block.rz(parameter_vector[9], 1)
         block.ry(parameter_vector[10], 1)
         block.rz(parameter_vector[11], 1)

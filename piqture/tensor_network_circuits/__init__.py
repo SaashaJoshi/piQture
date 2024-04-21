@@ -9,7 +9,15 @@
 # that they have been altered from the originals.
 
 """
-Quantum Variational Classifiers, including kernel estimator, and
-data re-uploader.
-(module: quantum_image_processing.models.variational_classifiers)
+Tensor Network Quantum Circuits (module: piqture.models.tensor_network_circuits)
 """
+
+from .ttn import TTN
+from .mera import MERA
+from .mps import MPS
+
+__all__ = [
+    "TTN",
+    "MERA",
+    "MPS",
+]

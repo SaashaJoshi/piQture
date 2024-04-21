@@ -13,8 +13,8 @@
 from __future__ import annotations
 from typing import Optional
 from qiskit.circuit import QuantumCircuit
-from quantum_image_processing.neural_networks.layers.base_layer import BaseLayer
-from quantum_image_processing.tensor_network_circuits.mera import MERA
+from piqture.neural_networks.layers.base_layer import BaseLayer
+from piqture.tensor_network_circuits.mera import MERA
 
 
 class QuantumConvolutionalLayer(BaseLayer):
