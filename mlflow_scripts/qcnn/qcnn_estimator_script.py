@@ -13,14 +13,14 @@ from qiskit.quantum_info import SparsePauliOp
 from qiskit_machine_learning.neural_networks.estimator_qnn import EstimatorQNN
 from qiskit_machine_learning.algorithms.classifiers import NeuralNetworkClassifier
 from qiskit_algorithms.optimizers.cobyla import COBYLA
-from quantum_image_processing.data_loader.mnist_data_loader import load_mnist_data
-from quantum_image_processing.data_encoder.angle_encoder import angle_encoding
-from quantum_image_processing.neural_networks.layers import (
+from piqture.data_loader.mnist_data_loader import load_mnist_data
+from piqture.data_encoder.angle_encoding import AngleEncoding
+from piqture.neural_networks.layers import (
     QuantumConvolutionalLayer,
     QuantumPoolingLayer2,
     FullyConnectedLayer,
 )
-from quantum_image_processing.neural_networks import QCNN
+from piqture.neural_networks import QCNN
 from mlflow_scripts.py_wrapper import QuantumModel
 
 global objective_func_vals

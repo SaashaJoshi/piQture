@@ -2,9 +2,9 @@
 import math
 import click
 import mlflow
-from quantum_image_processing.data_encoder.angle_encoding import AngleEncoding
-from quantum_image_processing.neural_networks import QCNN
-from quantum_image_processing.neural_networks.layers import (
+from piqture.data_encoder.angle_encoding import AngleEncoding
+from piqture.neural_networks import QCNN
+from piqture.neural_networks.layers import (
     QuantumConvolutionalLayer,
     QuantumPoolingLayer2,
     FullyConnectedLayer,
