@@ -1,12 +1,14 @@
 name: MLflow Workflow
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
 
 jobs:
   mlflow:
 
     runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+
     strategy:
       fail-fast: false
       matrix:
@@ -27,3 +29,12 @@ jobs:
       - name: Run MLflow Script for QCNN
         run: |
           mlflow run scripts/qcnn_script.py
+
+#      - name: Log with MLflow and Register Model
+#        run: |
+#          mlflow run . --experiment-name=${{ secrets.MLFLOW_EXPERIMENT_NAME }} --no-conda
+#          mlflow models register -m "runs:/${{ github.sha }}/model" -n "your_model_name" -r "your_model_version" --experiment-name="${{ secrets.MLFLOW_EXPERIMENT_NAME }}" --no-conda
+#        env:
+#          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+#          MLFLOW_REGISTRY_URI: ${{ secrets.MLFLOW_REGISTRY_URI }}
+#          MLFLOW_EXPERIMENT_NAME: ${{ secrets.MLFLOW_EXPERIMENT_NAME }}
