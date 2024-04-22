@@ -12,19 +12,68 @@
 
 _**piQture**_ is an open-source Python toolkit designed to simplify the development, execution, and training of Quantum Machine Learning (QML) models tailored for image processing tasks. This library seamlessly integrates with the Qiskit SDK, providing a convenient and user-friendly workflow for leveraging the potential of quantum computing for advanced image processing.
 
-## Installation
 
-How to import piQture?
+## Getting Started
 
-```python
-import piqture as pq
+### Setup
+
+
+Begin by creating a new Python environment or activating an existing one for working with the `piQture` library. You set up a Python virtual environment `venv` or a Conda environment and use `pip` or `conda` to install the `piQture` package.
+
+Here's how you can create a conda environment and manage a Python environment:
+
+```bash
+    # Create a new conda environment
+    conda create -n piqture_environment python=3.x
+    
+    # Activate the conda environment
+    conda activate piqture_environment
 ```
+
+### Installation
+
+Once the Python environment is activated, the required `piQture` package can be installed using `pip`. You can install the latest version directly from PyPI.
+
+```bash
+    pip install piqture
+```
+
+To create a development environment, and install `piQture` from source, you can refer to section `Installation from Source`.
+
+
+### Installation from Source
+
+To set up a development environment and install `piQture` from source, follow these steps:
+
+1. Start by cloning the `piQture` repository from GitHub.
+
+```bash
+    # Clone the GitHub repository.
+    git clone https://github.com/SaashaJoshi/piQture.git
+```
+
+2. Activate the Python environment and navigate to the `piQture` repository directory. Then, inside the Python environment, install the required dependencies from the `requirements.txt` configuration file.
+
+```bash
+    # Install the required dependencies
+    pip install -r requirements.txt
+```
+
+3. Install `piQture` in editable mode to make changes to the source code.
+
+```bash
+    # Install from source in editable mode
+    pip install -e .
+```
+
+Your development environment is set up, and `piQture` is installed from source. You can now start making changes to the code, running tests, and contributing to the project as a developer.
+
 
 ### Dependencies
 
-### Getting Started
+TBA
 
-
+### First program with _piQture_
 Let's build a Quantum Convolutional Neural Network (QCNN) with Convolutional, Pooling, and Fully-Connected layers.
 
 ```python
