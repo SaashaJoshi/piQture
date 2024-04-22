@@ -1,13 +1,15 @@
 # _**piQture**_: QML Library for Image Processing
 
-<p align="center">
-    <img src="graphics/QuIPL-svg.svg" alt="QIPL-logo" width="350"/>
-</p>
-<p align="center">
-    <img alt="Static Badge" src="https://img.shields.io/badge/license-Apache_2.0-bright_green">
+[//]: # (<p align="center">)
+
+[//]: # (    <img src="graphics/QuIPL-svg.svg" alt="QIPL-logo" width="350"/>)
+
+[//]: # (</p>)
+<p>
+    <img alt="Static Badge" src="https://img.shields.io/badge/license-Apache_2.0-yellow?label=license&color=yellow&link=https%3A%2F%2Fgithub.com%2FSaashaJoshi%2FpiQture%2FLICENSE">
     <img alt="Static Badge" src="https://img.shields.io/badge/build_status-passing-blue?link=https%3A%2F%2Fgithub.com%2FSaashaJoshi%2Fquantum-image-processing%2Factions">
-    <img alt="Static Badge" src="https://img.shields.io/badge/release-0.0.0-orange?link=https%3A%2F%2Fgithub.com%2FSaashaJoshi%2Fquantum-image-processing%2Factions">
-    <img alt="Static Badge" src="https://img.shields.io/badge/coverage-91%25-yellow?link=https%3A%2F%2Fgithub.com%2FSaashaJoshi%2Fquantum-image-processing%2Factions">
+    <img alt="Static Badge" src="https://img.shields.io/badge/release-v0.1-orange?label=release&color=orange&link=https%3A%2F%2Fgithub.com%2FSaashaJoshi%2FpiQture%2Fpiqture%2Fversion.txt">
+    <a href='https://coveralls.io/github/SaashaJoshi/piQture?branch=main'><img src='https://coveralls.io/repos/github/SaashaJoshi/piQture/badge.svg?branch=main' alt='Coverage Status' /></a>
 </p>
 
 _**piQture**_ is an open-source Python toolkit designed to simplify the development, execution, and training of Quantum Machine Learning (QML) models tailored for image processing tasks. This library seamlessly integrates with the Qiskit SDK, providing a convenient and user-friendly workflow for leveraging the potential of quantum computing for advanced image processing.
@@ -24,10 +26,10 @@ Here's how you can create a conda environment and manage a Python environment:
 
 ```bash
     # Create a new conda environment
-    conda create -n piqture_environment python=3.x
+    conda create -n piqture_env python=3.x
     
     # Activate the conda environment
-    conda activate piqture_environment
+    conda activate piqture_env
 ```
 
 ### Installation
@@ -69,9 +71,6 @@ To set up a development environment and install `piQture` from source, follow th
 Your development environment is set up, and `piQture` is installed from source. You can now start making changes to the code, running tests, and contributing to the project as a developer.
 
 
-### Dependencies
-
-TBA
 
 ### First program with _piQture_
 Let's build a Quantum Convolutional Neural Network (QCNN) with Convolutional, Pooling, and Fully-Connected layers.
