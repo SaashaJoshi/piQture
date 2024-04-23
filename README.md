@@ -25,11 +25,11 @@ Begin by creating a new Python environment or activating an existing one for wor
 Here's how you can create a conda environment and manage a Python environment:
 
 ```bash
-    # Create a new conda environment
-    conda create -n piqture_env python=3.x
-    
-    # Activate the conda environment
-    conda activate piqture_env
+# Create a new conda environment
+conda create -n piqture_env python=3.x
+
+# Activate the conda environment
+conda activate piqture_env
 ```
 
 ### Installation
@@ -37,7 +37,7 @@ Here's how you can create a conda environment and manage a Python environment:
 Once the Python environment is activated, the required `piQture` package can be installed using `pip`. You can install the latest version directly from PyPI.
 
 ```bash
-    pip install piqture
+pip install piqture
 ```
 
 To create a development environment, and install `piQture` from source, you can refer to section `Installation from Source`.
@@ -50,22 +50,22 @@ To set up a development environment and install `piQture` from source, follow th
 1. Start by cloning the `piQture` repository from GitHub.
 
 ```bash
-    # Clone the GitHub repository.
-    git clone https://github.com/SaashaJoshi/piQture.git
+# Clone the GitHub repository.
+git clone https://github.com/SaashaJoshi/piQture.git
 ```
 
 2. Activate the Python environment and navigate to the `piQture` repository directory. Then, inside the Python environment, install the required dependencies from the `requirements.txt` configuration file.
 
 ```bash
-    # Install the required dependencies
-    pip install -r requirements.txt
+# Install the required dependencies
+pip install -r requirements.txt
 ```
 
 3. Install `piQture` in editable mode to make changes to the source code.
 
 ```bash
-    # Install from source in editable mode
-    pip install -e .
+# Install from source in editable mode
+pip install -e .
 ```
 
 Your development environment is set up, and `piQture` is installed from source. You can now start making changes to the code, running tests, and contributing to the project as a developer.
@@ -73,6 +73,34 @@ Your development environment is set up, and `piQture` is installed from source. 
 
 
 ### First program with _piQture_
+
+Let's build a Quantum Image Representation with the `Improved Novel Enhanced Quantum Representation (INEQR)` encoding method.
+
+```python
+# INEQR Encoding Method
+import torch.utils.data
+from piqture.data_loader.mnist_data_loader import load_mnist_dataset
+from piqture.data_encoder.image_representations.ineqr import INEQR
+
+# Load MNIST dataset
+train_dataset, test_dataset = load_mnist_dataset()
+
+# Retrieve a single image from the dataset
+image, label = train_dataset[0]
+image_size = tuple(image.squeeze().size())
+
+# Change pixel values from float to integer
+pixel_vals = (image * 255).round().to(torch.uint8)
+pixel_vals = image.tolist()
+
+embedding = INEQR(image_size, pixel_vals).ineqr()
+
+# Display circuit.
+embedding.draw()
+```
+
+### Further examples
+
 Let's build a Quantum Convolutional Neural Network (QCNN) with Convolutional, Pooling, and Fully-Connected layers.
 
 ```python
@@ -104,7 +132,6 @@ qcnn_circuit = qcnn_circuit.sequence(
 qcnn_circuit.draw()
 ```
 
-### Further examples
 
 ## Contribution Guidelines
 
