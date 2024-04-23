@@ -84,8 +84,8 @@ from piqture.neural_networks.layers import (
 from piqture.neural_networks import QCNN
 
 # Initializing a QCNN circuit with given image dimensions.
-image_dimensions = 4
-qcnn_circuit = QCNN(image_dimensions)
+image_dims = 4
+qcnn_circuit = QCNN(image_dims)
 
 # Gathering parameters for layer objects.
 mera_params = {"layer_depth": 1, "mera_instance": 0, "complex_structure": False}
