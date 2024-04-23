@@ -29,6 +29,20 @@ jobs:
       - name: Run MLflow Script for QCNN
         run: |
           mlflow run scripts/qcnn_script.py
+#          mlflow run . --file Mlproject --experiment-name "Your Experiment Name"
+
+#  register_model:
+#      needs: mlflow
+#      runs-on: ubuntu-latest
+#      if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+#      steps:
+#        - name: Register model
+#          run: |
+#            if [ CONDITION_TO_REGISTER_MODEL ]; then
+#              mlflow register model -m "runs:/<run_id>/model_name" -n "Registered Model Name"
+#            else
+#              echo "Model registration not required."
+#            fi
 
 #      - name: Log with MLflow and Register Model
 #        run: |

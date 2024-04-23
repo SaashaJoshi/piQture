@@ -26,8 +26,10 @@ from mlflow_scripts.py_wrapper import QuantumModel
 global objective_func_vals
 
 # Set Mlflow URI
+experiment_name = "qcnn_estimator"
 mlflow.set_tracking_uri("http://127.0.0.1:5000")
-mlflow.set_experiment("qcnn_estimator")
+# mlflow.create_experiment(experiment_name, artifact_location="mlflow_scripts/mlruns")
+mlflow.set_experiment(experiment_name)
 
 
 def callback_graph(_, obj_func_eval):
@@ -71,8 +73,8 @@ if __name__ == "__main__":
         mlflow.log_param("initial qcnn circuit data", qcnn_circ.circuit.data)
 
         # Data Embedding - Angle Embedding/Encoding
-        embedding, feature_params = angle_encoding(img_dim)
-        mlflow.log_param("Embedding circuit data", embedding.data)
+        embedding = AngleEncoding(img_dim)
+        mlflow.log_param("Embedding circuit data", embedding.circuit.data)
 
         # CNN layers
         # Gathering parameters for layer objects.
@@ -89,7 +91,7 @@ if __name__ == "__main__":
                 (FullyConnectedLayer, {}),
             ]
         )
-        final_circuit = embedding.compose(qcnn_circuit, qubits=range(num_qubits))
+        final_circuit = embedding.circuit.compose(qcnn_circuit, qubits=range(num_qubits))
         observable = SparsePauliOp(["IZIZ"])
         mlflow.log_param("final qcnn circuit data", final_circuit.data)
         mlflow.log_param("Observable", observable)
@@ -104,7 +106,7 @@ if __name__ == "__main__":
             # estimator=estimator,
             circuit=final_circuit,
             observables=observable,
-            input_params=feature_params.params,
+            input_params=embedding.parameters,
             weight_params=qcnn_circuit.parameters,
         )
         estimator_qcnn.circuit.draw("mpl")
@@ -157,3 +159,9 @@ if __name__ == "__main__":
         # plt.ylabel("Objective function value")
         # plt.plot(range(len(objective_func_vals)), objective_func_vals)
         # plt.show()
+
+        # Log the model with MLflow
+        mlflow.pyfunc.log_model(estimator_qcnn, "QCNN_Estimator")
+
+        # Register the model with the MLflow model registry
+        mlflow.register_model("runs:/<run_id>/model_name", "QCNN_Estimator")

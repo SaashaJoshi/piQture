@@ -4,21 +4,21 @@ python_env: python_env.yaml
 
 entry_points:
     # Data Processing Stage
-    # load_mnist_data:
-    #     command: "python qcnn_estimator_script.py"
+    load_mnist_data:
+        command: "python data_loading.py"
 
     # Quantum Circuit Preparation Stage
     data_embedding:
         parameters:
 
-        command: "python "
+        command: "python data_embedding.py"
 
     model_selection:
-        command: "python"
+        command: "python model_selection.py"
 
     # Quantum Circuit Processing Stage
     model_training_and_evaluation:
-        command: "python"
+        command: "python model_training.py"
 
     # Model Performance
     model_performance:
@@ -26,4 +26,4 @@ entry_points:
 
     # Driver
     main:
-        command: "python"
+        command: "python main.py"
