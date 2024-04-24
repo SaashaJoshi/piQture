@@ -26,10 +26,10 @@ class NEQR(ImageEmbedding, ImageMixin):
     def __init__(
         self,
         img_dims: tuple[int, int],
-        pixel_vals: list,
+        pixel_vals: list[list],
         max_color_intensity: int = 255,
     ):
-        ImageEmbedding.__init__(self, img_dims, pixel_vals)
+        ImageEmbedding.__init__(self, img_dims, pixel_vals, colored=False)
 
         if max_color_intensity < 0 or max_color_intensity > 255:
             raise ValueError(
@@ -63,7 +63,7 @@ class NEQR(ImageEmbedding, ImageMixin):
         control_qubits = list(range(self.feature_dim))
         for index, color in enumerate(color_byte):
             if color == "1":
-                self.circuit.mct(
+                self.circuit.mcx(
                     control_qubits=control_qubits, target_qubit=self.feature_dim + index
                 )
 
@@ -76,6 +76,7 @@ class NEQR(ImageEmbedding, ImageMixin):
             QuantumCircuit: final circuit with the frqi image
             representation.
         """
+        self.pixel_vals = self.pixel_vals.flatten()
         for i in range(self.feature_dim):
             self.circuit.h(i)
 

@@ -24,23 +24,24 @@ class ImageEmbedding(ABC):
     - Pixel value (color) embedding
     """
 
-    def __init__(self, img_dims: tuple[int, ...], pixel_vals: list):
+    def __init__(
+        self, img_dims: tuple[int, ...], pixel_vals: list[list], colored: bool = False
+    ):
         if not all((isinstance(dims, int) for dims in img_dims)) or not isinstance(
             img_dims, tuple
         ):
             raise TypeError("Input img_dims must be of the type tuple[int, ...].")
         self.validate_image_dimensions(img_dims)
 
-        if not isinstance(pixel_vals, list):
-            raise TypeError("Input pixel_vals must be of the type list.")
+        if not all(isinstance(pixels, list) for pixels in pixel_vals) or not isinstance(
+            pixel_vals, list
+        ):
+            raise TypeError("Input pixel_vals must be of the type list[list].")
         pixel_vals = np.array(pixel_vals)
 
-        # pixel_vals can be a multi-dimensional list.
-        if len(pixel_vals.flatten()) != math.prod(img_dims):
-            raise ValueError(
-                f"No. of pixel values {len(pixel_vals)} must be equal to "
-                f"the product of image dimensions {math.prod(img_dims)}."
-            )
+        self.colored = colored
+        self.validate_number_pixel_lists(pixel_vals)
+        self.validate_number_pixels(img_dims, pixel_vals)
 
         for val in pixel_vals.flatten():
             if val < 0 or val > 255:
@@ -62,6 +63,39 @@ class ImageEmbedding(ABC):
             raise ValueError(
                 f"{self.__class__.__name__} supports square images only. "
                 f"Input img_dims must have same dimensions."
+            )
+
+    def validate_number_pixel_lists(self, pixel_vals):
+        """
+        Validates the number of pixel_lists in
+        pixel_vals input.
+        """
+        if self.colored:
+            if len(pixel_vals) != 3:
+                raise ValueError(
+                    f"{self.__class__.__name__} supports colored images. "
+                    f"No. of pixel_lists in pixel_vals must be 3 (one for each "
+                    f"RGB channel)."
+                )
+        else:
+            # For grayscale images.
+            if len(pixel_vals) != 1:
+                raise ValueError(
+                    f"{self.__class__.__name__} supports grayscale images only. "
+                    f"No. of pixel_lists in pixel_vals must be 1."
+                )
+
+    @staticmethod
+    def validate_number_pixels(img_dims, pixel_vals):
+        """
+        Validates the number of pixels in pixel_lists
+        in pixel_vals input.
+        """
+        if all(len(pixel_lists) != math.prod(img_dims) for pixel_lists in pixel_vals):
+            raise ValueError(
+                f"No. of pixels ({[len(pixel_lists) for pixel_lists in pixel_vals]}) "
+                f"in each pixel_lists in pixel_vals must be equal to the "
+                f"product of image dimensions {math.prod(img_dims)}."
             )
 
     @abstractmethod

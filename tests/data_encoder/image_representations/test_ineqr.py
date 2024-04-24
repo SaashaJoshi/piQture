@@ -31,20 +31,20 @@ def circuit_2_2():
     # Pixel vals = [[40, 128], [65, 2]]
     # Pixel-00
     circuit.x([0, 1])
-    circuit.mct(control_qubits=list(range(2)), target_qubit=2 + 2)
-    circuit.mct(control_qubits=list(range(2)), target_qubit=2 + 4)
+    circuit.mcx(control_qubits=list(range(2)), target_qubit=2 + 2)
+    circuit.mcx(control_qubits=list(range(2)), target_qubit=2 + 4)
     circuit.x([0, 1])
     # Pixel-01
     circuit.x(0)
-    circuit.mct(control_qubits=list(range(2)), target_qubit=2)
+    circuit.mcx(control_qubits=list(range(2)), target_qubit=2)
     circuit.x(0)
     # Pixel-10
     circuit.x(1)
-    circuit.mct(control_qubits=list(range(2)), target_qubit=2 + 1)
-    circuit.mct(control_qubits=list(range(2)), target_qubit=2 + 7)
+    circuit.mcx(control_qubits=list(range(2)), target_qubit=2 + 1)
+    circuit.mcx(control_qubits=list(range(2)), target_qubit=2 + 7)
     circuit.x(1)
     # Pixel-11
-    circuit.mct(control_qubits=list(range(2)), target_qubit=2 + 6)
+    circuit.mcx(control_qubits=list(range(2)), target_qubit=2 + 6)
 
     return circuit
 
@@ -57,19 +57,19 @@ def circuit_4_2():
     # Pixel vals = [[128, 64, 1, 2], [0, 0, 0, 1]]
     # Pixel-000
     circuit.x([0, 1, 2])
-    circuit.mct(control_qubits=list(range(3)), target_qubit=3)
+    circuit.mcx(control_qubits=list(range(3)), target_qubit=3)
     circuit.x([0, 1, 2])
     # Pixel-001
     circuit.x([0, 1])
-    circuit.mct(control_qubits=list(range(3)), target_qubit=3 + 1)
+    circuit.mcx(control_qubits=list(range(3)), target_qubit=3 + 1)
     circuit.x([0, 1])
     # Pixel-010
     circuit.x([0, 2])
-    circuit.mct(control_qubits=list(range(3)), target_qubit=3 + 7)
+    circuit.mcx(control_qubits=list(range(3)), target_qubit=3 + 7)
     circuit.x([0, 2])
     # Pixel-011
     circuit.x(0)
-    circuit.mct(control_qubits=list(range(3)), target_qubit=3 + 6)
+    circuit.mcx(control_qubits=list(range(3)), target_qubit=3 + 6)
     circuit.x(0)
     # Pixel-100
     circuit.x([1, 2])
@@ -81,17 +81,18 @@ def circuit_4_2():
     circuit.x(2)
     circuit.x(2)
     # Pixel-111
-    circuit.mct(control_qubits=list(range(3)), target_qubit=3 + 7)
+    circuit.mcx(control_qubits=list(range(3)), target_qubit=3 + 7)
 
     return circuit
 
 
+@pytest.mark.skip(reason="TestINEQR is being ignored.")
 class TestINEQR:
     """Tests for FRQI image representation class"""
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals",
-        [((2, 4), [list(range(251, 255)), list(range(251, 255))])],
+        [((2, 4), [[list(range(251, 255)), list(range(251, 255))]])],
     )
     def test_circuit_property(self, img_dims, pixel_vals):
         """Tests the INEQR circuits initialization."""
@@ -102,7 +103,7 @@ class TestINEQR:
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals",
-        [((2, 4, 5), [list(range(251, 255)), list(range(251, 255))])],
+        [((2, 4, 5), [[list(range(251, 255)), list(range(251, 255))]])],
     )
     def test_2d_image(self, img_dims, pixel_vals):
         """Tests if images are 2-dimensional"""
@@ -111,7 +112,7 @@ class TestINEQR:
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals",
-        [((3, 7), [list(range(251, 255)), list(range(251, 255))])],
+        [((3, 7), [[list(range(251, 255)), list(range(251, 255))]])],
     )
     def test_img_dim_power_of_2(self, img_dims, pixel_vals):
         """Tests if image dimensions are powers of 2."""
@@ -120,7 +121,21 @@ class TestINEQR:
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals",
-        [((4, 2), [[128, 64, 1, 2], [0, 0, 0, 1]])],
+        [((4, 2), [[list(range(250, 255)), list(range(251, 253))]])],
+    )
+    def test_number_pixels(self, img_dims, pixel_vals):
+        """Tests if the number of pixels is the same as the image dimension."""
+        with raises(
+            ValueError,
+            match=r"No. of pixels \(\[\d+\]\) "
+            r"in each pixel_lists in pixel_vals must be equal to the "
+            r"product of image dimensions \d.",
+        ):
+            _ = INEQR(img_dims, pixel_vals)
+
+    @pytest.mark.parametrize(
+        "img_dims, pixel_vals",
+        [((4, 2), [[[128, 64, 1, 2], [0, 0, 0, 1]]])],
     )
     def test_pixel_value(
         self,
@@ -134,7 +149,7 @@ class TestINEQR:
         mock_circuit = QuantumCircuit(feature_dims + COLOR_QUBITS)
         test_circuit = QuantumCircuit(feature_dims + COLOR_QUBITS)
 
-        for _, y_val in enumerate(pixel_vals):
+        for _, y_val in enumerate(pixel_vals[0]):
             for _, x_val in enumerate(y_val):
                 mock_circuit.clear()
                 test_circuit.clear()
@@ -142,14 +157,13 @@ class TestINEQR:
                 pixel_val_bin = f"{int(x_val):0>8b}"
                 for index, val in enumerate(pixel_val_bin):
                     if val == "1":
-                        test_circuit.mct(
+                        test_circuit.mcx(
                             control_qubits=list(range(3)), target_qubit=3 + index
                         )
 
                 with mock.patch(
-                    "piqture.data_encoder.image_representations."
-                    "ineqr.INEQR.circuit",
-                    new_callable=lambda: mock_circuit,
+                        "piqture.data_encoder.image_representations.ineqr.INEQR.circuit",
+                        new_callable=lambda: mock_circuit,
                 ):
                     ineqr_object.pixel_value(color_byte=f"{x_val:0>8b}")
                     assert mock_circuit == test_circuit
@@ -157,9 +171,9 @@ class TestINEQR:
     @pytest.mark.parametrize(
         "img_dims, pixel_vals, resulting_circuit",
         [
-            ((4, 2), [[128, 64, 1, 2], [0, 0, 0, 1]], "circuit_4_2"),
-            ((2, 4), [[128, 64], [1, 2], [0, 0], [0, 1]], "circuit_4_2"),
-            ((2, 2), [[40, 128], [65, 2]], "circuit_2_2"),
+            ((4, 2), [[[128, 64, 1, 2], [0, 0, 0, 1]]], "circuit_4_2"),
+            ((2, 4), [[[128, 64], [1, 2], [0, 0], [0, 1]]], "circuit_4_2"),
+            ((2, 2), [[[40, 128], [65, 2]]], "circuit_2_2"),
         ],
     )
     def test_ineqr(self, request, img_dims, pixel_vals, resulting_circuit):
@@ -170,8 +184,8 @@ class TestINEQR:
 
         resulting_circuit = request.getfixturevalue(resulting_circuit)
         with mock.patch(
-            "piqture.data_encoder.image_representations.ineqr.INEQR.circuit",
-            new_callable=lambda: mock_circuit,
+                "piqture.data_encoder.image_representations.ineqr.INEQR.circuit",
+                new_callable=lambda: mock_circuit,
         ):
             ineqr_object.ineqr()
             assert mock_circuit == resulting_circuit

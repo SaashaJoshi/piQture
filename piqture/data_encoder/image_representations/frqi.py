@@ -25,8 +25,8 @@ class FRQI(ImageEmbedding, ImageMixin):
     Represents images in FRQI representation format
     """
 
-    def __init__(self, img_dims: tuple[int, int], pixel_vals: list):
-        ImageEmbedding.__init__(self, img_dims, pixel_vals)
+    def __init__(self, img_dims: tuple[int, int], pixel_vals: list[list]):
+        ImageEmbedding.__init__(self, img_dims, pixel_vals, colored=False)
 
         # feature_dim = no. of qubits for pixel position embedding
         self.feature_dim = int(np.sqrt(math.prod(self.img_dims)))
@@ -47,6 +47,7 @@ class FRQI(ImageEmbedding, ImageMixin):
     def pixel_value(self, *args, **kwargs):
         """Embeds pixel (color) values in a circuit"""
         pixel_pos = kwargs.get("pixel_pos")
+        self.pixel_vals = self.pixel_vals.flatten()
 
         self.circuit.cry(
             self.pixel_vals[pixel_pos],
@@ -78,6 +79,7 @@ class FRQI(ImageEmbedding, ImageMixin):
         for i in range(self.feature_dim):
             self.circuit.h(i)
 
+        # Supports grayscale images only.
         num_theta = math.prod(self.img_dims)
         for pixel in range(num_theta):
             pixel_pos_binary = f"{pixel:0>2b}"
