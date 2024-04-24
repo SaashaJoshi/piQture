@@ -45,11 +45,11 @@ def circuit_pixel_value_fixture():
         feature_dim = int(np.sqrt(math.prod(img_dims)))
         test_circuit = QuantumCircuit(int(math.prod(img_dims)))
         # Add gates to test_circuit
-        test_circuit.cry(pixel_vals[pixel], feature_dim - 2, feature_dim)
+        test_circuit.cry(pixel_vals[0][pixel], feature_dim - 2, feature_dim)
         test_circuit.cx(0, 1)
-        test_circuit.cry(-pixel_vals[pixel], feature_dim - 1, feature_dim)
+        test_circuit.cry(-pixel_vals[0][pixel], feature_dim - 1, feature_dim)
         test_circuit.cx(0, 1)
-        test_circuit.cry(pixel_vals[pixel], feature_dim - 1, feature_dim)
+        test_circuit.cry(pixel_vals[0][pixel], feature_dim - 1, feature_dim)
         return test_circuit
 
     return _circuit
@@ -60,7 +60,7 @@ class TestFRQI:
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals",
-        [((2.5, 2.5), list(range(6))), ({"abc", "def"}, list(range(6)))],
+        [((2.5, 2.5), [list(range(6))]), ({"abc", "def"}, [list(range(6))])],
     )
     def test_abc_type_image_dims(self, img_dims, pixel_vals):
         """Tests the type of img_dims input."""
@@ -70,14 +70,21 @@ class TestFRQI:
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals",
-        [((2, 2), tuple(range(4))), ((2, 2), {1.0, 2.35, 4.5, 8.9})],
+        [
+            ((2, 2), [tuple(range(4))]),
+            ((2, 2), [{1.0, 2.35, 4.5, 8.9}]),
+            ((2, 2), {tuple(range(4))}),
+        ],
     )
     def test_abc_type_pixel_vals(self, img_dims, pixel_vals):
         """Tests the type of pixel_vals input."""
-        with raises(TypeError, match=r"Input pixel_vals must be of the type list."):
+        with raises(
+            TypeError,
+            match=re.escape("Input pixel_vals must be of the type list[list]."),
+        ):
             _ = FRQI(img_dims, pixel_vals)
 
-    @pytest.mark.parametrize("img_dims, pixel_vals", [((2, 3), list(range(6)))])
+    @pytest.mark.parametrize("img_dims, pixel_vals", [((2, 3), [list(range(6))])])
     def test_init_square_images(self, img_dims, pixel_vals):
         """Tests if the input img_dims represents a square image."""
         with raises(
@@ -87,19 +94,21 @@ class TestFRQI:
         ):
             _ = FRQI(img_dims, pixel_vals)
 
-    @pytest.mark.parametrize("img_dims, pixel_vals", [((2, 2), [1, 2, 3])])
+    @pytest.mark.parametrize("img_dims, pixel_vals", [((2, 2), [[1, 2, 3]])])
     def test_init_len_pixel_values(self, img_dims, pixel_vals):
+        # pylint: disable=duplicate-code
         """Tests if the length of pixel_vals input is the same as the image dimension."""
         with raises(
             ValueError,
-            match=r"No. of pixel values \d must "
-            r"be equal to the product of image dimensions \d.",
+            match=r"No. of pixels \(\[\d+\]\) "
+            r"in each pixel_lists in pixel_vals must be equal to the "
+            r"product of image dimensions \d.",
         ):
             _ = FRQI(img_dims, pixel_vals)
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals",
-        [((2, 2), [100, -23, 505, 256]), ((2, 2), [-100, -23, 230, 256])],
+        [((2, 2), [[100, -23, 505, 256]]), ((2, 2), [[-100, -23, 230, 256]])],
     )
     def test_pixel_values(self, img_dims, pixel_vals):
         """Tests the range of pixel values."""
@@ -109,7 +118,7 @@ class TestFRQI:
         ):
             _ = FRQI(img_dims, pixel_vals)
 
-    @pytest.mark.parametrize("img_dims, pixel_vals", [((2, 2), list(range(4)))])
+    @pytest.mark.parametrize("img_dims, pixel_vals", [((2, 2), [list(range(4))])])
     def test_circuit_property(self, img_dims, pixel_vals):
         """Tests the FRQI circuits initialization."""
         test_circuit = QuantumCircuit(int(np.sqrt(math.prod(img_dims))) + 1)
@@ -117,7 +126,7 @@ class TestFRQI:
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals, pixel_pos_binary_list",
-        [((2, 2), list(range(4)), PIXEL_POS_BINARY2)],
+        [((2, 2), [list(range(4))], PIXEL_POS_BINARY2)],
     )
     def test_pixel_position(
         self, img_dims, pixel_vals, pixel_pos_binary_list, circuit_pixel_position
@@ -139,7 +148,7 @@ class TestFRQI:
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals",
-        [((2, 2), list(range(4)))],
+        [((2, 2), [list(range(4))])],
     )
     def test_pixel_value(self, img_dims, pixel_vals, circuit_pixel_value):
         """Tests the circuit received after pixel value embedding."""
@@ -160,7 +169,7 @@ class TestFRQI:
     # pylint: disable=too-many-arguments
     @pytest.mark.parametrize(
         "img_dims, pixel_vals, pixel_pos_binary_list",
-        [((2, 2), list(range(4)), PIXEL_POS_BINARY2)],
+        [((2, 2), [list(range(4))], PIXEL_POS_BINARY2)],
     )
     def test_frqi(
         self,
