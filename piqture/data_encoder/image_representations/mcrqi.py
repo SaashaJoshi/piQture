@@ -5,7 +5,7 @@ import math
 import numpy as np
 from qiskit.circuit import QuantumCircuit
 from qiskit.circuit.library import MCMT, RYGate
-from piqture.data_encoder.image_representations import ImageEmbedding
+from piqture.data_encoder.image_representations.image_embedding import ImageEmbedding
 from piqture.mixin.image_embedding_mixin import ImageMixin
 
 
@@ -40,6 +40,7 @@ class MCRQI(ImageEmbedding):
 
     @property
     def circuit(self):
+        """Returns MCRQI circuit."""
         return self._circuit
 
     def pixel_position(self, pixel_pos_binary: str):
