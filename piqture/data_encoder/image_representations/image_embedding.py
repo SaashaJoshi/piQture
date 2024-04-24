@@ -22,6 +22,8 @@ class ImageEmbedding(ABC):
     on a quantum circuit. It consists of two components:
     - Pixel position embedding
     - Pixel value (color) embedding
+    - Color channels to indice how many color channels can be represented.
+        By default, grayscale = 1 color channel, and RGB = 3
     """
 
     def __init__(

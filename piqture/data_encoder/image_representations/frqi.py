@@ -26,7 +26,7 @@ class FRQI(ImageEmbedding, ImageMixin):
     """
 
     def __init__(self, img_dims: tuple[int, int], pixel_vals: list[list]):
-        ImageEmbedding.__init__(self, img_dims, pixel_vals, colored=False)
+        ImageEmbedding.__init__(self, img_dims, pixel_vals)
 
         # feature_dim = no. of qubits for pixel position embedding
         self.feature_dim = int(np.sqrt(math.prod(self.img_dims)))
