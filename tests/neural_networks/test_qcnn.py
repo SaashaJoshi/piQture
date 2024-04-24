@@ -122,7 +122,7 @@ class TestQCNN:
         ) as mock_layers:
             _ = QCNN(num_qubits).sequence(operations)
             layer_instance_called_once = any(
-                layer_mock.called_once_with(
+                layer_mock.assert_called_once_with(
                     num_qubits=num_qubits, circuit=mock.ANY, unmeasured_bits=mock.ANY
                 )
                 for layer_name, layer_mock in mock_layers.items()
