@@ -44,3 +44,14 @@ class ImageMixin:
             pixel_pos (int): takes as an input
             the pixel position.
         """
+
+    @staticmethod
+    def channel_index(
+        circuit: QuantumCircuit, channel_index_binary: str, qubit_padding: int
+    ):
+        """
+        Embeds channel indices on the qubits.
+        """
+        for index, value in enumerate(channel_index_binary):
+            if value == "0":
+                circuit.x(index + qubit_padding)
