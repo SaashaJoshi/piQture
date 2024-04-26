@@ -7,10 +7,10 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "piQture"
-copyright_notice = "2024, Saasha Joshi"
-author = "Saasha Joshi"
-release = "0.0.1"
+PROJECT = "piQture"
+COPYRIGHT_NOTICE = "2024, Saasha Joshi"
+AUTHOR = "Saasha Joshi"
+RELEASE = "0.0.1"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -27,5 +27,5 @@ exclude_patterns = []
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 # html_theme = "alabaster"
-html_theme = "furo"
+HTML_THEME = "furo"
 html_static_path = ["_static"]
