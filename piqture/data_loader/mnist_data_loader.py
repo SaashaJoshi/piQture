@@ -18,9 +18,9 @@ from torchvision import datasets
 
 
 def load_mnist_dataset(
-    labels: list = list(range(10)),
     batch_size: int = 64,
-    size: Union[int, tuple] = 2,
+    labels: list = None,
+    size: Union[int, tuple[int, int]] = 2,
     normalize_min: int = 0,
     normalize_max: int = 1,
 ):
@@ -28,9 +28,9 @@ def load_mnist_dataset(
     Loads MNIST dataset from PyTorch using DataLoader.
 
     Args:
-        labels (list): List of desired labels.
         batch_size (int, optional): Batch size for the dataset. Defaults to 64.
-        size (int or tuple, optional): Size to which images will be resized. Defaults to 2.
+        labels (list): List of desired labels.
+        size (int or tuple[int, int], optional): Size to which images will be resized. Defaults to 2.
             If an integer is provided, images will be resized to a
             square of that size.
             If a tuple of integers is provided, images will be resized to
@@ -42,9 +42,19 @@ def load_mnist_dataset(
         Train and Test DataLoader objects.
     """
 
-    def normalize_data(x, normalize_min, normalize_max):
-        """Normalizes data to a range [min, max]."""
-        return (x - normalize_min) / (normalize_max - normalize_min)
+    # Check if batch_size is int
+
+    if labels is None:
+        labels = list(range(10))
+    # Check if labels is list
+
+    # Check if size is int or tuple
+    # if not isinstance(size, (int, tuple)):
+    #     print("some error")
+    # if not all((isinstance(dim, int) for dim in dims) for dims in size):
+    #     raise TypeError("The argument size must be of the type int or tuple[int, int]")
+
+    # Check if normalize_min and max are floats, int, pi == Numbers
 
     mnist_transform = torchvision.transforms.Compose(
         [
@@ -89,6 +99,11 @@ def load_mnist_dataset(
         return train_dataloader, test_dataloader
 
     return mnist_train, mnist_test
+
+
+def normalize_data(x, normalize_min, normalize_max):
+    """Normalizes data to a range [min, max]."""
+    return (x - normalize_min) / (normalize_max - normalize_min)
 
 
 def collate_fn(batch, labels: list):
