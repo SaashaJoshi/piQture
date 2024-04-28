@@ -14,8 +14,12 @@ Quantum Image Representations (module: piqture.data_encoder.image_representation
 
 from .frqi import FRQI
 from .neqr import NEQR
+from .ineqr import INEQR
+from .mcrqi import MCRQI
 
 __all__ = [
     "FRQI",
     "NEQR",
+    "INEQR",
+    "MCRQI",
 ]
