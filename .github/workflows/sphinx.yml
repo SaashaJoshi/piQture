@@ -3,27 +3,33 @@ name: Sphinx Docs
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build_and_deploy:
 
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    - name: Set up Python
+      uses: actions/setup-python@v3
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install sphinx 
+        python -m pip install sphinx furo
 
     - name: Sphinx build
       run: |
-        sphinx-build docs/source docs/build
+        sphinx-build docs/source docs/_build/html
 
     - name: Deploy to gh-pages
       uses: peaceiris/actions-gh-pages@v3
@@ -31,4 +37,5 @@ jobs:
       with:
         publish_branch: gh-pages
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: docs/build/html
+        publish_dir: docs/_build/html
+        force_orphan: true
