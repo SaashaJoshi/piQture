@@ -26,6 +26,7 @@ exclude_patterns = []
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
+# pylint: disable=invalid-name
 # html_theme = "alabaster"
-HTML_THEME = "furo"
+html_theme = "furo"
 html_static_path = ["_static"]
