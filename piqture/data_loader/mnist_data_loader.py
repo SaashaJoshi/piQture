@@ -11,10 +11,12 @@
 """Data Loader for MNIST images"""
 
 from __future__ import annotations
+from functools import partial
 from typing import Union
 import torch.utils.data
 import torchvision
 from torchvision import datasets
+from piqture.data_loader.minmax_normalization import MinMaxNormalization
 
 
 def load_mnist_dataset(
@@ -40,38 +42,60 @@ def load_mnist_dataset(
     Returns:
         Train and Test DataLoader objects.
     """
+    # Check if img_size is int or tuple.
+    # Also check if tuple entries are int.
+    if not isinstance(img_size, (int, tuple)):
+        raise TypeError(
+            "the input img_size must be of the type int or tuple[int, int]."
+        )
 
-    # Check if batch_size is int
+    if isinstance(img_size, tuple) and not all(
+        isinstance(size, int) for size in img_size
+    ):
+        raise TypeError("the input img_size must be of the type tuple[int, int].")
 
-    if labels is None:
-        labels = list(range(10))
-    # Check if labels is list
+    # Check if batch_size is an int.
+    if batch_size:
+        if not isinstance(batch_size, int):
+            raise TypeError("The input batch_size must be of the type int.")
 
-    if batch_size is None:
-        batch_size = 64
+    # Check if labels are a list.
+    if labels:
+        if not isinstance(labels, list):
+            raise TypeError("The input labels must be of the type list.")
 
-    # Check if img_size is int or tuple
-    # if not isinstance(img_size, (int, tuple)):
-    #     print("some error")
-    # if not all((isinstance(dim, int) for dim in dims) for dims in img_size):
-    #     raise TypeError("The argument img_size must be of the type int or tuple[int, int]")
+    if normalize_max and normalize_min:
+        # Check if normalize_min and max are int or float.
+        if not isinstance(normalize_max, (int, float)) and not isinstance(
+            normalize_min, (int, float)
+        ):
+            raise TypeError(
+                "The inputs normalize_min and normlaize_max must be of the type int or float."
+            )
 
-    # Check if normalize_min and max are floats, int, pi == Numbers
+        # Define a custom mnist transforms.
+        mnist_transform = torchvision.transforms.Compose(
+            [
+                torchvision.transforms.ToTensor(),
+                torchvision.transforms.Resize(img_size),
+                MinMaxNormalization(normalize_min, normalize_max),
+            ]
+        )
+    else:
+        # When normalization is not requested; when normalize_min and max are None.
+        mnist_transform = torchvision.transforms.Compose(
+            [
+                torchvision.transforms.ToTensor(),
+                torchvision.transforms.Resize(img_size),
+            ]
+        )
 
-    mnist_transform = torchvision.transforms.Compose(
-        [
-            torchvision.transforms.ToTensor(),
-            (
-                torchvision.transforms.Resize(img_size)
-                if isinstance(img_size, int)
-                else torchvision.transforms.Resize(img_size[::-1])
-            ),
-            torchvision.transforms.Lambda(
-                lambda x: normalize_data(x, normalize_min, normalize_max)
-            ),
-        ]
-    )
+    # Partial application of custom collate function that calls
+    # collate_fn with args.
+    new_batch = []
+    custom_collate = partial(collate_fn, labels=labels, new_batch=new_batch)
 
+    # Download dataset.
     mnist_train = datasets.MNIST(
         root="data/mnist_data",
         train=True,
@@ -83,19 +107,19 @@ def load_mnist_dataset(
         root="data/mnist_data", train=False, download=True, transform=mnist_transform
     )
 
-    if batch_size is not None:
+    if labels or batch_size:
         train_dataloader = torch.utils.data.DataLoader(
             dataset=mnist_train,
-            batch_size=batch_size,
+            batch_size=batch_size if batch_size is not None else 1,
             shuffle=False,
-            collate_fn=lambda batch: collate_fn(batch, labels),
+            collate_fn=custom_collate,
         )
 
         test_dataloader = torch.utils.data.DataLoader(
             dataset=mnist_test,
-            batch_size=70000 - batch_size,
+            batch_size=70000 - batch_size if batch_size is not None else 1,
             shuffle=False,
-            collate_fn=lambda batch: collate_fn(batch, labels),
+            collate_fn=custom_collate,
         )
 
         return train_dataloader, test_dataloader
@@ -103,17 +127,14 @@ def load_mnist_dataset(
     return mnist_train, mnist_test
 
 
-def normalize_data(x, normalize_min, normalize_max):
-    """Normalizes data to a range [min, max]."""
-    return (x - normalize_min) / (normalize_max - normalize_min)
-
-
-def collate_fn(batch, labels: list):
+def collate_fn(batch, labels: list, new_batch: list):
     """
     Batches the images wrt the provided labels.
     """
-    new_batch = []
     for img, label in batch:
         if label in labels:
             new_batch.append((img, label))
-    return torch.utils.data.default_collate(new_batch)
+    # If new batch is empty return empty list.
+    if len(new_batch) > 0:
+        return torch.utils.data.default_collate(new_batch)
+    return []
