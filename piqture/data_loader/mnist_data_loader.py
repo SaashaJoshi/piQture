@@ -18,25 +18,24 @@ from torchvision import datasets
 
 
 def load_mnist_dataset(
-    batch_size: int = 64,
+    img_size: Union[int, tuple[int, int]] = 28,
+    batch_size: int = None,
     labels: list = None,
-    size: Union[int, tuple[int, int]] = 2,
-    normalize_min: int = 0,
-    normalize_max: int = 1,
+    normalize_min: float = None,
+    normalize_max: float = None,
 ):
     """
     Loads MNIST dataset from PyTorch using DataLoader.
 
     Args:
-        batch_size (int, optional): Batch size for the dataset. Defaults to 64.
+        img_size (int or tuple[int, int], optional): Size to which images
+        will be resized. Defaults to 28.
+            If integer, images will be resized to a square of that size.
+            If tuple, images will be resized to specified height and width.
+        batch_size (int, optional): Batch size for the dataset.
         labels (list): List of desired labels.
-        size (int or tuple[int, int], optional): Size to which images will be resized. Defaults to 2.
-            If an integer is provided, images will be resized to a
-            square of that size.
-            If a tuple of integers is provided, images will be resized to
-            the specified height and width.
-        normalize_min (float, optional): Minimum value for normalization. Defaults to 0.
-        normalize_max (float, optional): Maximum value for normalization. Defaults to 1.
+        normalize_min (float, optional): Minimum value for normalization.
+        normalize_max (float, optional): Maximum value for normalization.
 
     Returns:
         Train and Test DataLoader objects.
@@ -48,11 +47,14 @@ def load_mnist_dataset(
         labels = list(range(10))
     # Check if labels is list
 
-    # Check if size is int or tuple
-    # if not isinstance(size, (int, tuple)):
+    if batch_size is None:
+        batch_size = 64
+
+    # Check if img_size is int or tuple
+    # if not isinstance(img_size, (int, tuple)):
     #     print("some error")
-    # if not all((isinstance(dim, int) for dim in dims) for dims in size):
-    #     raise TypeError("The argument size must be of the type int or tuple[int, int]")
+    # if not all((isinstance(dim, int) for dim in dims) for dims in img_size):
+    #     raise TypeError("The argument img_size must be of the type int or tuple[int, int]")
 
     # Check if normalize_min and max are floats, int, pi == Numbers
 
@@ -60,9 +62,9 @@ def load_mnist_dataset(
         [
             torchvision.transforms.ToTensor(),
             (
-                torchvision.transforms.Resize(size)
-                if isinstance(size, int)
-                else torchvision.transforms.Resize(size[::-1])
+                torchvision.transforms.Resize(img_size)
+                if isinstance(img_size, int)
+                else torchvision.transforms.Resize(img_size[::-1])
             ),
             torchvision.transforms.Lambda(
                 lambda x: normalize_data(x, normalize_min, normalize_max)
