@@ -1,29 +1,14 @@
 name: MLflow Workflow for QCNN
 
-python_env: python_env.yaml
+conda_env: conda_env.yaml
 
 entry_points:
     # Data Processing Stage
     load_mnist_data:
-        command: "python data_loading.py"
-
-    # Quantum Circuit Preparation Stage
-    data_embedding:
         parameters:
-
-        command: "python data_embedding.py"
-
-    model_selection:
-        command: "python model_selection.py"
-
-    # Quantum Circuit Processing Stage
-    model_training_and_evaluation:
-        command: "python model_training.py"
-
-    # Model Performance
-    model_performance:
-        command: "python"
-
-    # Driver
-    main:
-        command: "python main.py"
+            labels: {default: None}
+            batch_size: {type: int, default: None}
+            img_size: {default: None}
+            norm_min: {default: None}
+            norm_max: {default: None}
+        command: "python data_loading.py --labels {labels} --batch_size {batch_size} --img_size {img_size} --norm_min {norm_min} --norm_max {norm_max}"
