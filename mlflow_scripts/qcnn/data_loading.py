@@ -1,6 +1,5 @@
 import mlflow
 import click
-import piqture
 from piqture.data_loader import load_mnist_dataset
 
 

@@ -12,3 +12,9 @@ entry_points:
             norm_min: {default: None}
             norm_max: {default: None}
         command: "python data_loading.py --img_size {img_size} --batch_size {batch_size} --labels {labels} --norm_min {norm_min} --norm_max {norm_max}"
+
+    # Quantum Circuit Preparation Stage
+    data_embedding:
+        parameters:
+            img_dims: {type: tuple}
+        command: "python data_embedding.py --img_dims {img_dims}"
