@@ -91,7 +91,7 @@ image_size = tuple(image.squeeze().size())
 
 # Change pixel values from float to integer
 pixel_vals = (image * 255).round().to(torch.uint8)
-pixel_vals = image.tolist()
+pixel_vals = pixel_vals.tolist()
 
 embedding = INEQR(image_size, pixel_vals).ineqr()
 
