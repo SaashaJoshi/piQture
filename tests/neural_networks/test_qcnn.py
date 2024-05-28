@@ -132,9 +132,8 @@ class TestQCNN:
             _ = QCNN(num_qubits).sequence(operations)
 
             assert (
-                    mock_quantum_convolutional_layer.call_count > 0
-                    or mock_quantum_pooling_layer2.call_count > 0
-                    or mock_quantum_pooling_layer3.call_count > 0
-                    or mock_fully_connected_layer.call_count > 0
+                mock_quantum_convolutional_layer.call_count > 0
+                or mock_quantum_pooling_layer2.call_count > 0
+                or mock_quantum_pooling_layer3.call_count > 0
+                or mock_fully_connected_layer.call_count > 0
             )
-
