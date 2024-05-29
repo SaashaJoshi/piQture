@@ -34,8 +34,8 @@ class QCNN(QuantumNeuralNetwork):
 
     def __init__(self, num_qubits: int):
         """
-        Initializes a Quantum Neural Network circuit with the given
-        number of qubits.
+        Initializes a Quantum Convolutional Neural Network
+        circuit with the given number of qubits.
 
         Args:
             num_qubits (int): builds a quantum convolutional neural
@@ -46,7 +46,7 @@ class QCNN(QuantumNeuralNetwork):
 
     def sequence(self, operations: list[tuple[Callable, dict]]) -> QuantumCircuit:
         """
-        Builds a QNN circuit by composing the circuit with given
+        Builds a QCNN circuit by composing the circuit with given
         sequence of list of operations.
 
         Args:
@@ -57,23 +57,8 @@ class QCNN(QuantumNeuralNetwork):
             circuit (QuantumCircuit): final QNN circuit with all the
             layers.
         """
-        if not isinstance(operations, list):
-            raise TypeError("The input operations must be of the type list.")
-
-        if not all(isinstance(operation, tuple) for operation in operations):
-            raise TypeError(
-                "The input operations list must contain tuple[operation, params]."
-            )
-
-        if not callable(operations[0][0]):
-            raise TypeError(
-                "Operation in input operations list must be Callable functions/classes."
-            )
-
-        if not isinstance(operations[0][1], dict):
-            raise TypeError(
-                "Parameters of operation in input operations list must be in a dictionary."
-            )
+        # Call sequence from ABC for error handling.
+        super().sequence(operations)
 
         unmeasured_bits = list(range(self.num_qubits))
         for layer, params in operations:
