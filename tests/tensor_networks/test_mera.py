@@ -1,12 +1,23 @@
+# (C) Copyright SaashaJoshi 2024.
+#
+# This code is licensed under the Apache License, Version 2.0. You may
+# obtain a copy of this license in the LICENSE.txt file in the root directory
+# of this source tree or at http://www.apache.org/licenses/LICENSE-2.0.
+#
+# Any modifications or derivative works of this code must retain this
+# copyright notice, and modified files need to carry a notice indicating
+# that they have been altered from the originals.
+
 """Unit test for MERA class"""
+
 from __future__ import annotations
 from unittest import mock
 import numpy as np
 import pytest
 from pytest import raises
 from qiskit.circuit import QuantumCircuit, ParameterVector
-from quantum_image_processing.tensor_network_circuits import MERA
-from quantum_image_processing.gates.two_qubit_unitary import TwoQubitUnitary
+from piqture.tensor_network_circuits import MERA
+from piqture.gates.two_qubit_unitary import TwoQubitUnitary
 
 
 @pytest.fixture(name="mera_circuit")
@@ -175,10 +186,10 @@ class TestMERA:
         # pylint: disable=line-too-long
         """Tests the mera_backbone method call via the mera_simple function."""
         with mock.patch(
-            "quantum_image_processing.tensor_network_circuits.mera.MERA.mera_backbone"
+            "piqture.tensor_network_circuits.mera.MERA.mera_backbone"
         ) as mock_mera_simple:
             with mock.patch(
-                "quantum_image_processing.gates.two_qubit_unitary.TwoQubitUnitary.simple_parameterization"
+                "piqture.gates.two_qubit_unitary.TwoQubitUnitary.simple_parameterization"
             ) as simple_parameterization:
                 _ = MERA(num_qubits, layer_depth).mera_simple(complex_structure)
                 mock_mera_simple.assert_called_once_with(
@@ -193,10 +204,10 @@ class TestMERA:
         # pylint: disable=line-too-long
         """Tests the mera_backbone method call via the mera_general function."""
         with mock.patch(
-            "quantum_image_processing.tensor_network_circuits.mera.MERA.mera_backbone"
+            "piqture.tensor_network_circuits.mera.MERA.mera_backbone"
         ) as mock_mera_general:
             with mock.patch(
-                "quantum_image_processing.gates.two_qubit_unitary.TwoQubitUnitary.general_parameterization"
+                "piqture.gates.two_qubit_unitary.TwoQubitUnitary.general_parameterization"
             ) as general_parameterization:
                 _ = MERA(num_qubits, layer_depth).mera_general(complex_structure)
                 mock_mera_general.assert_called_once_with(
