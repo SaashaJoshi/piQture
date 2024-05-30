@@ -40,4 +40,4 @@ jobs:
 #      env:
 #        IBM_TOKEN:
       run:
-        python /piqture/sample_circuit.py
+        python sample_circuit.py
