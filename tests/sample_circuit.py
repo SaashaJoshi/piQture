@@ -1,4 +1,4 @@
-from tensor_network_circuits.ttn import TTN
+from piqture.tensor_network_circuits.ttn import TTN
 from qiskit_ibm_provider import IBMProvider
 # import matplotlib.pyplot as plt
 import click
