@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12"]
 
     steps:
     - uses: actions/checkout@v3
@@ -29,15 +29,11 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install flake8 pytest pytest-cov pylint coveralls
+#        python -m pip install flake8 pytest pytest-cov pylint coveralls
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-#    - name: Setup IBMQ ID
-#      run:
-#        pytho
 
     - name: Run circuit
 #      env:
-#        IBM_TOKEN:
+#        IBM_API_TOKEN: ${{ secrets.IBM_API_TOKEN }}
       run:
-        python sample_circuit.py
+        python piqture/sample_circuit.py
