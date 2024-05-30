@@ -15,11 +15,10 @@ def main():
     # circuit.draw("mpl")
     # plt.show()
 
-
-    IBMProvider.save_account(token=ibm_token)
-    provider = IBMProvider()
-    print(provider.backend)
-    backend = provider.get_backend("ibm_qasm_simulator")
+    # IBMProvider.save_account(token=ibm_token)
+    provider = IBMProvider(token=ibm_token)
+    # print(provider.backends())
+    backend = provider.get_backend("ibm_brisbane")
     job = backend.run(circuit, shots=10)
     result = job.result()
     counts = result.get_counts()
