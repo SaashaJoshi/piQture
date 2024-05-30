@@ -1,5 +1,5 @@
 from qiskit_ibm_provider import IBMProvider
-from piqture.tensor_network_circuits.ttn import TTN
+from qiskit.circuit import QuantumCircuit
 
 # import matplotlib.pyplot as plt
 # import click
@@ -7,7 +7,8 @@ from piqture.tensor_network_circuits.ttn import TTN
 
 def main():
     num_qubits = 4
-    circuit = TTN(num_qubits).ttn_simple(complex_structure=False)
+    circuit = QuantumCircuit(2)
+    circuit.measure([0, 1], [0, 1])
     # circuit.draw("mpl")
     # plt.show()
 
