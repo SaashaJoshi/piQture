@@ -37,7 +37,7 @@ jobs:
 #        pylint $(git ls-files '*.py')
 
     - name: Run circuit
+      env:
+        IBM_API_TOKEN: ${{ secrets.IBM_API_TOKEN }}
       run:
         python tests/sample_circuit.py
-      #      env:
-      #        IBM_API_TOKEN: ${{ secrets.IBM_API_TOKEN }}

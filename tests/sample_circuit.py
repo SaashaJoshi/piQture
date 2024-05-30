@@ -11,8 +11,8 @@ def main():
     # circuit.draw("mpl")
     # plt.show()
 
-    # provider = IBMProvider(token="IBMQ_API_TOKEN")
-    provider = IBMProvider()
+    provider = IBMProvider(token="IBMQ_API_TOKEN")
+    # provider = IBMProvider()
     print(provider.backend)
     backend = provider.get_backend("ibm_qasm_simulator")
     job = backend.run(circuit, shots=10)
