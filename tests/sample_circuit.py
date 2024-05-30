@@ -8,7 +8,7 @@ from qiskit.circuit import QuantumCircuit
 def main():
     circuit = QuantumCircuit(2, 2)
     circuit.measure([0, 1], [0, 1])
-    circuit.draw("mpl")
+    # circuit.draw("mpl")
     # plt.show()
 
     # provider = IBMProvider(token="IBMQ_API_TOKEN")
