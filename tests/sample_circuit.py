@@ -7,7 +7,7 @@ from qiskit.circuit import QuantumCircuit
 
 
 def main():
-    ibm_token = os.getenv('IBMQ_TOKEN')
+    ibm_token = os.getenv('IBM_API_TOKEN')
     print(ibm_token)
 
     circuit = QuantumCircuit(2, 2)
