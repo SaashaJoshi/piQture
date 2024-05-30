@@ -32,6 +32,12 @@ jobs:
         python -m pip install flake8 pytest pytest-cov pylint coveralls
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
+#    - name: Setup IBMQ ID
+#      run:
+#        pytho
+
     - name: Run circuit
+#      env:
+#        IBM_TOKEN:
       run:
-        python piqture/sample_circuit.py
+        python /piqture/sample_circuit.py
