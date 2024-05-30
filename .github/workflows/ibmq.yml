@@ -36,4 +36,4 @@ jobs:
 #      env:
 #        IBM_API_TOKEN: ${{ secrets.IBM_API_TOKEN }}
       run:
-        python piqture/sample_circuit.py
+        python tests/sample_circuit.py
