@@ -11,8 +11,8 @@
 """Angle Encoder"""
 from __future__ import annotations
 import math
-from piqture.data_encoder.image_embedding import ImageEmbedding
 from qiskit.circuit import QuantumCircuit, ParameterVector
+from piqture.data_encoder.image_embedding import ImageEmbedding
 
 
 class AngleEncoding(ImageEmbedding):
@@ -47,25 +47,7 @@ class AngleEncoding(ImageEmbedding):
         return self._circuit
 
     def validate_image_dimensions(self, img_dims):
-        """
-        Validates img_dims input.
-
-        Here, checks for square images. This
-        function can be overriden.
-        """
-
-    # @staticmethod
-    # def validate_number_pixels(img_dims, pixel_vals):
-    #     """
-    #     Validates the number of pixels in pixel_lists
-    #     in pixel_vals input.
-    #     """
-    #     if all(len(pixel_lists) != math.prod(img_dims) for pixel_lists in pixel_vals):
-    #         raise ValueError(
-    #             f"No. of pixels ({[len(pixel_lists) for pixel_lists in pixel_vals]}) "
-    #             f"in each pixel_lists in pixel_vals must be equal to the "
-    #             f"product of image dimensions {math.prod(img_dims)}."
-    #         )
+        """Validates img_dims input."""
 
     def pixel_position(self, pixel_pos_binary: str):
         pass

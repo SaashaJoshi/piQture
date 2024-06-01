@@ -14,7 +14,6 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 import math
 import numpy as np
-from qiskit.circuit import ParameterVector
 
 
 class ImageEmbedding(ABC):
@@ -42,9 +41,9 @@ class ImageEmbedding(ABC):
 
         self.color_channels = color_channels
         if pixel_vals:
-            if not all(isinstance(pixels, list) for pixels in pixel_vals) or not isinstance(
-                pixel_vals, list
-            ):
+            if not all(
+                isinstance(pixels, list) for pixels in pixel_vals
+            ) or not isinstance(pixel_vals, list):
                 raise TypeError("Input pixel_vals must be of the type list[list].")
             pixel_vals = np.array(pixel_vals)
 
