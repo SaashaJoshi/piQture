@@ -49,10 +49,10 @@ class AngleEncoding(ImageEmbedding):
         """Validates img_dims input."""
 
     def pixel_position(self, pixel_pos_binary: str):
-        pass
+        """Embeds pixel positions on the qubits."""
 
     def pixel_value(self, *args, **kwargs):
-        pass
+        """Embeds pixel or color values on the qubits."""
 
     def embedding(self) -> QuantumCircuit:
         """Embeds data using Angle encoding technique."""
