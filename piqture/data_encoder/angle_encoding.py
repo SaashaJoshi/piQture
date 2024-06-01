@@ -23,7 +23,12 @@ class AngleEncoding:
         if not isinstance(img_dims, tuple):
             raise TypeError("Input img_dims must be of the type tuple.")
 
-        if not all((isinstance(dims, int) for dims in img_dims)):
+        for dims in img_dims:
+            print("Type of dims: ", isinstance(dims, int))
+
+        if not all((isinstance(dims, int) for dims in img_dims)) or all(
+            (isinstance(dims, bool) for dims in img_dims)
+        ):
             raise TypeError("Input img_dims must be of the type tuple[int, ...].")
         self.img_dims = img_dims
 
