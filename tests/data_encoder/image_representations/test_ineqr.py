@@ -86,7 +86,6 @@ def circuit_4_2():
     return circuit
 
 
-@pytest.mark.skip(reason="TestINEQR is being ignored.")
 class TestINEQR:
     """Tests for FRQI image representation class"""
 
@@ -121,7 +120,7 @@ class TestINEQR:
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals",
-        [((4, 2), [[list(range(250, 255)), list(range(251, 253))]])],
+        [((4, 2), [[list(range(250, 255)), list(range(155, 160))]])],
     )
     def test_number_pixels(self, img_dims, pixel_vals):
         """Tests if the number of pixels is the same as the image dimension."""
@@ -162,8 +161,8 @@ class TestINEQR:
                         )
 
                 with mock.patch(
-                        "piqture.data_encoder.image_representations.ineqr.INEQR.circuit",
-                        new_callable=lambda: mock_circuit,
+                    "piqture.data_encoder.image_representations.ineqr.INEQR.circuit",
+                    new_callable=lambda: mock_circuit,
                 ):
                     ineqr_object.pixel_value(color_byte=f"{x_val:0>8b}")
                     assert mock_circuit == test_circuit
@@ -184,8 +183,8 @@ class TestINEQR:
 
         resulting_circuit = request.getfixturevalue(resulting_circuit)
         with mock.patch(
-                "piqture.data_encoder.image_representations.ineqr.INEQR.circuit",
-                new_callable=lambda: mock_circuit,
+            "piqture.data_encoder.image_representations.ineqr.INEQR.circuit",
+            new_callable=lambda: mock_circuit,
         ):
             ineqr_object.ineqr()
             assert mock_circuit == resulting_circuit
