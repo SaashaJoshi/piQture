@@ -11,23 +11,25 @@
 """Angle Encoder"""
 from __future__ import annotations
 import math
+from piqture.data_encoder.image_embedding import ImageEmbedding
 from qiskit.circuit import QuantumCircuit, ParameterVector
 
 
-class AngleEncoding:
+class AngleEncoding(ImageEmbedding):
     """
     Implements an Angle encoding technique.
     """
 
-    def __init__(self, img_dims: tuple[int, ...]):
-        if not all((isinstance(dims, int) for dims in img_dims)) or not isinstance(
-            img_dims, tuple
-        ):
-            raise TypeError("Input img_dims must be of the type tuple[int, ...].")
+    def __init__(self, img_dims: tuple[int, ...], pixel_vals: list[list] = None):
+        ImageEmbedding.__init__(self, img_dims, pixel_vals, color_channels=1)
         self.img_dims = img_dims
-
         self.feature_dims = int(math.prod(self.img_dims))
-        self._parameters = ParameterVector("Angle", self.feature_dims)
+
+        if self.pixel_vals is None:
+            self._parameters = ParameterVector("Angle", self.feature_dims)
+        else:
+            self._parameters = self.pixel_vals
+
         self._circuit = QuantumCircuit(self.feature_dims)
         self._qr = self._circuit.qubits
 
@@ -43,6 +45,33 @@ class AngleEncoding:
     def circuit(self):
         """Returns angle embedding circuit."""
         return self._circuit
+
+    def validate_image_dimensions(self, img_dims):
+        """
+        Validates img_dims input.
+
+        Here, checks for square images. This
+        function can be overriden.
+        """
+
+    # @staticmethod
+    # def validate_number_pixels(img_dims, pixel_vals):
+    #     """
+    #     Validates the number of pixels in pixel_lists
+    #     in pixel_vals input.
+    #     """
+    #     if all(len(pixel_lists) != math.prod(img_dims) for pixel_lists in pixel_vals):
+    #         raise ValueError(
+    #             f"No. of pixels ({[len(pixel_lists) for pixel_lists in pixel_vals]}) "
+    #             f"in each pixel_lists in pixel_vals must be equal to the "
+    #             f"product of image dimensions {math.prod(img_dims)}."
+    #         )
+
+    def pixel_position(self, pixel_pos_binary: str):
+        pass
+
+    def pixel_value(self, *args, **kwargs):
+        pass
 
     def embedding(self) -> QuantumCircuit:
         """Embeds data using Angle encoding technique."""

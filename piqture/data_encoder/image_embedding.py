@@ -14,6 +14,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 import math
 import numpy as np
+from qiskit.circuit import ParameterVector
 
 
 class ImageEmbedding(ABC):
@@ -29,7 +30,7 @@ class ImageEmbedding(ABC):
     def __init__(
         self,
         img_dims: tuple[int, ...],
-        pixel_vals: list[list],
+        pixel_vals: list[list] = None,
         color_channels: int = 1,
     ):
         if not all((isinstance(dims, int) for dims in img_dims)) or not isinstance(
@@ -37,25 +38,27 @@ class ImageEmbedding(ABC):
         ):
             raise TypeError("Input img_dims must be of the type tuple[int, ...].")
         self.validate_image_dimensions(img_dims)
-
-        if not all(isinstance(pixels, list) for pixels in pixel_vals) or not isinstance(
-            pixel_vals, list
-        ):
-            raise TypeError("Input pixel_vals must be of the type list[list].")
-        pixel_vals = np.array(pixel_vals)
+        self.img_dims = img_dims
 
         self.color_channels = color_channels
-        self.validate_number_pixel_lists(pixel_vals)
-        self.validate_number_pixels(img_dims, pixel_vals)
+        if pixel_vals:
+            if not all(isinstance(pixels, list) for pixels in pixel_vals) or not isinstance(
+                pixel_vals, list
+            ):
+                raise TypeError("Input pixel_vals must be of the type list[list].")
+            pixel_vals = np.array(pixel_vals)
 
-        for val in pixel_vals.flatten():
-            if val < 0 or val > 255:
-                raise ValueError(
-                    "Pixel values cannot be less than 0 or greater than 255."
-                )
+            self.validate_number_pixel_lists(pixel_vals)
+            self.validate_number_pixels(img_dims, pixel_vals)
 
-        self.img_dims = img_dims
-        self.pixel_vals = pixel_vals
+            for val in pixel_vals.flatten():
+                if val < 0 or val > 255:
+                    raise ValueError(
+                        "Pixel values cannot be less than 0 or greater than 255."
+                    )
+            self.pixel_vals = pixel_vals
+        else:
+            self.pixel_vals = None
 
     def validate_image_dimensions(self, img_dims):
         """
