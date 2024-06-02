@@ -19,7 +19,7 @@ from qiskit.circuit import (
     ParameterVector,
 )
 from piqture.gates.two_qubit_unitary import TwoQubitUnitary
-from piqture.tensor_network_circuits.base_tensor_network import (
+from piqture.tensor_networks.base_tensor_network import (
     BaseTensorNetwork,
 )
 

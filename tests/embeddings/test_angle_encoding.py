@@ -17,7 +17,7 @@ import numpy as np
 import pytest
 from pytest import raises
 from qiskit.circuit import QuantumCircuit, ParameterVector
-from piqture.data_encoder.angle_encoding import AngleEncoding
+from piqture.embeddings.angle_encoding import AngleEncoding
 
 
 @pytest.fixture(name="circuit_embedding")

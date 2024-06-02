@@ -17,7 +17,7 @@ import numpy as np
 import pytest
 from pytest import raises
 from qiskit.circuit import QuantumCircuit
-from piqture.data_encoder.image_representations.neqr import NEQR
+from piqture.embeddings.image_embeddings.neqr import NEQR
 
 MAX_COLOR_INTENSITY = 255
 
@@ -87,7 +87,7 @@ class TestNEQR:
             test_circuit = neqr_pixel_value(img_dims, pixel_val, color_qubits)
 
             with mock.patch(
-                "piqture.data_encoder.image_representations.neqr.NEQR.circuit",
+                "piqture.embeddings.image_embeddings.neqr.NEQR.circuit",
                 new_callable=lambda: mock_circuit,
             ):
                 neqr_object.pixel_value(color_byte=f"{pixel_val:0>8b}")
@@ -127,7 +127,7 @@ class TestNEQR:
             )
 
         with mock.patch(
-            "piqture.data_encoder.image_representations.neqr.NEQR.circuit",
+            "piqture.embeddings.image_embeddings.neqr.NEQR.circuit",
             new_callable=lambda: mock_circuit,
         ):
             neqr_object.neqr()

@@ -8,47 +8,36 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-"""Novel Enhanced Quantum Representation (NEQR) of digital images"""
+"""Flexible Representation of Quantum Images (FRQI)"""
 
 from __future__ import annotations
 import math
 import numpy as np
 from qiskit.circuit import QuantumCircuit
-from piqture.data_encoder.image_embedding import (
+from piqture.embeddings.image_embedding import (
     ImageEmbedding,
 )
 from piqture.mixin.image_embedding_mixin import ImageMixin
 
 
-class NEQR(ImageEmbedding, ImageMixin):
-    """Represents images in NEQR representation format."""
+class FRQI(ImageEmbedding, ImageMixin):
+    """
+    Represents images in FRQI representation format
+    """
 
-    def __init__(
-        self,
-        img_dims: tuple[int, int],
-        pixel_vals: list[list],
-        max_color_intensity: int = 255,
-    ):
+    def __init__(self, img_dims: tuple[int, int], pixel_vals: list[list] = None):
         ImageEmbedding.__init__(self, img_dims, pixel_vals)
 
-        if max_color_intensity < 0 or max_color_intensity > 255:
-            raise ValueError(
-                "Maximum color intensity cannot be less than 0 or greater than 255."
-            )
+        # feature_dim = no. of qubits for pixel position embedding
+        self.feature_dim = int(np.sqrt(math.prod(self.img_dims)))
 
-        self.feature_dim = int(np.ceil(np.sqrt(math.prod(self.img_dims))))
-        self.max_color_intensity = max_color_intensity + 1
-
-        # number of qubits to encode color byte
-        self.color_qubits = int(np.ceil(math.log(self.max_color_intensity, 2)))
-
-        # NEQR circuit
-        self._circuit = QuantumCircuit(self.feature_dim + self.color_qubits)
+        # FRQI circuit
+        self._circuit = QuantumCircuit(self.feature_dim + 1)
         self.qr = self._circuit.qubits
 
     @property
     def circuit(self):
-        """Returns NEQR circuit."""
+        """Returns the FRQI circuit."""
         return self._circuit
 
     def pixel_position(self, pixel_pos_binary: str):
@@ -56,39 +45,48 @@ class NEQR(ImageEmbedding, ImageMixin):
         ImageMixin.pixel_position(self.circuit, pixel_pos_binary)
 
     def pixel_value(self, *args, **kwargs):
-        """
-        Embeds pixel (color) values in a circuit
-        """
-        color_byte = kwargs.get("color_byte")
-        control_qubits = list(range(self.feature_dim))
-        for index, color in enumerate(color_byte):
-            if color == "1":
-                self.circuit.mcx(
-                    control_qubits=control_qubits, target_qubit=self.feature_dim + index
-                )
+        """Embeds pixel (color) values in a circuit"""
+        pixel_pos = kwargs.get("pixel_pos")
 
-    def neqr(self) -> QuantumCircuit:
+        self.circuit.cry(
+            self._parameters[pixel_pos],
+            target_qubit=self.feature_dim,
+            control_qubit=self.feature_dim - 2,
+        )
+        self.circuit.cx(0, 1)
+        self.circuit.cry(
+            -self._parameters[pixel_pos],
+            target_qubit=self.feature_dim,
+            control_qubit=self.feature_dim - 1,
+        )
+        self.circuit.cx(0, 1)
+        self.circuit.cry(
+            self._parameters[pixel_pos],
+            target_qubit=self.feature_dim,
+            control_qubit=self.feature_dim - 1,
+        )
+
+    def frqi(self) -> QuantumCircuit:
         # pylint: disable=duplicate-code
         """
-        Builds the NEQR image representation on a circuit.
+        Builds the FRQI image representation on a circuit.
 
         Returns:
             QuantumCircuit: final circuit with the frqi image
             representation.
         """
-        self.pixel_vals = self.pixel_vals.flatten()
         for i in range(self.feature_dim):
             self.circuit.h(i)
 
+        # Supports grayscale images only.
         num_theta = math.prod(self.img_dims)
         for pixel in range(num_theta):
             pixel_pos_binary = f"{pixel:0>2b}"
-            color_byte = f"{int(self.pixel_vals[pixel]):0>8b}"
 
             # Embed pixel position on qubits
             self.pixel_position(pixel_pos_binary)
             # Embed color information on qubits
-            self.pixel_value(color_byte=color_byte)
+            self.pixel_value(pixel_pos=pixel)
             # Remove pixel position embedding
             self.pixel_position(pixel_pos_binary)
 

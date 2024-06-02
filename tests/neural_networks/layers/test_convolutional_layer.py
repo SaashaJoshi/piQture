@@ -70,7 +70,7 @@ class TestQuantumConvolutionalLayer:
         )
         mock_circuit = QuantumCircuit(qc_layer.num_qubits)
         with mock.patch(
-            "piqture.tensor_network_circuits.mera.MERA.mera_backbone",
+            "piqture.tensor_networks.mera.MERA.mera_backbone",
             return_value=mock_circuit,
         ) as mock_mera:
             _, _ = qc_layer.build_layer()

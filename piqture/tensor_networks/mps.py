@@ -13,7 +13,7 @@
 from __future__ import annotations
 from typing import Callable
 from qiskit.circuit import QuantumCircuit, ParameterVector
-from piqture.tensor_network_circuits.base_tensor_network import (
+from piqture.tensor_networks.base_tensor_network import (
     BaseTensorNetwork,
 )
 from piqture.gates.two_qubit_unitary import TwoQubitUnitary
