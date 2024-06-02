@@ -14,6 +14,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 import math
 import numpy as np
+from qiskit.circuit import ParameterVector
 
 
 class ImageEmbedding(ABC):
@@ -58,8 +59,15 @@ class ImageEmbedding(ABC):
                         "Pixel values cannot be less than 0 or greater than 255."
                     )
             self.pixel_vals = pixel_vals
+            self._parameters = self.pixel_vals.flatten()
         else:
-            self.pixel_vals = None
+            self.pixel_vals = ParameterVector("Parameter", math.prod(img_dims))
+            self._parameters = self.pixel_vals
+
+    @property
+    def parameters(self):
+        """Returns parameters in an embedding circuit."""
+        return self._parameters
 
     def validate_image_dimensions(self, img_dims):
         """
