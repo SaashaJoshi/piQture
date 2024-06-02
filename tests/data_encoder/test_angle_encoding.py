@@ -13,7 +13,6 @@
 from __future__ import annotations
 
 import math
-import re
 import numpy as np
 import pytest
 from pytest import raises
@@ -21,11 +20,11 @@ from qiskit.circuit import QuantumCircuit, ParameterVector
 from piqture.data_encoder.angle_encoding import AngleEncoding
 
 
-@pytest.fixture(name="circuit_fixture")
+@pytest.fixture(name="circuit_embedding")
 def circuit_fixture():
     """Circuit fixture for Angle Embedding."""
 
-    def circuit(img_dims, pixel_vals):
+    def _circuit(img_dims, pixel_vals):
         img_dims = math.prod(img_dims)
         if pixel_vals is None:
             pixels = ParameterVector("Angle", img_dims)
@@ -38,26 +37,11 @@ def circuit_fixture():
 
         return embedding_circuit
 
-    return circuit
+    return _circuit
 
 
 class TestAngleEncoding:
     """Tests for AngleEncoding class"""
-
-    # @pytest.mark.parametrize(
-    #     "img_dims", [{1: 1}, [1, 2, 3], [[10, 23.5], [14.2, 98.6]]]
-    # )
-
-    # @pytest.mark.parametrize(
-    #     "img_dims",
-    #     [
-    #         (None, None, False),
-    #         (1.5, 3.4),
-    #         (1.5, 3.4, 7.3),
-    #         (np.pi, 3.14),
-    #         (False, True),
-    #     ],
-    # )
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals",
@@ -69,10 +53,11 @@ class TestAngleEncoding:
         ],
     )
     def test_pixel_lists(self, img_dims, pixel_vals):
+        """Tests the number of pixel_lists in pixel_vals argument."""
         with raises(
-                ValueError,
-                match=r"No. of pixel_lists \(\d+\) must be equal "
-                      r"to the number of columns in the image \d+\.",
+            ValueError,
+            match=r"No. of pixel_lists \(\d+\) must be equal "
+            r"to the number of columns in the image \d+\.",
         ):
             _ = AngleEncoding(img_dims, pixel_vals)
 
@@ -89,10 +74,11 @@ class TestAngleEncoding:
         ],
     )
     def test_number_pixels(self, img_dims, pixel_vals):
+        """Tests the number of pixels in each pixel_lists in pixel_vals argument."""
         with raises(
-                ValueError,
-                match=r"No. of pixels in each pixel_list in pixel_vals must "
-                      r"be equal to the number of rows in the image \d+\.",
+            ValueError,
+            match=r"No. of pixels in each pixel_list in pixel_vals must "
+            r"be equal to the number of rows in the image \d+\.",
         ):
             _ = AngleEncoding(img_dims, pixel_vals)
 
@@ -107,11 +93,9 @@ class TestAngleEncoding:
             ((2, 1), None),
         ],
     )
-    def test_embedding(self, img_dims, pixel_vals, circuit_fixture):
+    def test_embedding(self, img_dims, pixel_vals, circuit_embedding):
         """Tests Angle embedding circuits."""
-        from qiskit.converters import circuit_to_instruction
-
-        test_circuit = circuit_fixture(img_dims, pixel_vals)
+        test_circuit = circuit_embedding(img_dims, pixel_vals)
         resulting_circuit = AngleEncoding(img_dims, pixel_vals)
 
         if pixel_vals is None:

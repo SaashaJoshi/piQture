@@ -11,7 +11,6 @@
 """Angle Encoder"""
 from __future__ import annotations
 import math
-import numpy as np
 from qiskit.circuit import QuantumCircuit, ParameterVector
 from piqture.data_encoder.image_embedding import ImageEmbedding
 
