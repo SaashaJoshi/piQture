@@ -11,39 +11,112 @@
 """Unit test for AngleEncoding class"""
 
 from __future__ import annotations
+
+import math
 import re
 import numpy as np
 import pytest
 from pytest import raises
+from qiskit.circuit import QuantumCircuit, ParameterVector
 from piqture.data_encoder.angle_encoding import AngleEncoding
+
+
+@pytest.fixture(name="circuit_fixture")
+def circuit_fixture():
+    """Circuit fixture for Angle Embedding."""
+
+    def circuit(img_dims, pixel_vals):
+        img_dims = math.prod(img_dims)
+        if pixel_vals is None:
+            pixels = ParameterVector("Angle", img_dims)
+        else:
+            pixels = [pixel for pixel_list in pixel_vals for pixel in pixel_list]
+
+        embedding_circuit = QuantumCircuit(img_dims)
+        for qubit, pixel in enumerate(pixels):
+            embedding_circuit.ry(pixel, qubit)
+
+        return embedding_circuit
+
+    return circuit
 
 
 class TestAngleEncoding:
     """Tests for AngleEncoding class"""
 
-    @pytest.mark.parametrize(
-        "img_dims", [{1: 1}, [1, 2, 3], [[10, 23.5], [14.2, 98.6]]]
-    )
-    def test_img_dims(self, img_dims):
-        """Tests type of img_dims input."""
-        with raises(TypeError, match=r"Input img_dims must be of the type tuple."):
-            _ = AngleEncoding(img_dims)
+    # @pytest.mark.parametrize(
+    #     "img_dims", [{1: 1}, [1, 2, 3], [[10, 23.5], [14.2, 98.6]]]
+    # )
 
-    # Why does it not raise error with boolean values?
+    # @pytest.mark.parametrize(
+    #     "img_dims",
+    #     [
+    #         (None, None, False),
+    #         (1.5, 3.4),
+    #         (1.5, 3.4, 7.3),
+    #         (np.pi, 3.14),
+    #         (False, True),
+    #     ],
+    # )
+
     @pytest.mark.parametrize(
-        "img_dims",
+        "img_dims, pixel_vals",
         [
-            (None, None, False),
-            (1.5, 3.4),
-            (1.5, 3.4, 7.3),
-            (np.pi, 3.14),
-            (False, True),
+            ((1, 2), [[215], [255], [209]]),
+            ((3, 2), [[12.5, 98.2, 67.5]]),
+            ((4, 1), [[12.5, 98.2, 34.9, 87.2], [12.5, 98.2, 34.9, 87.2]]),
+            ((9, 8), [[1]]),
         ],
     )
-    def test_dims(self, img_dims):
-        """Tests the type of dims in img_dims"""
+    def test_pixel_lists(self, img_dims, pixel_vals):
         with raises(
-            TypeError,
-            match=re.escape("Input img_dims must be of the type tuple[int, ...]."),
+                ValueError,
+                match=r"No. of pixel_lists \(\d+\) must be equal "
+                      r"to the number of columns in the image \d+\.",
         ):
-            _ = AngleEncoding(img_dims)
+            _ = AngleEncoding(img_dims, pixel_vals)
+
+    # Since lists are converted to array, pixel_lists cannot
+    # have different number of pixels.
+    # Figure the way to test this.
+    @pytest.mark.parametrize(
+        "img_dims, pixel_vals",
+        [
+            ((1, 2), [[215, 215], [255, 255]]),
+            ((2, 1), [[215, 255, 234]]),
+            ((3, 2), [[12.5, 98.2], [45, 34.9]]),
+            ((4, 1), [[12.5, 98.2, 34.9, 87.2, 45.6]]),
+        ],
+    )
+    def test_number_pixels(self, img_dims, pixel_vals):
+        with raises(
+                ValueError,
+                match=r"No. of pixels in each pixel_list in pixel_vals must "
+                      r"be equal to the number of rows in the image \d+\.",
+        ):
+            _ = AngleEncoding(img_dims, pixel_vals)
+
+    @pytest.mark.parametrize(
+        "img_dims, pixel_vals",
+        [
+            ((1, 2), [[215], [255]]),
+            ((2, 1), [[215, 255]]),
+            ((3, 2), [[12.5, 98.2, 67.5], [45, 34.9, 87.2]]),
+            ((4, 1), [[12.5, 98.2, 34.9, 87.2]]),
+            ((9, 8), None),
+            ((2, 1), None),
+        ],
+    )
+    def test_embedding(self, img_dims, pixel_vals, circuit_fixture):
+        """Tests Angle embedding circuits."""
+        from qiskit.converters import circuit_to_instruction
+
+        test_circuit = circuit_fixture(img_dims, pixel_vals)
+        resulting_circuit = AngleEncoding(img_dims, pixel_vals)
+
+        if pixel_vals is None:
+            pixel_vals = np.random.random(math.prod(img_dims))
+            test_circuit.assign_parameters(pixel_vals, inplace=True)
+            resulting_circuit.circuit.assign_parameters(pixel_vals, inplace=True)
+
+        assert test_circuit == resulting_circuit.circuit

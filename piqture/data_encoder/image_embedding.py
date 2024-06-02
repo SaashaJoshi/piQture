@@ -32,8 +32,10 @@ class ImageEmbedding(ABC):
         pixel_vals: list[list] = None,
         color_channels: int = 1,
     ):
-        if not all((isinstance(dims, int) for dims in img_dims)) or not isinstance(
-            img_dims, tuple
+        if (
+            not all((isinstance(dims, int) for dims in img_dims))
+            or all((isinstance(dims, bool) for dims in img_dims))
+            or not isinstance(img_dims, tuple)
         ):
             raise TypeError("Input img_dims must be of the type tuple[int, ...].")
         self.validate_image_dimensions(img_dims)

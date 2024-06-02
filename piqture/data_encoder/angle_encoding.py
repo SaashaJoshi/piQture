@@ -11,6 +11,7 @@
 """Angle Encoder"""
 from __future__ import annotations
 import math
+import numpy as np
 from qiskit.circuit import QuantumCircuit, ParameterVector
 from piqture.data_encoder.image_embedding import ImageEmbedding
 
@@ -19,15 +20,15 @@ class AngleEncoding(ImageEmbedding):
     """
     Implements an Angle encoding technique.
     """
+
     def __init__(self, img_dims: tuple[int, ...], pixel_vals: list[list] = None):
-        ImageEmbedding.__init__(self, img_dims, pixel_vals, color_channels=1)
-        self.img_dims = img_dims
+        ImageEmbedding.__init__(self, img_dims, pixel_vals)
         self.feature_dims = int(math.prod(self.img_dims))
 
         if self.pixel_vals is None:
             self._parameters = ParameterVector("Angle", self.feature_dims)
         else:
-            self._parameters = self.pixel_vals
+            self._parameters = self.pixel_vals.flatten()
 
         self._circuit = QuantumCircuit(self.feature_dims)
         self._qr = self._circuit.qubits
@@ -47,6 +48,31 @@ class AngleEncoding(ImageEmbedding):
 
     def validate_image_dimensions(self, img_dims):
         """Validates img_dims input."""
+
+    def validate_number_pixel_lists(self, pixel_vals):
+        """
+        Validates the number of pixel_lists in
+        pixel_vals input.
+        """
+        if len(pixel_vals) != self.img_dims[1]:
+            raise ValueError(
+                f"No. of pixel_lists ({len(pixel_vals)}) must be equal "
+                f"to the number of columns in the image {self.img_dims[1]}."
+            )
+
+    @staticmethod
+    def validate_number_pixels(img_dims, pixel_vals):
+        """
+        Validates the number of pixels in pixel_lists
+        in pixel_vals input.
+        """
+        # pixels = [pixel for pixel_lists in pixel_vals for pixel in pixel_lists]
+        # print(pixels)
+        if all(len(pixel_list) != img_dims[0] for pixel_list in pixel_vals):
+            raise ValueError(
+                f"No. of pixels in each pixel_list in pixel_vals must "
+                f"be equal to the number of rows in the image {img_dims[0]}."
+            )
 
     def pixel_position(self, pixel_pos_binary: str):
         """Embeds pixel positions on the qubits."""
