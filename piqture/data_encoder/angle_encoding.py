@@ -11,7 +11,7 @@
 """Angle Encoder"""
 from __future__ import annotations
 import math
-from qiskit.circuit import QuantumCircuit, ParameterVector
+from qiskit.circuit import QuantumCircuit
 from piqture.data_encoder.image_embedding import ImageEmbedding
 
 
@@ -22,23 +22,13 @@ class AngleEncoding(ImageEmbedding):
 
     def __init__(self, img_dims: tuple[int, ...], pixel_vals: list[list] = None):
         ImageEmbedding.__init__(self, img_dims, pixel_vals)
+
         self.feature_dims = int(math.prod(self.img_dims))
-
-        if self.pixel_vals is None:
-            self._parameters = ParameterVector("Angle", self.feature_dims)
-        else:
-            self._parameters = self.pixel_vals.flatten()
-
         self._circuit = QuantumCircuit(self.feature_dims)
         self._qr = self._circuit.qubits
 
         # Performs encoding at instantiation.
         self.embedding()
-
-    @property
-    def parameters(self):
-        """Returns parameters in angle embedding circuit."""
-        return self._parameters
 
     @property
     def circuit(self):

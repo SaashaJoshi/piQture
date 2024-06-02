@@ -17,7 +17,7 @@ from unittest import mock
 import numpy as np
 import pytest
 from pytest import raises
-from qiskit.circuit import QuantumCircuit
+from qiskit.circuit import QuantumCircuit, ParameterVector
 from piqture.data_encoder.image_representations.frqi import FRQI
 
 PIXEL_POS_BINARY2 = ["00", "01", "10", "11"]
@@ -44,12 +44,18 @@ def circuit_pixel_value_fixture():
     def _circuit(img_dims, pixel_vals, pixel):
         feature_dim = int(np.sqrt(math.prod(img_dims)))
         test_circuit = QuantumCircuit(int(math.prod(img_dims)))
+
+        if pixel_vals is None:
+            pixel_vals = ParameterVector("Angle", math.prod(img_dims))
+        else:
+            pixel_vals = [pixel for pixel_list in pixel_vals for pixel in pixel_list]
+
         # Add gates to test_circuit
-        test_circuit.cry(pixel_vals[0][pixel], feature_dim - 2, feature_dim)
+        test_circuit.cry(pixel_vals[pixel], feature_dim - 2, feature_dim)
         test_circuit.cx(0, 1)
-        test_circuit.cry(-pixel_vals[0][pixel], feature_dim - 1, feature_dim)
+        test_circuit.cry(-pixel_vals[pixel], feature_dim - 1, feature_dim)
         test_circuit.cx(0, 1)
-        test_circuit.cry(pixel_vals[0][pixel], feature_dim - 1, feature_dim)
+        test_circuit.cry(pixel_vals[pixel], feature_dim - 1, feature_dim)
         return test_circuit
 
     return _circuit
@@ -169,7 +175,10 @@ class TestFRQI:
     # pylint: disable=too-many-arguments
     @pytest.mark.parametrize(
         "img_dims, pixel_vals, pixel_pos_binary_list",
-        [((2, 2), [list(range(4))], PIXEL_POS_BINARY2)],
+        [
+            ((2, 2), [list(range(4))], PIXEL_POS_BINARY2),
+            ((2, 2), None, PIXEL_POS_BINARY2),
+        ],
     )
     def test_frqi(
         self,
@@ -201,4 +210,10 @@ class TestFRQI:
             new_callable=lambda: mock_circuit,
         ):
             frqi_object.frqi()
+
+            if pixel_vals is None:
+                pixel_vals = np.random.random(math.prod(img_dims))
+                test_circuit.assign_parameters(pixel_vals, inplace=True)
+                mock_circuit.assign_parameters(pixel_vals, inplace=True)
+
             assert mock_circuit == test_circuit

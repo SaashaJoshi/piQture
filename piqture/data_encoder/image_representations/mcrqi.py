@@ -23,7 +23,7 @@ class MCRQI(ImageEmbedding):
         https://ieeexplore.ieee.org/document/6051718.
     """
 
-    def __init__(self, img_dims: tuple[int, int], pixel_vals: list[list]):
+    def __init__(self, img_dims: tuple[int, int], pixel_vals: list[list] = None):
         ImageEmbedding.__init__(self, img_dims, pixel_vals, color_channels=4)
 
         self.feature_dim = int(np.ceil(np.sqrt(math.prod(self.img_dims))))
