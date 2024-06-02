@@ -65,8 +65,6 @@ class AngleEncoding(ImageEmbedding):
         Validates the number of pixels in pixel_lists
         in pixel_vals input.
         """
-        # pixels = [pixel for pixel_lists in pixel_vals for pixel in pixel_lists]
-        # print(pixels)
         if all(len(pixel_list) != img_dims[0] for pixel_list in pixel_vals):
             raise ValueError(
                 f"No. of pixels in each pixel_list in pixel_vals must "
