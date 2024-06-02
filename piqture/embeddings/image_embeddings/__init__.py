@@ -9,11 +9,17 @@
 # that they have been altered from the originals.
 
 """
-Data Encoders (module: piqture.data_encoder)
+Quantum Image Representations (module: piqture.embeddings.image_embeddings)
 """
 
-from .angle_encoding import AngleEncoding
+from .frqi import FRQI
+from .neqr import NEQR
+from .ineqr import INEQR
+from .mcrqi import MCRQI
 
 __all__ = [
-    "AngleEncoding",
+    "FRQI",
+    "NEQR",
+    "INEQR",
+    "MCRQI",
 ]

@@ -12,7 +12,7 @@
 from __future__ import annotations
 import math
 from qiskit.circuit import QuantumCircuit
-from piqture.data_encoder.image_embedding import ImageEmbedding
+from piqture.embeddings.image_embedding import ImageEmbedding
 
 
 class AngleEncoding(ImageEmbedding):

@@ -80,7 +80,7 @@ Let's build a Quantum Image Representation with the `Improved Novel Enhanced Qua
 # INEQR Encoding Method
 import torch.utils.data
 from piqture.data_loader.mnist_data_loader import load_mnist_dataset
-from piqture.data_encoder.image_representations.ineqr import INEQR
+from piqture.embeddings.image_embeddings.ineqr import INEQR
 
 # Load MNIST dataset
 train_dataset, test_dataset = load_mnist_dataset()
