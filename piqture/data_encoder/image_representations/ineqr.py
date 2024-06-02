@@ -99,7 +99,6 @@ class INEQR(NEQR):
 
         for y_index, y_val in enumerate(self.pixel_vals[0]):
             for x_index, x_val in enumerate(y_val):
-                print(y_val, x_val)
                 pixel_pos_binary = (
                     f"{y_index:0>{self.y_coord}b}{x_index:0>{self.x_coord}b}"
                 )
