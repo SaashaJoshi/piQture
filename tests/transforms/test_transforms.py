@@ -26,7 +26,10 @@ class TestMinMaxNormalization:
     )
     def test_repr(self, normalize_min, normalize_max):
         """Tests MinMaxNormalization class representation."""
-        result = f"MinMaxNormalization(normalize_min={normalize_min}, normalize_max={normalize_max})"
+        result = (
+            f"MinMaxNormalization(normalize_min={normalize_min}, "
+            f"normalize_max={normalize_max})"
+        )
         assert result == repr(MinMaxNormalization(normalize_min, normalize_max))
 
     @pytest.mark.parametrize(
