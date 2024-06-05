@@ -16,7 +16,7 @@ from typing import Union
 import torch.utils.data
 import torchvision
 from torchvision import datasets
-from piqture.data_loader.minmax_normalization import MinMaxNormalization
+from piqture.transforms import MinMaxNormalization
 
 
 def load_mnist_dataset(
@@ -65,14 +65,6 @@ def load_mnist_dataset(
             raise TypeError("The input labels must be of the type list.")
 
     if normalize_max and normalize_min:
-        # Check if normalize_min and max are int or float.
-        if not isinstance(normalize_max, (int, float)) and not isinstance(
-            normalize_min, (int, float)
-        ):
-            raise TypeError(
-                "The inputs normalize_min and normlaize_max must be of the type int or float."
-            )
-
         # Define a custom mnist transforms.
         mnist_transform = torchvision.transforms.Compose(
             [
