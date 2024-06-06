@@ -33,7 +33,7 @@ jobs:
 
     - name: Test with pytest
       run: |
-        tox -e py{${{ matrx.python-version }}}
+        tox -e py${{ matrx.python-version }}
 
     - name: Upload coverage to Coveralls
       run: coveralls
