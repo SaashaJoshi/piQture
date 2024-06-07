@@ -11,11 +11,14 @@
 """Data Loader for MNIST images"""
 
 from __future__ import annotations
+
 from functools import partial
 from typing import Union
+
 import torch.utils.data
 import torchvision
 from torchvision import datasets
+
 from piqture.transforms import MinMaxNormalization
 
 

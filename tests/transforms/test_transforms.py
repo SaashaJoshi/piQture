@@ -11,10 +11,12 @@
 """Unit test for transforms"""
 
 from __future__ import annotations
+
 import numpy as np
 import pytest
 import torch
 from pytest import raises
+
 from piqture.transforms.transforms import MinMaxNormalization
 
 
@@ -49,7 +51,7 @@ class TestMinMaxNormalization:
             _ = MinMaxNormalization(normalize_min, 2.3)
 
     @pytest.mark.parametrize(
-        "normalize_min, normalize_max, x, output",
+        "normalize_min, normalize_max, data, output",
         [
             (0, 1, torch.Tensor([1, 2, 3, 4]), torch.Tensor([0, 0.3333, 0.6667, 1])),
             (
@@ -66,8 +68,8 @@ class TestMinMaxNormalization:
             ),
         ],
     )
-    def test_minmax_transform(self, normalize_min, normalize_max, x, output):
+    def test_minmax_transform(self, normalize_min, normalize_max, data, output):
         """Tests the transform output."""
         transform = MinMaxNormalization(normalize_min, normalize_max)
-        result = transform(x)
+        result = transform(data)
         assert torch.allclose(result, output, atol=1e-5, rtol=1e-4)

@@ -11,7 +11,9 @@
 """Quantum Fully Connected Layer Structure"""
 
 from __future__ import annotations
+
 from qiskit.circuit import QuantumCircuit
+
 from piqture.neural_networks.layers.base_layer import BaseLayer
 
 

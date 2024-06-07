@@ -11,6 +11,7 @@
 """Mixin class for Image Embedding methods"""
 
 from __future__ import annotations
+
 from qiskit.circuit import QuantumCircuit
 
 

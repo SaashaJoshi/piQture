@@ -1,10 +1,13 @@
 """Multi-Channel Representation of Quantum Image (MCRQI)"""
 
 from __future__ import annotations
+
 import math
+
 import numpy as np
 from qiskit.circuit import QuantumCircuit
 from qiskit.circuit.library import MCMT, RYGate
+
 from piqture.embeddings.image_embedding import ImageEmbedding
 from piqture.mixin.image_embedding_mixin import ImageMixin
 
@@ -36,7 +39,7 @@ class MCRQI(ImageEmbedding):
         self._circuit = QuantumCircuit(
             self.feature_dim + self.channel_index_qubits + self.color_channels
         )
-        self.qr = self.circuit.qubits
+        self.q_reg = self.circuit.qubits
 
     @property
     def circuit(self):

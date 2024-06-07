@@ -11,11 +11,14 @@
 """Unit test for TwoQubitUnitary class"""
 
 from __future__ import annotations
+
 import re
 from unittest import mock
+
 import pytest
 from pytest import raises
 from qiskit.circuit import ParameterVector
+
 from piqture.gates.two_qubit_unitary import TwoQubitUnitary
 
 

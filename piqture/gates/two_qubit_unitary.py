@@ -11,8 +11,10 @@
 """Two-Qubit Unitary Gate class"""
 
 from __future__ import annotations
+
 import numpy as np
-from qiskit.circuit import QuantumCircuit, ParameterVector, Parameter
+from qiskit.circuit import Parameter, ParameterVector, QuantumCircuit
+
 from piqture.gates.unitary_block import UnitaryBlock
 
 

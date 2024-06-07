@@ -11,12 +11,15 @@
 """Unit test for INEQR class"""
 
 from __future__ import annotations
+
 import math
 from unittest import mock
+
 import numpy as np
 import pytest
 from pytest import raises
 from qiskit.circuit import QuantumCircuit
+
 from piqture.embeddings.image_embeddings.ineqr import INEQR
 
 MAX_COLOR_INTENSITY = 255

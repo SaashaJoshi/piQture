@@ -11,12 +11,13 @@
 """Novel Enhanced Quantum Representation (NEQR) of digital images"""
 
 from __future__ import annotations
+
 import math
+
 import numpy as np
 from qiskit.circuit import QuantumCircuit
-from piqture.embeddings.image_embedding import (
-    ImageEmbedding,
-)
+
+from piqture.embeddings.image_embedding import ImageEmbedding
 from piqture.mixin.image_embedding_mixin import ImageMixin
 
 
@@ -44,7 +45,7 @@ class NEQR(ImageEmbedding, ImageMixin):
 
         # NEQR circuit
         self._circuit = QuantumCircuit(self.feature_dim + self.color_qubits)
-        self.qr = self._circuit.qubits
+        self.q_reg = self._circuit.qubits
 
     @property
     def circuit(self):

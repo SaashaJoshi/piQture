@@ -11,30 +11,19 @@
 """Unit test for FRQI class"""
 
 from __future__ import annotations
-import re
+
 import math
+import re
 from unittest import mock
+
 import numpy as np
 import pytest
 from pytest import raises
-from qiskit.circuit import QuantumCircuit, ParameterVector
+from qiskit.circuit import ParameterVector, QuantumCircuit
+
 from piqture.embeddings.image_embeddings.frqi import FRQI
 
 PIXEL_POS_BINARY2 = ["00", "01", "10", "11"]
-
-
-@pytest.fixture(name="circuit_pixel_position")
-def circuit_pixel_position_fixture():
-    """Fixture for embedding pixel position."""
-
-    def _circuit(img_dims, pixel_pos_binary):
-        test_circuit = QuantumCircuit(int(math.prod(img_dims)))
-        index = [index for index, val in enumerate(pixel_pos_binary) if val == "0"]
-        if len(index):
-            test_circuit.x(index)
-        return test_circuit
-
-    return _circuit
 
 
 @pytest.fixture(name="circuit_pixel_value")
@@ -135,7 +124,11 @@ class TestFRQI:
         [((2, 2), [list(range(4))], PIXEL_POS_BINARY2)],
     )
     def test_pixel_position(
-        self, img_dims, pixel_vals, pixel_pos_binary_list, circuit_pixel_position
+        self,
+        img_dims,
+        pixel_vals,
+        pixel_pos_binary_list,
+        circuit_pixel_position,
     ):
         """Tests the circuit received after pixel position embedding."""
         frqi_object = FRQI(img_dims, pixel_vals)
