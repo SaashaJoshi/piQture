@@ -11,8 +11,10 @@
 """Tests for Fully Connected Layer"""
 
 from __future__ import annotations
+
 import pytest
 from qiskit.circuit import QuantumCircuit
+
 from piqture.neural_networks.layers import FullyConnectedLayer
 
 

@@ -10,8 +10,11 @@
 
 """Angle Encoder"""
 from __future__ import annotations
+
 import math
+
 from qiskit.circuit import QuantumCircuit
+
 from piqture.embeddings.image_embedding import ImageEmbedding
 
 
@@ -25,7 +28,7 @@ class AngleEncoding(ImageEmbedding):
 
         self.feature_dims = int(math.prod(self.img_dims))
         self._circuit = QuantumCircuit(self.feature_dims)
-        self._qr = self._circuit.qubits
+        self.q_reg = self._circuit.qubits
 
         # Performs encoding at instantiation.
         self.embedding()

@@ -11,12 +11,15 @@
 """Unit test for NEQR class"""
 
 from __future__ import annotations
+
 import math
 from unittest import mock
+
 import numpy as np
 import pytest
 from pytest import raises
 from qiskit.circuit import QuantumCircuit
+
 from piqture.embeddings.image_embeddings.neqr import NEQR
 
 MAX_COLOR_INTENSITY = 255

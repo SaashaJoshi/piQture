@@ -11,8 +11,10 @@
 """Neural Network Abstract Base Class"""
 
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from typing import Callable
+
 from qiskit.circuit import QuantumCircuit
 
 # pylint: disable=too-few-public-methods
@@ -40,7 +42,7 @@ class QuantumNeuralNetwork(ABC):
 
         self.num_qubits = num_qubits
         self._circuit = QuantumCircuit(self.num_qubits)
-        self.qr = self._circuit.qubits
+        self.q_reg = self._circuit.qubits
         # Remove clbits as Sampler cannot take clbits.
         # self.cr = self._circuit.clbits
 

@@ -11,6 +11,7 @@
 """Data transforms for Pytorch datasets."""
 
 from typing import Union
+
 import torch
 from torch import Tensor
 
@@ -40,8 +41,10 @@ class MinMaxNormalization:
             f"{__class__.__name__}(normalize_min={self.min}, normalize_max={self.max})"
         )
 
-    def __call__(self, x: Tensor) -> Tensor:
+    def __call__(self, data: Tensor) -> Tensor:
         """Normalizes data to a range [min, max]."""
         return self.min + (
-            (x - torch.min(x)) * (self.max - self.min) / (torch.max(x) - torch.min(x))
+            (data - torch.min(data))
+            * (self.max - self.min)
+            / (torch.max(data) - torch.min(data))
         )

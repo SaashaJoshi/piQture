@@ -11,13 +11,16 @@
 """Unit test for MERA class"""
 
 from __future__ import annotations
+
 from unittest import mock
+
 import numpy as np
 import pytest
 from pytest import raises
-from qiskit.circuit import QuantumCircuit, ParameterVector
-from piqture.tensor_networks import MERA
+from qiskit.circuit import ParameterVector, QuantumCircuit
+
 from piqture.gates.two_qubit_unitary import TwoQubitUnitary
+from piqture.tensor_networks import MERA
 
 
 @pytest.fixture(name="mera_circuit")

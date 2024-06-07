@@ -13,10 +13,12 @@
 from __future__ import annotations
 
 import math
+
 import numpy as np
 import pytest
 from pytest import raises
-from qiskit.circuit import QuantumCircuit, ParameterVector
+from qiskit.circuit import ParameterVector, QuantumCircuit
+
 from piqture.embeddings.angle_encoding import AngleEncoding
 
 

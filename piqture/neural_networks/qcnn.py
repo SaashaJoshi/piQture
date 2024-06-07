@@ -11,11 +11,12 @@
 """Quantum Convolutional Neural Network"""
 
 from __future__ import annotations
+
 from typing import Callable
+
 from qiskit.circuit import QuantumCircuit
-from piqture.neural_networks.quantum_neural_network import (
-    QuantumNeuralNetwork,
-)
+
+from piqture.neural_networks.quantum_neural_network import QuantumNeuralNetwork
 
 # pylint: disable=too-few-public-methods
 

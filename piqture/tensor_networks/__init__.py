@@ -12,9 +12,9 @@
 Tensor Network Quantum Circuits (module: piqture.models.tensor_network_circuits)
 """
 
-from .ttn import TTN
 from .mera import MERA
 from .mps import MPS
+from .ttn import TTN
 
 __all__ = [
     "TTN",

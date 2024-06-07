@@ -3,7 +3,11 @@ repos:
   rev: v4.5.0
   hooks:
     - id: trailing-whitespace
+      exclude: ^(docs|graphics|utils)/
+
     - id: end-of-file-fixer
+      exclude: ^(docs|graphics|utils)/
+
     - id: check-yaml
     - id: detect-private-key
 
@@ -11,22 +15,27 @@ repos:
   rev: v0.4.8
   hooks:
     - id: ruff
+      exclude: ^(docs|graphics|utils)/
 
 - repo: https://github.com/PyCQA/isort
   rev: 5.13.2
   hooks:
     - id: isort
+      args: ["--profile", "black"]
+      exclude: ^(docs|graphics|utils)/
 
 - repo: https://github.com/psf/black
   rev: 24.4.2
   hooks:
     - id: black
+      exclude: ^(docs|graphics|utils)/
 
 - repo: https://github.com/PyCQA/pylint
   rev: v2.17.0
   hooks:
     - id: pylint
       args: [--disable=import-error]
+      exclude: ^(docs|graphics|utils)/
 
 #- repo: https://github.com/pre-commit/mirrors-mypy
 #  rev: v1.9.0

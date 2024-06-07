@@ -11,14 +11,15 @@
 """Tests for Quantum Convolutional Layer"""
 
 from __future__ import annotations
+
 import re
 from unittest import mock
+
 import pytest
 from pytest import raises
 from qiskit.circuit import QuantumCircuit
-from piqture.neural_networks.layers import (
-    QuantumConvolutionalLayer,
-)
+
+from piqture.neural_networks.layers import QuantumConvolutionalLayer
 
 
 class TestQuantumConvolutionalLayer:

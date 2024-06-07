@@ -11,8 +11,11 @@
 """Improved Novel Enhanced Quantum Representation (INEQR) of digital images"""
 
 from __future__ import annotations
+
 import math
+
 from qiskit.circuit import QuantumCircuit
+
 from piqture.embeddings.image_embeddings.neqr import NEQR
 
 
@@ -46,7 +49,7 @@ class INEQR(NEQR):
 
         # INEQR circuit
         self._circuit = QuantumCircuit(self.feature_dim + self.color_qubits)
-        self.qr = self._circuit.qubits
+        self.q_reg = self._circuit.qubits
 
     @property
     def circuit(self):

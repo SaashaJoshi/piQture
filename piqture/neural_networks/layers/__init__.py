@@ -12,8 +12,8 @@
 
 from .base_layer import BaseLayer
 from .convolutional_layer import QuantumConvolutionalLayer
-from .pooling_layer import QuantumPoolingLayer2, QuantumPoolingLayer3
 from .fully_connected_layer import FullyConnectedLayer
+from .pooling_layer import QuantumPoolingLayer2, QuantumPoolingLayer3
 
 __all__ = [
     "BaseLayer",

@@ -11,11 +11,14 @@
 """Unit test for TTN class"""
 
 from __future__ import annotations
+
 from unittest import mock
+
 import pytest
 from qiskit.circuit import QuantumCircuit
-from piqture.tensor_networks.ttn import TTN
+
 from piqture.gates.two_qubit_unitary import TwoQubitUnitary
+from piqture.tensor_networks.ttn import TTN
 
 
 @pytest.fixture(name="ttn_circuit")

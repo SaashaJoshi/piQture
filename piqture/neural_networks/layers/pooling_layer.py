@@ -11,9 +11,12 @@
 """Quantum Pooling Layer Structure"""
 
 from __future__ import annotations
+
 import itertools
 from typing import Optional
+
 from qiskit.circuit import QuantumCircuit
+
 from piqture.neural_networks.layers.base_layer import BaseLayer
 
 # pylint: disable = too-few-public-methods

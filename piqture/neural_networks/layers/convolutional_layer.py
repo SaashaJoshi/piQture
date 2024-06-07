@@ -11,8 +11,11 @@
 """Quantum Convolutional Layer Structure"""
 
 from __future__ import annotations
+
 from typing import Optional
+
 from qiskit.circuit import QuantumCircuit
+
 from piqture.neural_networks.layers.base_layer import BaseLayer
 from piqture.tensor_networks.mera import MERA
 

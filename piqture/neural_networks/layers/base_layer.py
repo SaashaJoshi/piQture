@@ -11,10 +11,11 @@
 """Abstract Base Class for QNN Layers"""
 
 from __future__ import annotations
-from typing import Optional
-from abc import ABC, abstractmethod
-from qiskit.circuit import QuantumCircuit
 
+from abc import ABC, abstractmethod
+from typing import Optional
+
+from qiskit.circuit import QuantumCircuit
 
 # pylint: disable=too-few-public-methods
 

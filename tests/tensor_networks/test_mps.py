@@ -11,40 +11,15 @@
 """Unit test for MPS class"""
 
 from __future__ import annotations
+
 from unittest import mock
+
 import pytest
 from pytest import raises
-from qiskit.circuit import QuantumCircuit, ParameterVector
-from piqture.tensor_networks import MPS
+from qiskit.circuit import QuantumCircuit
+
 from piqture.gates.two_qubit_unitary import TwoQubitUnitary
-
-
-@pytest.fixture(name="parameterization_mapper")
-def parameterization_mapper_fixture():
-    """Fixture for parameterization mapper dictionary."""
-
-    def _mapper(num_qubits):
-        parameterization_mapper = {
-            "real_simple": [
-                ParameterVector("test", 2 * num_qubits - 1),
-                TwoQubitUnitary().simple_parameterization,
-            ],
-            "complex_simple": [
-                ParameterVector("test", 2 * num_qubits - 1),
-                TwoQubitUnitary().simple_parameterization,
-            ],
-            "real_general": [
-                ParameterVector("test", 6 * num_qubits - 1),
-                TwoQubitUnitary().general_parameterization,
-            ],
-            "complex_general": [
-                ParameterVector("test", 15 * num_qubits - 1),
-                TwoQubitUnitary().general_parameterization,
-            ],
-        }
-        return parameterization_mapper
-
-    return _mapper
+from piqture.tensor_networks import MPS
 
 
 @pytest.fixture(name="mps_circuit")
@@ -168,13 +143,15 @@ class TestMPS:
     ):
         # pylint: disable=too-many-arguments
         """Tests the mps_backbone circuit with real and complex parameterization."""
-        parameterization_mapper = parameterization_mapper(num_qubits)
+        parameterization_mapper_dict = parameterization_mapper(num_qubits)
         test_circuit = mps_circuit(
-            num_qubits, parameterization_mapper[parameterization][0], parameterization
+            num_qubits,
+            parameterization_mapper_dict[parameterization][0],
+            parameterization,
         )
         circuit = MPS(num_qubits).mps_backbone(
-            parameterization_mapper[parameterization][1],
-            parameterization_mapper[parameterization][0],
+            parameterization_mapper_dict[parameterization][1],
+            parameterization_mapper_dict[parameterization][0],
             complex_structure,
         )
         assert circuit == test_circuit

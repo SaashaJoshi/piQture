@@ -11,17 +11,20 @@
 """Tests for Quantum Convolutionall Neural Network structure"""
 
 from __future__ import annotations
+
 import re
 from unittest import mock
+
 import pytest
 from pytest import raises
 from qiskit.circuit import QuantumCircuit
+
 from piqture.neural_networks import QCNN
 from piqture.neural_networks.layers import (
+    FullyConnectedLayer,
     QuantumConvolutionalLayer,
     QuantumPoolingLayer2,
     QuantumPoolingLayer3,
-    FullyConnectedLayer,
 )
 
 
