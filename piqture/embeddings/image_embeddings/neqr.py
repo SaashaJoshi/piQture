@@ -11,12 +11,13 @@
 """Novel Enhanced Quantum Representation (NEQR) of digital images"""
 
 from __future__ import annotations
+
 import math
+
 import numpy as np
 from qiskit.circuit import QuantumCircuit
-from piqture.data_encoder.image_representations.image_embedding import (
-    ImageEmbedding,
-)
+
+from piqture.embeddings.image_embedding import ImageEmbedding
 from piqture.mixin.image_embedding_mixin import ImageMixin
 
 
@@ -29,7 +30,7 @@ class NEQR(ImageEmbedding, ImageMixin):
         pixel_vals: list[list],
         max_color_intensity: int = 255,
     ):
-        ImageEmbedding.__init__(self, img_dims, pixel_vals, colored=False)
+        ImageEmbedding.__init__(self, img_dims, pixel_vals)
 
         if max_color_intensity < 0 or max_color_intensity > 255:
             raise ValueError(
@@ -44,7 +45,7 @@ class NEQR(ImageEmbedding, ImageMixin):
 
         # NEQR circuit
         self._circuit = QuantumCircuit(self.feature_dim + self.color_qubits)
-        self.qr = self._circuit.qubits
+        self.q_reg = self._circuit.qubits
 
     @property
     def circuit(self):

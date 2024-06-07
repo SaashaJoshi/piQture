@@ -13,8 +13,8 @@ Gate implementations, including unitary gates and their alternative parameteriza
 (module: piqture.gates)
 """
 
-from .unitary_block import UnitaryBlock
 from .two_qubit_unitary import TwoQubitUnitary
+from .unitary_block import UnitaryBlock
 
 __all__ = [
     "UnitaryBlock",

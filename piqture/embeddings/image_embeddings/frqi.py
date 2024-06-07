@@ -11,12 +11,13 @@
 """Flexible Representation of Quantum Images (FRQI)"""
 
 from __future__ import annotations
+
 import math
+
 import numpy as np
 from qiskit.circuit import QuantumCircuit
-from piqture.data_encoder.image_representations.image_embedding import (
-    ImageEmbedding,
-)
+
+from piqture.embeddings.image_embedding import ImageEmbedding
 from piqture.mixin.image_embedding_mixin import ImageMixin
 
 
@@ -25,15 +26,15 @@ class FRQI(ImageEmbedding, ImageMixin):
     Represents images in FRQI representation format
     """
 
-    def __init__(self, img_dims: tuple[int, int], pixel_vals: list[list]):
-        ImageEmbedding.__init__(self, img_dims, pixel_vals, colored=False)
+    def __init__(self, img_dims: tuple[int, int], pixel_vals: list[list] = None):
+        ImageEmbedding.__init__(self, img_dims, pixel_vals)
 
         # feature_dim = no. of qubits for pixel position embedding
         self.feature_dim = int(np.sqrt(math.prod(self.img_dims)))
 
         # FRQI circuit
         self._circuit = QuantumCircuit(self.feature_dim + 1)
-        self.qr = self._circuit.qubits
+        self.q_reg = self._circuit.qubits
 
     @property
     def circuit(self):
@@ -47,22 +48,21 @@ class FRQI(ImageEmbedding, ImageMixin):
     def pixel_value(self, *args, **kwargs):
         """Embeds pixel (color) values in a circuit"""
         pixel_pos = kwargs.get("pixel_pos")
-        self.pixel_vals = self.pixel_vals.flatten()
 
         self.circuit.cry(
-            self.pixel_vals[pixel_pos],
+            self._parameters[pixel_pos],
             target_qubit=self.feature_dim,
             control_qubit=self.feature_dim - 2,
         )
         self.circuit.cx(0, 1)
         self.circuit.cry(
-            -self.pixel_vals[pixel_pos],
+            -self._parameters[pixel_pos],
             target_qubit=self.feature_dim,
             control_qubit=self.feature_dim - 1,
         )
         self.circuit.cx(0, 1)
         self.circuit.cry(
-            self.pixel_vals[pixel_pos],
+            self._parameters[pixel_pos],
             target_qubit=self.feature_dim,
             control_qubit=self.feature_dim - 1,
         )

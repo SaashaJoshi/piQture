@@ -9,11 +9,11 @@
 # that they have been altered from the originals.
 
 """
-Data Encoders (module: piqture.data_encoder)
+Transforms (module: piqture.data_loader)
 """
 
-from .angle_encoding import AngleEncoding
+from .transforms import MinMaxNormalization
 
 __all__ = [
-    "AngleEncoding",
+    "MinMaxNormalization",
 ]

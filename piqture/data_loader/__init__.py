@@ -12,8 +12,8 @@
 Data Loader (module: piqture.data_loader)
 """
 
-from .mnist_data_loader import load_mnist_data
+from .mnist_data_loader import load_mnist_dataset
 
 __all__ = [
-    "load_mnist_data",
+    "load_mnist_dataset",
 ]

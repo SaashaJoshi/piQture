@@ -11,9 +11,12 @@
 """Improved Novel Enhanced Quantum Representation (INEQR) of digital images"""
 
 from __future__ import annotations
+
 import math
+
 from qiskit.circuit import QuantumCircuit
-from piqture.data_encoder.image_representations.neqr import NEQR
+
+from piqture.embeddings.image_embeddings.neqr import NEQR
 
 
 class INEQR(NEQR):
@@ -38,11 +41,6 @@ class INEQR(NEQR):
         max_color_intensity: int = 255,
     ):
         NEQR.__init__(self, img_dims, pixel_vals, max_color_intensity)
-        # self.validate_image_dimensions(img_dims)
-        # self.img_dims = img_dims
-        #
-        # self.validate_number_pixels(img_dims, self.pixel_vals)
-        # self.pixel_vals = pixel_vals
 
         # Determine number of qubits for position embedding
         self.x_coord = int(math.log(img_dims[0], 2))
@@ -51,7 +49,7 @@ class INEQR(NEQR):
 
         # INEQR circuit
         self._circuit = QuantumCircuit(self.feature_dim + self.color_qubits)
-        self.qr = self._circuit.qubits
+        self.q_reg = self._circuit.qubits
 
     @property
     def circuit(self):
@@ -104,7 +102,6 @@ class INEQR(NEQR):
 
         for y_index, y_val in enumerate(self.pixel_vals[0]):
             for x_index, x_val in enumerate(y_val):
-                print(y_val, x_val)
                 pixel_pos_binary = (
                     f"{y_index:0>{self.y_coord}b}{x_index:0>{self.x_coord}b}"
                 )

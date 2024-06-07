@@ -11,30 +11,19 @@
 """Unit test for FRQI class"""
 
 from __future__ import annotations
-import re
+
 import math
+import re
 from unittest import mock
+
 import numpy as np
 import pytest
 from pytest import raises
-from qiskit.circuit import QuantumCircuit
-from piqture.data_encoder.image_representations.frqi import FRQI
+from qiskit.circuit import ParameterVector, QuantumCircuit
+
+from piqture.embeddings.image_embeddings.frqi import FRQI
 
 PIXEL_POS_BINARY2 = ["00", "01", "10", "11"]
-
-
-@pytest.fixture(name="circuit_pixel_position")
-def circuit_pixel_position_fixture():
-    """Fixture for embedding pixel position."""
-
-    def _circuit(img_dims, pixel_pos_binary):
-        test_circuit = QuantumCircuit(int(math.prod(img_dims)))
-        index = [index for index, val in enumerate(pixel_pos_binary) if val == "0"]
-        if len(index):
-            test_circuit.x(index)
-        return test_circuit
-
-    return _circuit
 
 
 @pytest.fixture(name="circuit_pixel_value")
@@ -44,12 +33,18 @@ def circuit_pixel_value_fixture():
     def _circuit(img_dims, pixel_vals, pixel):
         feature_dim = int(np.sqrt(math.prod(img_dims)))
         test_circuit = QuantumCircuit(int(math.prod(img_dims)))
+
+        if pixel_vals is None:
+            pixel_vals = ParameterVector("Angle", math.prod(img_dims))
+        else:
+            pixel_vals = [pixel for pixel_list in pixel_vals for pixel in pixel_list]
+
         # Add gates to test_circuit
-        test_circuit.cry(pixel_vals[0][pixel], feature_dim - 2, feature_dim)
+        test_circuit.cry(pixel_vals[pixel], feature_dim - 2, feature_dim)
         test_circuit.cx(0, 1)
-        test_circuit.cry(-pixel_vals[0][pixel], feature_dim - 1, feature_dim)
+        test_circuit.cry(-pixel_vals[pixel], feature_dim - 1, feature_dim)
         test_circuit.cx(0, 1)
-        test_circuit.cry(pixel_vals[0][pixel], feature_dim - 1, feature_dim)
+        test_circuit.cry(pixel_vals[pixel], feature_dim - 1, feature_dim)
         return test_circuit
 
     return _circuit
@@ -129,7 +124,11 @@ class TestFRQI:
         [((2, 2), [list(range(4))], PIXEL_POS_BINARY2)],
     )
     def test_pixel_position(
-        self, img_dims, pixel_vals, pixel_pos_binary_list, circuit_pixel_position
+        self,
+        img_dims,
+        pixel_vals,
+        pixel_pos_binary_list,
+        circuit_pixel_position,
     ):
         """Tests the circuit received after pixel position embedding."""
         frqi_object = FRQI(img_dims, pixel_vals)
@@ -140,7 +139,7 @@ class TestFRQI:
             test_circuit = circuit_pixel_position(img_dims, pixel_pos_binary)
 
             with mock.patch(
-                "piqture.data_encoder.image_representations.frqi.FRQI.circuit",
+                "piqture.embeddings.image_embeddings.frqi.FRQI.circuit",
                 new_callable=lambda: mock_circuit,
             ):
                 frqi_object.pixel_position(pixel_pos_binary)
@@ -160,7 +159,7 @@ class TestFRQI:
             test_circuit = circuit_pixel_value(img_dims, pixel_vals, pixel)
 
             with mock.patch(
-                "piqture.data_encoder.image_representations.frqi.FRQI.circuit",
+                "piqture.embeddings.image_embeddings.frqi.FRQI.circuit",
                 new_callable=lambda: mock_circuit,
             ):
                 frqi_object.pixel_value(pixel_pos=pixel)
@@ -169,7 +168,10 @@ class TestFRQI:
     # pylint: disable=too-many-arguments
     @pytest.mark.parametrize(
         "img_dims, pixel_vals, pixel_pos_binary_list",
-        [((2, 2), [list(range(4))], PIXEL_POS_BINARY2)],
+        [
+            ((2, 2), [list(range(4))], PIXEL_POS_BINARY2),
+            ((2, 2), None, PIXEL_POS_BINARY2),
+        ],
     )
     def test_frqi(
         self,
@@ -197,8 +199,14 @@ class TestFRQI:
             )
 
         with mock.patch(
-            "piqture.data_encoder.image_representations.frqi.FRQI.circuit",
+            "piqture.embeddings.image_embeddings.frqi.FRQI.circuit",
             new_callable=lambda: mock_circuit,
         ):
             frqi_object.frqi()
+
+            if pixel_vals is None:
+                pixel_vals = np.random.random(math.prod(img_dims))
+                test_circuit.assign_parameters(pixel_vals, inplace=True)
+                mock_circuit.assign_parameters(pixel_vals, inplace=True)
+
             assert mock_circuit == test_circuit

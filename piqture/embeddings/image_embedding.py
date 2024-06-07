@@ -11,9 +11,12 @@
 """Abstract Base Class for Image Embedding"""
 
 from __future__ import annotations
-from abc import ABC, abstractmethod
+
 import math
+from abc import ABC, abstractmethod
+
 import numpy as np
+from qiskit.circuit import ParameterVector
 
 
 class ImageEmbedding(ABC):
@@ -22,35 +25,51 @@ class ImageEmbedding(ABC):
     on a quantum circuit. It consists of two components:
     - Pixel position embedding
     - Pixel value (color) embedding
+    - Color channels to indice how many color channels can be represented.
+        By default, grayscale = 1 color channel, and RGB = 3
     """
 
     def __init__(
-        self, img_dims: tuple[int, ...], pixel_vals: list[list], colored: bool = False
+        self,
+        img_dims: tuple[int, ...],
+        pixel_vals: list[list] = None,
+        color_channels: int = 1,
     ):
-        if not all((isinstance(dims, int) for dims in img_dims)) or not isinstance(
-            img_dims, tuple
+        if (
+            not all((isinstance(dims, int) for dims in img_dims))
+            or all((isinstance(dims, bool) for dims in img_dims))
+            or not isinstance(img_dims, tuple)
         ):
             raise TypeError("Input img_dims must be of the type tuple[int, ...].")
         self.validate_image_dimensions(img_dims)
-
-        if not all(isinstance(pixels, list) for pixels in pixel_vals) or not isinstance(
-            pixel_vals, list
-        ):
-            raise TypeError("Input pixel_vals must be of the type list[list].")
-        pixel_vals = np.array(pixel_vals)
-
-        self.colored = colored
-        self.validate_number_pixel_lists(pixel_vals)
-        self.validate_number_pixels(img_dims, pixel_vals)
-
-        for val in pixel_vals.flatten():
-            if val < 0 or val > 255:
-                raise ValueError(
-                    "Pixel values cannot be less than 0 or greater than 255."
-                )
-
         self.img_dims = img_dims
-        self.pixel_vals = pixel_vals
+
+        self.color_channels = color_channels
+        if pixel_vals:
+            if not all(
+                isinstance(pixels, list) for pixels in pixel_vals
+            ) or not isinstance(pixel_vals, list):
+                raise TypeError("Input pixel_vals must be of the type list[list].")
+            pixel_vals = np.array(pixel_vals)
+
+            self.validate_number_pixel_lists(pixel_vals)
+            self.validate_number_pixels(img_dims, pixel_vals)
+
+            for val in pixel_vals.flatten():
+                if val < 0 or val > 255:
+                    raise ValueError(
+                        "Pixel values cannot be less than 0 or greater than 255."
+                    )
+            self.pixel_vals = pixel_vals
+            self._parameters = self.pixel_vals.flatten()
+        else:
+            self.pixel_vals = ParameterVector("Parameter", math.prod(img_dims))
+            self._parameters = self.pixel_vals
+
+    @property
+    def parameters(self):
+        """Returns parameters in an embedding circuit."""
+        return self._parameters
 
     def validate_image_dimensions(self, img_dims):
         """
@@ -70,19 +89,19 @@ class ImageEmbedding(ABC):
         Validates the number of pixel_lists in
         pixel_vals input.
         """
-        if self.colored:
-            if len(pixel_vals) != 3:
-                raise ValueError(
-                    f"{self.__class__.__name__} supports colored images. "
-                    f"No. of pixel_lists in pixel_vals must be 3 (one for each "
-                    f"RGB channel)."
-                )
-        else:
+        if self.color_channels == 1:
             # For grayscale images.
-            if len(pixel_vals) != 1:
+            if len(pixel_vals) > 1:
                 raise ValueError(
                     f"{self.__class__.__name__} supports grayscale images only. "
-                    f"No. of pixel_lists in pixel_vals must be 1."
+                    f"No. of pixel_lists in pixel_vals must be maximum 1."
+                )
+        else:
+            if len(pixel_vals) > self.color_channels:
+                raise ValueError(
+                    f"{self.__class__.__name__} supports colored images. "
+                    f"No. of pixel_lists in pixel_vals must be maximum "
+                    f"{self.color_channels}."
                 )
 
     @staticmethod

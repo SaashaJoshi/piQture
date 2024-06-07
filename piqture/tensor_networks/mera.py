@@ -11,17 +11,15 @@
 """Multiscale Entanglement Renormalization Ansatz (MERA) Tensor Network"""
 
 from __future__ import annotations
+
 import uuid
 from typing import Callable, Optional
+
 import numpy as np
-from qiskit.circuit import (
-    QuantumCircuit,
-    ParameterVector,
-)
+from qiskit.circuit import ParameterVector, QuantumCircuit
+
 from piqture.gates.two_qubit_unitary import TwoQubitUnitary
-from piqture.tensor_network_circuits.base_tensor_network import (
-    BaseTensorNetwork,
-)
+from piqture.tensor_networks.base_tensor_network import BaseTensorNetwork
 
 
 class MERA(BaseTensorNetwork):

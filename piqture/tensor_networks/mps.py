@@ -11,12 +11,13 @@
 """Matrix Product State Tensor Network (MPS)"""
 
 from __future__ import annotations
+
 from typing import Callable
-from qiskit.circuit import QuantumCircuit, ParameterVector
-from piqture.tensor_network_circuits.base_tensor_network import (
-    BaseTensorNetwork,
-)
+
+from qiskit.circuit import ParameterVector, QuantumCircuit
+
 from piqture.gates.two_qubit_unitary import TwoQubitUnitary
+from piqture.tensor_networks.base_tensor_network import BaseTensorNetwork
 
 
 class MPS(BaseTensorNetwork):

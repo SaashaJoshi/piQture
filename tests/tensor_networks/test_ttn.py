@@ -11,11 +11,14 @@
 """Unit test for TTN class"""
 
 from __future__ import annotations
+
 from unittest import mock
+
 import pytest
 from qiskit.circuit import QuantumCircuit
-from piqture.tensor_network_circuits.ttn import TTN
+
 from piqture.gates.two_qubit_unitary import TwoQubitUnitary
+from piqture.tensor_networks.ttn import TTN
 
 
 @pytest.fixture(name="ttn_circuit")
@@ -99,7 +102,7 @@ class TestTTN:
         # pylint: disable=line-too-long
         """Tests the ttn_backbone method call via the ttn_simple function."""
         with mock.patch(
-            "piqture.tensor_network_circuits.ttn.TTN.ttn_backbone"
+            "piqture.tensor_networks.ttn.TTN.ttn_backbone"
         ) as mock_ttn_simple:
             with mock.patch(
                 "piqture.gates.two_qubit_unitary.TwoQubitUnitary.simple_parameterization"
@@ -114,7 +117,7 @@ class TestTTN:
         # pylint: disable=line-too-long
         """Tests the ttn_backbone method call via the ttn_general function."""
         with mock.patch(
-            "piqture.tensor_network_circuits.ttn.TTN.ttn_backbone"
+            "piqture.tensor_networks.ttn.TTN.ttn_backbone"
         ) as mock_ttn_general:
             with mock.patch(
                 "piqture.gates.two_qubit_unitary.TwoQubitUnitary.general_parameterization"
