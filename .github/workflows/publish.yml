@@ -1,29 +1,16 @@
-name: Deploy to Test PyPI
+name: Publish Package
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
-  deploy:
-
+  pypi:
+    name: Deploy to PyPI
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
-
-    strategy:
-      matrix:
-        python-version: [ "3.8", "3.9", "3.10", "3.11", "3.12"]
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
-        with:
-          python-version: ${{ matrix.python-version }}
+        uses: actions/checkout@v3
 
       - name: Install dependencies
         run: |
@@ -36,6 +23,14 @@ jobs:
       - name: Upload package to Test PyPI
         env:
           TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+          TWINE_PASSWORD: ${{ secrets.TEST_PYPI_PIQTURE_TOKEN }}
         run: |
           python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+
+      - name: Upload package to PyPI
+        if: github.ref == 'refs/heads/main'
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          python -m twine upload dist/*

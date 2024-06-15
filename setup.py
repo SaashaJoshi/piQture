@@ -20,11 +20,16 @@ with open("requirements.txt", "r", encoding="utf-8") as reqs_file:
 with open("piqture/version.txt", "r", encoding="utf-8") as version_file:
     version = version_file.read().strip()
 
+# Long description
+with open("README.md", "r", encoding="utf-8") as readme:
+    README = readme.read()
+
 setup(
     name="piqture",
     version=version,
     description="piQture: A QML library for Image Processing",
-    # long_description=README,
+    long_description=README,
+    long_description_content_type="text/markdown",
     author="Saasha Joshi",
     author_email="saashajoshi08@gmail.com",
     url="https://github.com/SaashaJoshi/piQture",
