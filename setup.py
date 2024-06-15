@@ -29,7 +29,7 @@ setup(
     version=version,
     description="piQture: A QML library for Image Processing",
     long_description=README,
-    long_description_content_type='text/markdown',
+    long_description_content_type="text/markdown",
     author="Saasha Joshi",
     author_email="saashajoshi08@gmail.com",
     url="https://github.com/SaashaJoshi/piQture",

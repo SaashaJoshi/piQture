@@ -4,29 +4,9 @@ on:
   workflow_dispatch:
 
 jobs:
-#  github:
-#    name: Publish to GitHub
-#
-#    runs-on: ubuntu-latest
-#    if: github.event_name == 'workflow_dispatch'
-#
-#    steps:
-#      - name: Checkout repository
-#        uses: actions/checkout@v3
-#
-#      - name: Publish release
-#        uses: pass
-#        if: pass
-#        run: |
-#          pass
-#        with:
-#          token: pass
-
   pypi:
     name: Deploy to PyPI
-
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout repository
@@ -41,7 +21,6 @@ jobs:
         run: python setup.py sdist bdist_wheel
 
       - name: Upload package to Test PyPI
-        if: github.event_name == 'workflow_dispatch'
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.TEST_PYPI_PIQTURE_TOKEN }}
@@ -49,7 +28,7 @@ jobs:
           python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 
       - name: Upload package to PyPI
-        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main'
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
