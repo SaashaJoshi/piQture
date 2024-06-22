@@ -28,6 +28,7 @@ Once the Python environment is activated, the required `piQture` package can be 
 To create a development environment, and install `piQture` from source, you can refer to section :ref:`Install from Source <installation_from_source>`.
 
 .. _installation_from_source:
+
 Installation from Source
 ------------------------
 
