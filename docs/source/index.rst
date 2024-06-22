@@ -6,7 +6,7 @@
 Welcome to piQture's documentation!
 ===================================
 
-**piQture** is a Python toolkit designed to simplify the development, execution, and training of Quantum Machine Learning (QML) models tailored for image processing tasks. This library seamlessly integrates with the Qiskit SDK, providing a convenient and user-friendly workflow for leveraging the potential of quantum computing for advanced image processing.
+**piQture** is a Python and Qiskit-based toolkit designed to simplify the development, execution, and training of Quantum Machine Learning (QML) models tailored for image processing tasks. This library seamlessly integrates with the Qiskit SDK, providing a convenient and user-friendly workflow for leveraging the potential of quantum computing for advanced image processing.
 
 
 Contribution Guidelines
@@ -26,14 +26,4 @@ Table of Contents
    :maxdepth: 2
 
    getting_started
-
-.. hidden::
-   Next
-   ==================
-
-   `Getting Started <getting_started.html>`_
-
-.. hidden::
-   * :ref:`genindex`
-   * :ref:`modindex`
-   * :ref:`search`
+   piqture
