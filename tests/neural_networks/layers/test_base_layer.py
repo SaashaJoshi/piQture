@@ -11,12 +11,12 @@
 """Tests for Base Layer abstract class"""
 
 from __future__ import annotations
+
 import pytest
 from pytest import raises
 from qiskit.circuit import QuantumCircuit
-from quantum_image_processing.neural_networks.layers import (
-    QuantumConvolutionalLayer,
-)
+
+from piqture.neural_networks.layers import QuantumConvolutionalLayer
 
 
 class TestQuantumConvolutionalLayer:
