@@ -11,15 +11,15 @@ preferred-citation:
   url: "https://github.com/SaashaJoshi/piQture"
   doi: "10.5281/zenodo.2583252"
 
-preferred-citation:
-  type: thesis
-  authors:
-    - family-names: "Joshi"
-      given-names: "Saasha"
-      orcid: "https://orcid.org/0000-0001-9928-9796"
-  title: "piQture: A Quantum Machine Learning Library for Image Processing"
-  year: 2024
-  month: 6
-  institution: "University of Victoria"
-  thesis-type: "Master's thesis"
-  url: https://hdl.handle.net/1828/16627
+
+type: thesis
+authors:
+- family-names: "Joshi"
+  given-names: "Saasha"
+  orcid: "https://orcid.org/0000-0001-9928-9796"
+title: "piQture: A Quantum Machine Learning Library for Image Processing"
+year: 2024
+month: 6
+institution: "University of Victoria"
+thesis-type: "Master's thesis"
+url: https://hdl.handle.net/1828/16627
