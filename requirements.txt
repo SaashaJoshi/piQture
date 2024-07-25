@@ -5,7 +5,7 @@ qiskit_algorithms==0.3.0
 qiskit_ibm_runtime==0.22.0
 qiskit_ibm_provider==0.10.0
 qiskit_machine_learning==0.7.2
-setuptools==69.2.0
+setuptools==70.0.0
 torch==2.2.1
 torchvision==0.17.1
 mlflow>=2.10.1
