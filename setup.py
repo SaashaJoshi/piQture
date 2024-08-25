@@ -10,7 +10,7 @@
 
 """piQture setup file."""
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 # Read the contents of requirements.txt
 with open("requirements.txt", "r", encoding="utf-8") as reqs_file:
@@ -33,7 +33,7 @@ setup(
     author="Saasha Joshi",
     author_email="saashajoshi08@gmail.com",
     url="https://github.com/SaashaJoshi/piQture",
-    packages=["piqture", "tests"],
+    packages=find_packages(include=["piqture", "piqture.*", "tests"]),
     python_requires=">=3.8",
     install_requires=install_requires,
 )
