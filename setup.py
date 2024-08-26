@@ -1,28 +1,10 @@
-# (C) Copyright SaashaJoshi 2024.
-#
-# This code is licensed under the Apache License, Version 2.0. You may
-# obtain a copy of this license in the LICENSE.txt file in the root directory
-# of this source tree or at http://www.apache.org/licenses/LICENSE-2.0.
-#
-# Any modifications or derivative works of this code must retain this
-# copyright notice, and modified files need to carry a notice indicating
-# that they have been altered from the originals.
+"""Setup configuration for the piQture package.
 
-"""piQture setup file."""
+This script uses setuptools to package and distribute the piQture library.
+It reads configuration from various files to set up the package.
+"""
 
-# (C) Copyright SaashaJoshi 2024.
-#
-# This code is licensed under the Apache License, Version 2.0. You may
-# obtain a copy of this license in the LICENSE.txt file in the root directory
-# of this source tree or at http://www.apache.org/licenses/LICENSE-2.0.
-#
-# Any modifications or derivative works of this code must retain this
-# copyright notice, and modified files need to carry a notice indicating
-# that they have been altered from the originals.
-
-"""piQture setup file."""
-
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 # Read the contents of requirements.txt
 with open("requirements.txt", "r", encoding="utf-8") as reqs_file:
@@ -49,16 +31,6 @@ setup(
     packages=find_packages(include=["piqture", "piqture.*", "tests"]),
     python_requires=">=3.8",
     install_requires=install_requires,
-    classifiers=[
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11",
-        "Programming Language :: Python :: 3.12",
-        "License :: OSI Approved :: Apache Software License",
-        "Operating System :: OS Independent",
-    ],
     include_package_data=True,
     zip_safe=False,
 )
