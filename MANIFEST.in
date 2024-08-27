@@ -1,3 +1,6 @@
+include README.md
+include LICENSE
 include requirements.txt
-include LICENSE.txt
 include piqture/version.txt
+recursive-include piqture *
+recursive-include tests *
