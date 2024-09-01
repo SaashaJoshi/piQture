@@ -9,7 +9,7 @@
 [![Static Badge](https://img.shields.io/badge/license-Apache_2.0-yellow?label=license&color=yellow&link=https%3A%2F%2Fgithub.com%2FSaashaJoshi%2FpiQture%2FLICENSE)](https://github.com/SaashaJoshi/piQture/blob/main/LICENSE)
 [![Static Badge](https://img.shields.io/badge/release-v0.1-orange?label=release&color=orange&link=https%3A%2F%2Fgithub.com%2FSaashaJoshi%2FpiQture%2Fpiqture%2Fversion.txt)](https://github.com/SaashaJoshi/piQture/blob/main/piqture/version.txt)
 [![Coverage Status](https://coveralls.io/repos/github/SaashaJoshi/piQture/badge.svg?branch=main)](https://coveralls.io/github/SaashaJoshi/piQture?branch=main)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12577095.svg)](https://doi.org/10.5281/zenodo.12577095)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12577095.svg)](https://doi.org/10.5281/zenodo.13625704)
 
 _**piQture**_ is an open-source Python toolkit designed to simplify the development, execution, and training of Quantum Machine Learning (QML) models tailored for image processing tasks. This library seamlessly integrates with the Qiskit SDK, providing a convenient and user-friendly workflow for leveraging the potential of quantum computing for advanced image processing.
 
