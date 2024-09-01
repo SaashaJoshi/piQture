@@ -36,6 +36,7 @@ jobs:
         tox -e py${{ matrix.python-version }}
 
     - name: Upload coverage to Coveralls
+      if: github.ref == 'refs/heads/main'
       run: coveralls
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
