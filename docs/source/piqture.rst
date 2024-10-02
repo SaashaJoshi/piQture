@@ -15,11 +15,3 @@ API References
    piqture.tensor_networks
    piqture.transforms
    piqture.variational_classifiers
-
-.. only:: never
-    Module contents
-    ---------------
-    .. automodule:: piqture
-       :members:
-       :undoc-members:
-       :show-inheritance:

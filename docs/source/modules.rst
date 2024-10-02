@@ -1,6 +1,3 @@
-piqture
-=======
-
 .. toctree::
    :maxdepth: 4
 
