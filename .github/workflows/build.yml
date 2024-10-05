@@ -1,0 +1,21 @@
+name: Build and Test
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build Docker image
+      run: |
+        docker build --build-arg PYTHON_VERSION=${{ matrix.python-version }} -t your-app-name:${{ matrix.python-version }} .
+
+    - name: Run Docker container
+      run: |
+        docker run your-app-name:${{ matrix.python-version }}

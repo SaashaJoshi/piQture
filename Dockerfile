@@ -1,7 +1,12 @@
-FROM python:3.12-slim
+ARG PYTHON_VERSION=3.12
+FROM python:${PYTHON_VERSION}-slim
+
 WORKDIR /app
+
 COPY requirements.txt /app/requirements.txt
+
 RUN python -m venv venv
-RUN . ./venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt
+ENV PATH="/app/venv/bin:$PATH"
+RUN pip install --upgrade pip && pip install -r requirements.txt
 COPY . /app
-CMD ["./venv/bin/python", "setup.py" ,"--help-commands"]
+CMD ["python", "setup.py", "--help-commands"]
