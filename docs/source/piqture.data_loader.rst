@@ -4,7 +4,7 @@ Data Loader
 `piqture.data_loader.mnist_data_loader` module
 -----------------------------------------------
 
-This module provides a `load_mnist_dataset` function that simplifies loading the MNIST dataset for machine learning and deep learning experiments. It supports custom batch sizes, label selection, image resizing, and normalization options. 
+This module provides a `load_mnist_dataset` function that simplifies loading the MNIST dataset for machine learning and deep learning experiments. It supports custom batch sizes, label selection, image resizing, and normalization options.
 
 .. automodule:: piqture.data_loader.mnist_data_loader
    :members:
@@ -16,7 +16,9 @@ Overview
 
 The `load_mnist_dataset` function in this module is designed to streamline the process of loading and preparing the MNIST dataset for image-based machine learning models, especially those involving quantum machine learning or custom image processing workflows.
 
-### Features
+Features
+--------
+
 - Supports custom image resizing to specified dimensions.
 - Optionally filters specific labels from the MNIST dataset.
 - Integrates custom normalization using `MinMaxNormalization`.
@@ -26,7 +28,8 @@ The `load_mnist_dataset` function in this module is designed to streamline the p
 
    Make sure that the `torch` and `torchvision` libraries are installed, as these are used internally for dataset handling and transformations.
 
-### Function Documentation
+Function Documentation
+----------------------
 
 **`load_mnist_dataset`**
 
@@ -56,7 +59,9 @@ Here's an example of how to use the `load_mnist_dataset` function to load the MN
         print(f"Batch labels: {labels}")
         break
 
-### Parameters
+Parameters
+----------
+
 - **`img_size`** (*int* or *tuple[int, int]*, optional):
   - Size to which MNIST images will be resized.
   - If an integer, images will be resized to a square of that size.
@@ -79,13 +84,16 @@ Here's an example of how to use the `load_mnist_dataset` function to load the MN
   - Maximum value for pixel normalization.
   - **Default:** `None` (no normalization).
 
-### Returns
+Returns
+-------
+
 - **`Tuple[torch.utils.data.DataLoader, torch.utils.data.DataLoader]`**:
   - A tuple containing:
     - **Training DataLoader**: A PyTorch DataLoader for training data.
     - **Testing DataLoader**: A PyTorch DataLoader for testing data.
 
-### Related Functions and Classes
+Related Functions and Classes
+-----------------------------
 
 **`collate_fn`**
 
@@ -109,10 +117,9 @@ The function performs type checking and validation to ensure that the input para
 - **`batch_size`**: Raises a `TypeError` if the value is not an integer.
 - **`labels`**: Raises a `TypeError` if the value is not a list.
 
-Refer to the [source code](https://github.com/SaashaJoshi/piqture) for additional implementation details and advanced configurations.
+Refer to the `source code <https://github.com/SaashaJoshi/piqture>`_ for additional implementation details and advanced configurations.
 
 .. seealso::
 
    - `torchvision.datasets.MNIST <https://pytorch.org/vision/stable/datasets.html#mnist>`_
    - `piqture.transforms.MinMaxNormalization <https://piqture.readthedocs.io/en/latest/transforms.html#piqture.transforms.MinMaxNormalization>`_
-
