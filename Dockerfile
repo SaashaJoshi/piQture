@@ -1,12 +1,10 @@
-ARG PYTHON_VERSION=3.12
+ARG PYTHON_VERSION=3.9
 FROM python:${PYTHON_VERSION}-slim-bullseye
 
 WORKDIR /app
 
 COPY requirements.txt /app/requirements.txt
 
-RUN python -m venv venv
-ENV PATH="/app/venv/bin:$PATH"
 RUN pip install --upgrade pip && pip install -r requirements.txt
 COPY . /app
 CMD ["python", "setup.py", "--help-commands"]
