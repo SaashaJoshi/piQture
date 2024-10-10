@@ -16,10 +16,12 @@ from .frqi import FRQI
 from .ineqr import INEQR
 from .mcrqi import MCRQI
 from .neqr import NEQR
+from .brqi import BRQI
 
 __all__ = [
     "FRQI",
     "NEQR",
     "INEQR",
     "MCRQI",
+    "BRQI",
 ]
