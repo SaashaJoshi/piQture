@@ -1,10 +1,10 @@
 """
 Test Suite for the MNIST Data Loader
 
-This module contains a series of unit tests for the MNIST data loader 
-implemented in the `mnist_data_loader` module. It verifies that the 
-data loader functions as expected, checking various aspects such as 
-loading the dataset, batching of images and labels, normalization, 
+This module contains a series of unit tests for the MNIST data loader
+implemented in the `mnist_data_loader` module. It verifies that the
+data loader functions as expected, checking various aspects such as
+loading the dataset, batching of images and labels, normalization,
 resizing images, and filtering by labels.
 
 The tests include:
@@ -15,13 +15,15 @@ The tests include:
 - Filtering batches based on specified labels.
 - Confirming that DataLoader instances are created successfully.
 
-These tests utilize the pytest framework for structured testing and 
+These tests utilize the pytest framework for structured testing and
 assertion checking.
 """
 
 import math
+
 import torch
 import torchvision.transforms.functional as F
+
 from piqture.data_loader.mnist_data_loader import load_mnist_dataset
 from piqture.transforms import MinMaxNormalization
 
@@ -36,21 +38,20 @@ def test_load_mnist_dataset():
 
     # Check that the loaders are instances of DataLoader
     assert isinstance(
-        train_loader,
-        torch.utils.data.DataLoader
+        train_loader, torch.utils.data.DataLoader
     ), "Train loader should be a DataLoader"
     assert isinstance(
-        test_loader,
-        torch.utils.data.DataLoader
+        test_loader, torch.utils.data.DataLoader
     ), "Test loader should be a DataLoader"
-
 
 
 def test_dataloader_batches():
     """
     Test that the DataLoader batches have the correct image and label shape
     """
-    train_loader, test_loader = load_mnist_dataset(batch_size_train=64, batch_size_test=1000, load="both")  # pylint: disable=C0301
+    train_loader, test_loader = load_mnist_dataset(
+        batch_size_train=64, batch_size_test=1000, load="both"
+    )  # pylint: disable=C0301
 
     # Test a single batch from the train loader
     for images, labels in train_loader:
@@ -92,7 +93,9 @@ def test_resizing_images():
         image_resized = F.resize(image, (new_height, new_width))
 
         # Check that the resized dimensions are correct
-        assert image_resized.shape[2] == new_height, f"Image height should be {new_height} after resizing."  # pylint: disable=C0301
+        assert (
+            image_resized.shape[2] == new_height
+        ), f"Image height should be {new_height} after resizing."  # pylint: disable=C0301
         break  # Only need to check one image
 
 
@@ -118,6 +121,10 @@ def test_normalization_after_resizing():
         # Check normalization
         min_val = image_normalized.min().item()
         max_val = image_normalized.max().item()
-        assert 0 <= min_val < 1, "Normalized image pixels should be between 0 and 1 (min value)"
-        assert 0 < max_val <= 1, "Normalized image pixels should be between 0 and 1 (max value)"
+        assert (
+            0 <= min_val < 1
+        ), "Normalized image pixels should be between 0 and 1 (min value)"
+        assert (
+            0 < max_val <= 1
+        ), "Normalized image pixels should be between 0 and 1 (max value)"
         break

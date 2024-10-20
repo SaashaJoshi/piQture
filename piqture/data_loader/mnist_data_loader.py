@@ -11,8 +11,9 @@
 """Data Loader for MNIST images"""
 
 from __future__ import annotations
+
 from functools import partial
-from typing import Union, Tuple, List, Optional
+from typing import List, Optional, Tuple, Union
 
 import torch.utils.data
 import torchvision
@@ -21,7 +22,7 @@ from torchvision import datasets
 from piqture.transforms.transforms import MinMaxNormalization
 
 
-def load_mnist_dataset(  # pylint: disable=R0913, R0917, R0914
+def load_mnist_dataset(  # pylint: disable=R0913, R0914, W0012
     img_size: Union[int, Tuple[int, int]] = 28,
     batch_size_train: int = 64,
     batch_size_test: int = 1000,
@@ -54,7 +55,9 @@ def load_mnist_dataset(  # pylint: disable=R0913, R0917, R0914
     if not isinstance(img_size, (int, tuple)):
         raise TypeError("img_size must be an int or tuple[int, int].")
 
-    if isinstance(img_size, tuple) and not all(isinstance(size, int) for size in img_size):
+    if isinstance(img_size, tuple) and not all(
+        isinstance(size, int) for size in img_size
+    ):
         raise TypeError("img_size tuple must contain integers.")
 
     if not isinstance(batch_size_train, int) or not isinstance(batch_size_test, int):
@@ -67,19 +70,25 @@ def load_mnist_dataset(  # pylint: disable=R0913, R0917, R0914
         raise ValueError('load must be one of "train", "test", or "both".')
 
     # Define the transform
-    mnist_transform = torchvision.transforms.Compose([
-        torchvision.transforms.ToTensor(),
-        torchvision.transforms.Resize(img_size),
-        MinMaxNormalization(normalize_min, normalize_max) if normalize_min is not None and normalize_max is not None  # pylint: disable=C0301
-        else torchvision.transforms.Lambda(lambda x: x)
-    ])
+    mnist_transform = torchvision.transforms.Compose(
+        [
+            torchvision.transforms.ToTensor(),
+            torchvision.transforms.Resize(img_size),
+            (
+                MinMaxNormalization(normalize_min, normalize_max)
+                if normalize_min is not None
+                and normalize_max is not None  # pylint: disable=C0301
+                else torchvision.transforms.Lambda(lambda x: x)
+            ),
+        ]
+    )
 
     # Load the full MNIST dataset
     mnist_full = datasets.MNIST(
         root="data/mnist_data",
         train=True,  # Always load train to split later
         download=True,
-        transform=mnist_transform
+        transform=mnist_transform,
     )
 
     # Split the dataset into train/test based on split_ratio
@@ -115,10 +124,7 @@ def create_dataloader(dataset, batch_size: int, labels: Optional[List[int]]):
     """
     custom_collate = partial(collate_fn, labels=labels) if labels else None
     return torch.utils.data.DataLoader(
-        dataset=dataset,
-        batch_size=batch_size,
-        shuffle=True,
-        collate_fn=custom_collate
+        dataset=dataset, batch_size=batch_size, shuffle=True, collate_fn=custom_collate
     )
 
 
