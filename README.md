@@ -77,20 +77,45 @@ Let's build a Quantum Image Representation with the `Improved Novel Enhanced Qua
 
 ```python
 # INEQR Encoding Method
+import math
 import torch.utils.data
+import torchvision.transforms.functional as F
 from piqture.data_loader.mnist_data_loader import load_mnist_dataset
-from piqture.embeddings.image_embeddings.ineqr import INEQR
+from piqture.transforms import MinMaxNormalization
 
-# Load MNIST dataset
-train_dataset, test_dataset = load_mnist_dataset()
+train_loader, test_loader = load_mnist_dataset(load="both", batch_size_train=64, batch_size_test=1000)
+# OR
+train_loader = load_mnist_dataset(load="train", batch_size_train=64)
+test_loader = load_mnist_dataset(load="test", batch_size_test=1000)
 
-# Retrieve a single image from the dataset
-image, label = train_dataset[0]
-image_size = tuple(image.squeeze().size())
+# Iterate through the train_loader to retrieve a batch of images and labels
+for image_batch, label_batch in train_loader:
+    # Assuming you want to retrieve the first batch only
+    image, label = image_batch[0], label_batch[0]
+    
+    # Get the original image size
+    height, width = image.squeeze().size()
+
+    # Resize image to the nearest power of 2 (e.g., 32x32)
+    new_height = 2 ** math.ceil(math.log2(height))
+    new_width = 2 ** math.ceil(math.log2(width))
+    
+    # Resize image using torchvision's functional transforms
+    image_resized = F.resize(image, (new_height, new_width))
+
+    # Update image size after resizing
+    image_size = tuple(image_resized.squeeze().size())
+    
+    # Break after processing the first batch
+    break
+
+# Apply MinMaxNormalization on the resized image data (normalize pixel values between 0 and 1)
+normalizer = MinMaxNormalization(normalize_min=0, normalize_max=1)
+image_normalized = normalizer(image_resized) 
 
 # Change pixel values from float to integer
-pixel_vals = (image * 255).round().to(torch.uint8)
-pixel_vals = pixel_vals.tolist()
+pixel_vals = (image_normalized * 255).round().to(torch.uint8)
+pixel_vals = pixel_vals.tolist() 
 
 embedding = INEQR(image_size, pixel_vals).ineqr()
 
