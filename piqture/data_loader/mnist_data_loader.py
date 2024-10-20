@@ -133,8 +133,10 @@ def collate_fn(batch, labels: list):
     Custom collate function that filters batches by provided labels.
     """
     new_batch = []
-    for img, label in batch:
-        if label in labels:
-            new_batch.append((img, label))
+    for item in batch:
+        if isinstance(item, tuple) and len(item) == 2:
+            img, label = item
+            if label in labels:
+                new_batch.append((img, label))
 
     return torch.utils.data.default_collate(new_batch) if new_batch else []
