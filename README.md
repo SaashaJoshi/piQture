@@ -1,10 +1,8 @@
 # _**piQture**_: QML Library for Image Processing
 
-[//]: # (<p align="center">)
-
-[//]: # (    <img src="graphics/QuIPL-svg.svg" alt="QIPL-logo" width="350"/>)
-
-[//]: # (</p>)
+ <p align="center">
+     <img src="graphics/piqture-logo.png" alt="piqture-logo" width="350"/>
+ </p>
 
 [![Static Badge](https://img.shields.io/badge/license-Apache_2.0-yellow?label=license&color=yellow&link=https%3A%2F%2Fgithub.com%2FSaashaJoshi%2FpiQture%2FLICENSE)](https://github.com/SaashaJoshi/piQture/blob/main/LICENSE)
 [![Static Badge](https://img.shields.io/badge/release-v0.1-orange?label=release&color=orange&link=https%3A%2F%2Fgithub.com%2FSaashaJoshi%2FpiQture%2Fpiqture%2Fversion.txt)](https://github.com/SaashaJoshi/piQture/blob/main/piqture/version.txt)
