@@ -34,7 +34,7 @@ repos:
   rev: v2.17.0
   hooks:
     - id: pylint
-      args: [--disable=import-error, --disable=R0801]
+      args: [--disable=import-error]
       exclude: ^(docs|graphics|utils)/
 
 #- repo: https://github.com/pre-commit/mirrors-mypy
