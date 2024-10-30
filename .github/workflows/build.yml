@@ -1,0 +1,27 @@
+name: Build_docker.yml
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        app-version: ['v0.1.1']  # Add more app versions as needed
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build Docker image for each combination of Python and App versions
+      run: |
+        docker build --build-arg PYTHON_VERSION=${{ matrix.python-version }} \
+                     --build-arg APP_VERSION=${{ matrix.app-version }} \
+                     -t piqture:${{ matrix.app-version }}-${{ matrix.python-version }} .
+
+    - name: Run Docker container
+      run: |
+        docker run piqture:${{ matrix.app-version }}-${{ matrix.python-version }}
