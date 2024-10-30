@@ -1,7 +1,7 @@
 import numpy as np
 from PIL import Image
-from qiskit import QuantumCircuit, transpile
 from qiskit_aer import Aer
+from qiskit import transpile
 from qiskit.visualization import plot_histogram
 import matplotlib.pyplot as plt
 

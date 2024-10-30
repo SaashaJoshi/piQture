@@ -1,9 +1,10 @@
-
 """Unit test for BRQI class"""
 
 from __future__ import annotations
 
 import math
+import os
+import sys
 from unittest import mock
 
 import numpy as np
@@ -11,20 +12,6 @@ import pytest
 from pytest import raises
 from qiskit.circuit import QuantumCircuit
 
-import sys
-import os
-
-# Add the project root to the Python path
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
-sys.path.insert(0, project_root)
-print(f"Updated Python path: {sys.path}")
-
-# Now try to import BRQI
-try:
-    from piqture.embeddings.image_embeddings.brqi import BRQI
-    print("Successfully imported BRQI")
-except ImportError as e:
-    print(f"Error importing BRQI: {e}")
 from piqture.embeddings.image_embeddings.brqi import BRQI
 
 
@@ -40,10 +27,11 @@ def brqi_pixel_value_fixture():
         pixel_val_bin = f"{int(pixel_val):0>{color_qubits}b}"
         test_circuit = QuantumCircuit(feature_dim + color_qubits)
 
-        # Add gates to test_circuit
+        # Add gates to test_circuit based on binary representation
+        control_qubits = list(range(feature_dim))
         for index, color in enumerate(pixel_val_bin):
             if color == "1":
-                test_circuit.mcx(list(range(feature_dim)), feature_dim + index)
+                test_circuit.mcx(control_qubits, feature_dim + index)
         return test_circuit
 
     return _circuit
@@ -114,26 +102,31 @@ class TestBRQI:
         brqi_pixel_value,
     ):
         """Tests the final BRQI circuit."""
+        # Create BRQI object and get dimensions
         brqi_object = BRQI(img_dims, pixel_vals, max_color_intensity)
         color_qubits = int(np.ceil(np.log2(max_color_intensity + 1)))
         feature_dim = int(np.ceil(np.log2(math.prod(img_dims))))
-        mock_circuit = QuantumCircuit(feature_dim + color_qubits)
-
+        
+        # Create test circuit with same dimensions
         test_circuit = QuantumCircuit(feature_dim + color_qubits)
+        
+        # Add Hadamard gates
         test_circuit.h(list(range(feature_dim)))
-        for index, pixel_val in enumerate(pixel_vals[0]):
-            pixel_pos_binary = f"{index:0>{feature_dim}b}"
-            mock_circuit.clear()
-            test_circuit.compose(
-                brqi_pixel_value(img_dims, pixel_val, color_qubits), inplace=True
-            )
-
-        with mock.patch(
-            "piqture.embeddings.image_embeddings.brqi.BRQI.circuit",
-            new_callable=lambda: mock_circuit,
-        ):
-            brqi_object.brqi()
-            assert mock_circuit == test_circuit
+        
+        # Add pixel value gates in same order as BRQI implementation
+        pixel_vals_flat = np.array(pixel_vals).flatten()
+        for pixel_val in pixel_vals_flat:
+            pixel_circuit = brqi_pixel_value(img_dims, pixel_val, color_qubits)
+            test_circuit.compose(pixel_circuit, inplace=True)
+        
+        # Add measurements to match BRQI implementation
+        test_circuit.measure_all()
+        
+        # Get the actual circuit
+        actual_circuit = brqi_object.brqi()
+        
+        # Compare circuits
+        assert actual_circuit == test_circuit
 
     @pytest.mark.parametrize(
         "img_dims, pixel_vals, max_color_intensity",
