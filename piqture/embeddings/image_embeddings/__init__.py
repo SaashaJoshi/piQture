@@ -12,11 +12,11 @@
 Quantum Image Representations (module: piqture.embeddings.image_embeddings)
 """
 
+from .brqi import BRQI
 from .frqi import FRQI
 from .ineqr import INEQR
 from .mcrqi import MCRQI
 from .neqr import NEQR
-from .brqi import BRQI
 
 __all__ = [
     "FRQI",

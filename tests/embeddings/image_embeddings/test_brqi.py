@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 import math
-import os
-import sys
 from unittest import mock
 
 import numpy as np
@@ -13,7 +11,6 @@ from pytest import raises
 from qiskit.circuit import QuantumCircuit
 
 from piqture.embeddings.image_embeddings.brqi import BRQI
-
 
 MAX_COLOR_INTENSITY = 255
 
@@ -106,25 +103,25 @@ class TestBRQI:
         brqi_object = BRQI(img_dims, pixel_vals, max_color_intensity)
         color_qubits = int(np.ceil(np.log2(max_color_intensity + 1)))
         feature_dim = int(np.ceil(np.log2(math.prod(img_dims))))
-        
+
         # Create test circuit with same dimensions
         test_circuit = QuantumCircuit(feature_dim + color_qubits)
-        
+
         # Add Hadamard gates
         test_circuit.h(list(range(feature_dim)))
-        
+
         # Add pixel value gates in same order as BRQI implementation
         pixel_vals_flat = np.array(pixel_vals).flatten()
         for pixel_val in pixel_vals_flat:
             pixel_circuit = brqi_pixel_value(img_dims, pixel_val, color_qubits)
             test_circuit.compose(pixel_circuit, inplace=True)
-        
+
         # Add measurements to match BRQI implementation
         test_circuit.measure_all()
-        
+
         # Get the actual circuit
         actual_circuit = brqi_object.brqi()
-        
+
         # Compare circuits
         assert actual_circuit == test_circuit
 
@@ -136,7 +133,9 @@ class TestBRQI:
         """Tests BRQI with NumPy array input."""
         brqi_object = BRQI(img_dims, pixel_vals, max_color_intensity)
         circuit = brqi_object.brqi()
-        
+
         # Check if the circuit is generated correctly
         assert isinstance(circuit, QuantumCircuit)
-        assert circuit.num_qubits == int(np.ceil(np.log2(math.prod(img_dims)))) + int(np.ceil(np.log2(max_color_intensity + 1)))
+        assert circuit.num_qubits == int(np.ceil(np.log2(math.prod(img_dims)))) + int(
+            np.ceil(np.log2(max_color_intensity + 1))
+        )

@@ -1,15 +1,16 @@
-
 """Bitplane Representation of Quantum Images (BRQI)"""
 
 from __future__ import annotations
 
 import math
 from typing import Union
+
 import numpy as np
 from qiskit.circuit import QuantumCircuit
 
 from piqture.embeddings.image_embedding import ImageEmbedding
 from piqture.mixin.image_embedding_mixin import ImageMixin
+
 
 class BRQI(ImageEmbedding, ImageMixin):
     """Represents images in BRQI representation format."""
@@ -22,19 +23,24 @@ class BRQI(ImageEmbedding, ImageMixin):
     ):
         self.max_color_intensity = max_color_intensity
         self.validate_max_color_intensity()
-        
+
         # Convert numpy array to list if necessary
         if isinstance(pixel_vals, np.ndarray):
             pixel_vals = [pixel_vals.flatten().tolist()]
-        
+
         ImageEmbedding.__init__(self, img_dims, pixel_vals)
         self.color_qubits = int(np.ceil(np.log2(self.max_color_intensity + 1)))
         self.feature_dim = int(np.ceil(np.log2(math.prod(self.img_dims))))
-        
+
         # Initialize the _circuit attribute
         self._circuit = QuantumCircuit(self.feature_dim + self.color_qubits)
 
     def validate_max_color_intensity(self):
+        """Validate the maximum color intensity value.
+
+        Raises:
+            ValueError: If max_color_intensity is less than 0 or greater than 255
+        """
         if self.max_color_intensity < 0 or self.max_color_intensity > 255:
             raise ValueError(
                 "Maximum color intensity cannot be less than 0 or greater than 255."
@@ -63,8 +69,7 @@ class BRQI(ImageEmbedding, ImageMixin):
         for index, color in enumerate(color_byte):
             if color == "1":
                 self.circuit.mcx(
-                    control_qubits=control_qubits,
-                    target_qubit=self.feature_dim + index
+                    control_qubits=control_qubits, target_qubit=self.feature_dim + index
                 )
 
     def brqi(self) -> QuantumCircuit:
