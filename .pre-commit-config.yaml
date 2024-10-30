@@ -32,7 +32,7 @@ repos:
       exclude: ^(docs|graphics|utils)/
 
 - repo: https://github.com/PyCQA/pylint
-  rev: v2.17.0
+  rev: v3.3.1
   hooks:
     - id: pylint
       args: [--disable=import-error]
