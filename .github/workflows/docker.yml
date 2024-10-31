@@ -1,4 +1,4 @@
-name: Build_docker.yml
+name: Build Docker
 
 on:
   workflow_dispatch:
