@@ -63,9 +63,37 @@ class BRQI(ImageEmbedding, ImageMixin):
         ImageMixin.pixel_position(self.circuit, pixel_pos_binary)
 
     def pixel_value(self, *args, **kwargs):
-        """Embeds pixel (color) values in a circuit"""
+        """
+        Embeds pixel (color) values in a circuit.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+                color_byte (str): Binary representation of the color value.
+        """
+        # Get the color byte from kwargs
         color_byte = kwargs.get("color_byte")
-        control_qubits = list(range(self.feature_dim))
+        if not color_byte:
+            raise ValueError("color_byte must be provided")
+
+        # Create control qubits list
+        control_qubits = self._get_control_qubits()
+
+        # Apply gates for each '1' in the color byte
+        self._apply_color_gates(color_byte, control_qubits)
+
+    def _get_control_qubits(self):
+        """Helper method to get control qubits."""
+        return list(range(self.feature_dim))
+
+    def _apply_color_gates(self, color_byte: str, control_qubits: list):
+        """
+        Apply quantum gates for color encoding.
+
+        Args:
+            color_byte (str): Binary representation of the color value.
+            control_qubits (list): List of control qubits.
+        """
         for index, color in enumerate(color_byte):
             if color == "1":
                 self.circuit.mcx(
