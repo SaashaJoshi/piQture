@@ -142,6 +142,8 @@ class TestTTN:
             (4, True, "complex_general"),
         ],
     )
+
+    # pylint: disable=R0917
     def test_ttn_backbone(
         self,
         num_qubits,
