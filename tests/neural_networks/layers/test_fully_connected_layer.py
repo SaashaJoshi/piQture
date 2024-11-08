@@ -67,6 +67,8 @@ class TestFullyConnectedLayer:
             (6, None, [2, 3], "circuit4"),
         ],
     )
+
+    # pylint: disable=R0917
     def test_build_layer(
         self, request, num_qubits, circuit, unmeasured_bits, resulting_circuit
     ):

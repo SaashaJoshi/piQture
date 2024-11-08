@@ -173,6 +173,8 @@ class TestFRQI:
             ((2, 2), None, PIXEL_POS_BINARY2),
         ],
     )
+
+    # pylint: disable=R0917
     def test_frqi(
         self,
         img_dims,
@@ -189,7 +191,8 @@ class TestFRQI:
         test_circuit.h(list(range(int(np.sqrt(math.prod(img_dims))))))
         for pixel, pixel_pos_binary in enumerate(pixel_pos_binary_list):
             test_circuit.compose(
-                circuit_pixel_position(img_dims, pixel_pos_binary), inplace=True
+                circuit_pixel_position(img_dims, pixel_pos_binary),
+                inplace=True,  # pylint: disable=too-many-arguments
             )
             test_circuit.compose(
                 circuit_pixel_value(img_dims, pixel_vals, pixel), inplace=True
@@ -208,5 +211,4 @@ class TestFRQI:
                 pixel_vals = np.random.random(math.prod(img_dims))
                 test_circuit.assign_parameters(pixel_vals, inplace=True)
                 mock_circuit.assign_parameters(pixel_vals, inplace=True)
-
             assert mock_circuit == test_circuit

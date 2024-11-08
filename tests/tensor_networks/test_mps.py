@@ -133,6 +133,8 @@ class TestMPS:
             (4, True, "complex_general"),
         ],
     )
+
+    # pylint: disable=R0917
     def test_mps_backbone(
         self,
         num_qubits,

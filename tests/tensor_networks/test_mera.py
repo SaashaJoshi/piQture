@@ -235,6 +235,8 @@ class TestMERA:
             (5, None, True, "complex_simple"),
         ],
     )
+
+    # pylint: disable=R0917
     def test_mera_backbone(
         self, num_qubits, layer_depth, complex_structure, parameterization, mera_circuit
     ):
