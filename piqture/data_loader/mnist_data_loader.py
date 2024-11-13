@@ -28,6 +28,7 @@ def load_mnist_dataset(
     labels: list = None,
     normalize_min: float = None,
     normalize_max: float = None,
+    train_test: int = None,
 ):
     """
     Loads MNIST dataset from PyTorch using DataLoader.
@@ -118,8 +119,15 @@ def load_mnist_dataset(
         )
 
         return train_dataloader, test_dataloader
-
-    return mnist_train, mnist_test
+    # 1 for test
+    # 2 for train
+    #  rest for both
+    if (train_test==1):
+        return mnist_test
+    elif (train_test==2):
+        return mnist_train
+    else :
+        return mnist_train, mnist_test
 
 
 def collate_fn(batch, labels: list, new_batch: list):
