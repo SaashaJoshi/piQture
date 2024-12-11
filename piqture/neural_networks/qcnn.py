@@ -12,70 +12,80 @@
 
 from __future__ import annotations
 
-from typing import Callable
-
+from typing import Type
+from inspect import isclass
 from qiskit.circuit import QuantumCircuit
-
 from piqture.neural_networks.quantum_neural_network import QuantumNeuralNetwork
-
-# pylint: disable=too-few-public-methods
-
+from piqture.neural_networks.layers.base_layer import BaseLayer
 
 class QCNN(QuantumNeuralNetwork):
-    """
-    Builds a Quantum Neural Network circuit with the help of
-    convolutional, pooling or fully-connected layers.
-
-    References:
-        [1] I. Cong, S. Choi, and M. D. Lukin, “Quantum
-        convolutional neural networks,” Nature Physics,
-        vol. 15, no. 12, pp. 1273–1278, Aug. 2019,
-        doi: https://doi.org/10.1038/s41567-019-0648-8.
-    """
-
     def __init__(self, num_qubits: int):
         """
-        Initializes a Quantum Neural Network circuit with the given
-        number of qubits.
+        Initializes a Quantum Neural Network circuit with the given number of qubits.
 
         Args:
-            num_qubits (int): builds a quantum convolutional neural
-            network circuit with the given number of qubits or image
-            dimensions.
+            num_qubits (int): builds a quantum convolutional neural network circuit 
+                             with the given number of qubits or image dimensions.
         """
         QuantumNeuralNetwork.__init__(self, num_qubits)
 
-    def sequence(self, operations: list[tuple[Callable, dict]]) -> QuantumCircuit:
+    def sequence(self, operations: list[tuple[Type[BaseLayer], dict]]) -> QuantumCircuit:
         """
-        Builds a QNN circuit by composing the circuit with given
-        sequence of list of operations.
+        Builds a QNN circuit by composing the circuit with given sequence of operations.
 
         Args:
-            operations (list[tuple[Callable, dict]]: a tuple
-            of a Layer object and a dictionary of its arguments.
+            operations (list[tuple[Type[BaseLayer], dict]]): a tuple of a Layer class 
+                      that inherits from BaseLayer and a dictionary of its arguments.
 
         Returns:
-            circuit (QuantumCircuit): final QNN circuit with all the
-            layers.
+            circuit (QuantumCircuit): final QNN circuit with all the layers.
+
+        Raises:
+            TypeError: If operations format is invalid or if any operation doesn't
+                      inherit from BaseLayer
+            ValueError: If operations list is empty
         """
+        # Validate operations list
         if not isinstance(operations, list):
             raise TypeError("The input operations must be of the type list.")
+
+        if not operations:
+            raise ValueError("The operations list cannot be empty.")
 
         if not all(isinstance(operation, tuple) for operation in operations):
             raise TypeError(
                 "The input operations list must contain tuple[operation, params]."
             )
 
-        if not callable(operations[0][0]):
-            raise TypeError(
-                "Operation in input operations list must be Callable functions/classes."
-            )
+        # Validate each operation
+        for idx, (layer, params) in enumerate(operations):
+            # Check if it's a class and inherits from BaseLayer
+            if not isclass(layer):
+                raise TypeError(
+                    f"Operation at index {idx} must be a class, got {type(layer).__name__}"
+                )
+            
+            if not issubclass(layer, BaseLayer):
+                raise TypeError(
+                    f"Operation at index {idx} must inherit from BaseLayer, "
+                    f"got {layer.__name__}"
+                )
 
-        if not isinstance(operations[0][1], dict):
-            raise TypeError(
-                "Parameters of operation in input operations list must be in a dictionary."
-            )
+            # Prevent using BaseLayer itself
+            if layer is BaseLayer:
+                raise TypeError(
+                    f"Operation at index {idx} cannot be BaseLayer itself, "
+                    "must be a concrete implementation"
+                )
 
+            # Validate parameters
+            if not isinstance(params, dict):
+                raise TypeError(
+                    f"Parameters at index {idx} must be in a dictionary, "
+                    f"got {type(params).__name__}"
+                )
+
+        # Build the circuit
         unmeasured_bits = list(range(self.num_qubits))
         for layer, params in operations:
             layer_instance = layer(
@@ -84,8 +94,6 @@ class QCNN(QuantumNeuralNetwork):
                 unmeasured_bits=unmeasured_bits,
                 **params,
             )
-            # Optionally collect circuit since it is
-            # composed in place.
             _, unmeasured_bits = layer_instance.build_layer()
 
         return self.circuit
