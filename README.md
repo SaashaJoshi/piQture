@@ -80,7 +80,7 @@ from piqture.data_loader.mnist_data_loader import load_mnist_dataset
 from piqture.embeddings.image_embeddings.ineqr import INEQR
 
 # Load MNIST dataset
-train_dataset, test_dataset = load_mnist_dataset()
+train_dataset, test_dataset = load_mnist_dataset(img_size=(8, 8))
 
 # Retrieve a single image from the dataset
 image, label = train_dataset[0]
