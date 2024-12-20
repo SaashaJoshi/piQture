@@ -101,6 +101,8 @@ class TestNEQR:
         "img_dims, pixel_vals, max_color_intensity",
         [((2, 2), [list(range(1, 5))], MAX_COLOR_INTENSITY)],
     )
+
+    # pylint: disable=R0917
     def test_neqr(
         self,
         img_dims,

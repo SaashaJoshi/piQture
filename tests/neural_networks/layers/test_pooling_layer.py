@@ -202,6 +202,8 @@ class TestQuantumPoolingLayer2:
             (None, None, [2, 3, 5], True, "circuit4a"),
         ],
     )
+
+    # pylint: disable=R0917
     def test_build_layer(
         self,
         request,
@@ -264,6 +266,8 @@ class TestQuantumPoolingLayer3:
             (None, None, [2, 3, 5, 7], True, "circuit7a"),
         ],
     )
+
+    # pylint: disable=R0917
     def test_build_layer(
         self,
         request,
