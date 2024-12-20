@@ -12,38 +12,53 @@
 
 from __future__ import annotations
 
-from typing import Type
 from inspect import isclass
+from typing import Type
+
 from qiskit.circuit import QuantumCircuit
-from piqture.neural_networks.quantum_neural_network import QuantumNeuralNetwork
+
 from piqture.neural_networks.layers.base_layer import BaseLayer
+from piqture.neural_networks.quantum_neural_network import QuantumNeuralNetwork
+
 
 class QCNN(QuantumNeuralNetwork):
+    """
+    A Quantum Convolutional Neural Network implementation.
+
+    This class implements a quantum convolutional neural network by extending
+    the base QuantumNeuralNetwork class. It provides functionality to build
+    quantum circuits with convolutional-style quantum operations.
+    """
+
     def __init__(self, num_qubits: int):
         """
-        Initializes a Quantum Neural Network circuit with the given number of qubits.
+        Initialize a Quantum Neural Network circuit with the given number of qubits.
 
         Args:
-            num_qubits (int): builds a quantum convolutional neural network circuit 
-                             with the given number of qubits or image dimensions.
+            num_qubits (int): Number of qubits to use in the quantum convolutional
+                             neural network circuit. This determines the dimensions
+                             of the input that can be processed.
         """
         QuantumNeuralNetwork.__init__(self, num_qubits)
 
-    def sequence(self, operations: list[tuple[Type[BaseLayer], dict]]) -> QuantumCircuit:
+    def sequence(
+        self, operations: list[tuple[Type[BaseLayer], dict]]
+    ) -> QuantumCircuit:
         """
-        Builds a QNN circuit by composing the circuit with given sequence of operations.
+        Build a QNN circuit by composing the circuit with given sequence of operations.
 
         Args:
-            operations (list[tuple[Type[BaseLayer], dict]]): a tuple of a Layer class 
-                      that inherits from BaseLayer and a dictionary of its arguments.
+            operations (list[tuple[Type[BaseLayer], dict]]): A list of tuples where
+                      each tuple contains a Layer class that inherits from BaseLayer
+                      and a dictionary of its arguments.
 
         Returns:
-            circuit (QuantumCircuit): final QNN circuit with all the layers.
+            QuantumCircuit: Final QNN circuit with all the layers applied.
 
         Raises:
             TypeError: If operations format is invalid or if any operation doesn't
-                      inherit from BaseLayer
-            ValueError: If operations list is empty
+                      inherit from BaseLayer.
+            ValueError: If operations list is empty.
         """
         # Validate operations list
         if not isinstance(operations, list):
@@ -64,7 +79,7 @@ class QCNN(QuantumNeuralNetwork):
                 raise TypeError(
                     f"Operation at index {idx} must be a class, got {type(layer).__name__}"
                 )
-            
+
             if not issubclass(layer, BaseLayer):
                 raise TypeError(
                     f"Operation at index {idx} must inherit from BaseLayer, "
