@@ -34,7 +34,7 @@ pip install -e .
 
 We use pytest for our test suite:
 ```bash
-pytest tests/
+tox
 ```
 
 ## How to Contribute
@@ -47,12 +47,12 @@ pytest tests/
 - Improving documentation and adding examples
 - Writing tests and improving test coverage
 - Performance optimization and benchmarking
-
+- And other good first issues
 ### Pull Request Process
 
 1. Fork the repository and create a new branch:
 ```bash
-git checkout -b feature/your-feature-name
+git checkout -b branch-name
 ```
 
 2. Make your changes following our code style guidelines
@@ -79,7 +79,7 @@ Longer description if needed
 Closes #123
 ```
 
-Types:
+Types (Optional):
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -96,11 +96,12 @@ Types:
 - Follow PEP 8 guidelines
 - Use type hints for function arguments and return values
 - Maximum line length: 88 characters (using Black formatter)
-- Use docstrings for classes and functions (Google style)
-
+- Use docstrings for classes and functions
+Code formatting can be checked using `tox`.
+ ```bash
+  tox -e lint
 ### Quantum Circuit Style
 
-- Use meaningful names for quantum registers
 - Comment complex quantum operations
 - Include circuit diagrams in docstrings when helpful
 - Optimize circuit depth where possible
