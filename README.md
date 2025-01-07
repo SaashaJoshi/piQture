@@ -3,9 +3,9 @@
 <!---
 <p align="center">
      <img src="graphics/piqture-logo.png" alt="piqture-logo" width="350"/>
- </p> 
+ </p>
  -->
- 
+
 [![Static Badge](https://img.shields.io/badge/license-Apache_2.0-yellow?label=license&color=yellow&link=https%3A%2F%2Fgithub.com%2FSaashaJoshi%2FpiQture%2FLICENSE)](https://github.com/SaashaJoshi/piQture/blob/main/LICENSE)
 [![Static Badge](https://img.shields.io/badge/release-v0.1-orange?label=release&color=orange&link=https%3A%2F%2Fgithub.com%2FSaashaJoshi%2FpiQture%2Fpiqture%2Fversion.txt)](https://github.com/SaashaJoshi/piQture/blob/main/piqture/version.txt)
 [![Coverage Status](https://coveralls.io/repos/github/SaashaJoshi/piQture/badge.svg?branch=main)](https://coveralls.io/github/SaashaJoshi/piQture?branch=main)
