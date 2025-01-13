@@ -21,11 +21,13 @@ from qiskit.circuit import QuantumCircuit
 
 from piqture.neural_networks import QCNN
 from piqture.neural_networks.layers import (
+    BaseLayer,
     FullyConnectedLayer,
     QuantumConvolutionalLayer,
     QuantumPoolingLayer2,
     QuantumPoolingLayer3,
 )
+from piqture.tensor_networks import MERA
 
 
 class TestQCNN:
@@ -78,13 +80,20 @@ class TestQCNN:
 
     @pytest.mark.parametrize(
         "num_qubits, operations",
-        [(2, [([], {})]), (3, [(pytest.mark, {})]), (4, [(1, {})]), (5, [("abc", {})])],
+        [
+            (2, [([], {})]),
+            (3, [(pytest.mark, {})]),
+            (4, [(1, {})]),
+            (5, [("abc", {})]),
+            (2, [(print, {})]),
+            (3, [(sum, {})]),
+            (4, [(lambda x: x, {})]),
+        ],
     )
-    def test_operation(self, num_qubits, operations):
+    def test_operation_isclass(self, num_qubits, operations):
         """Tests the type of operation in operation tuple."""
         with raises(
-            TypeError,
-            match="Operation in input operations list must be Callable functions/classes.",
+            TypeError, match=r"Operation at index \d+\ must be a class, got .*?"
         ):
             _ = QCNN(num_qubits).sequence(operations)
 
@@ -101,7 +110,7 @@ class TestQCNN:
         """Tests the type of params in operation tuple."""
         with raises(
             TypeError,
-            match="Parameters of operation in input operations list must be in a dictionary.",
+            match=r"Parameters of operation at index \d+ must be in a dictionary, got .*?",
         ):
             _ = QCNN(num_qubits).sequence(operations)
 
@@ -140,3 +149,33 @@ class TestQCNN:
                 or mock_quantum_pooling_layer3.call_count > 0
                 or mock_fully_connected_layer.call_count > 0
             )
+
+    @pytest.mark.parametrize(
+        "num_qubits, operations",
+        [
+            (2, [(dict, {})]),
+            (3, [(str, {})]),
+            (4, [(object, {})]),
+            (2, [(MERA, {})]),
+            (3, [(QCNN, {})]),
+        ],
+    )
+    def test_non_baselayer_operation(self, num_qubits, operations):
+        """Tests if the layer operation inherits from the abstract BaseLayer class."""
+        with raises(
+            TypeError,
+            match=r"Operation at index \d+\ must inherit from BaseLayer, got \*?",
+        ):
+            _ = QCNN(num_qubits).sequence(operations)
+
+    @pytest.mark.parametrize(
+        "num_qubits, operations",
+        [(2, [(BaseLayer, {})])],
+    )
+    def test_baselayer(self, num_qubits, operations):
+        """Tests if the layer operation is the abstract BaseLayer class."""
+        with raises(
+            TypeError,
+            match=r"Operation at index \d+\ cannot be BaseLayer itself.",
+        ):
+            _ = QCNN(num_qubits).sequence(operations)
