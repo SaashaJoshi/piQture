@@ -87,9 +87,7 @@ class QCNN(QuantumNeuralNetwork):
 
             # Prevent using BaseLayer itself
             if layer is BaseLayer:
-                raise TypeError(
-                    f"Operation at index {idx} cannot be BaseLayer itself, got *"
-                )
+                raise TypeError(f"Operation at index {idx} cannot be BaseLayer itself.")
 
             # Validate parameters
             if not isinstance(params, dict):

@@ -161,7 +161,7 @@ class TestQCNN:
         ],
     )
     def test_non_baselayer_operation(self, num_qubits, operations):
-        """Tests that classes not inheriting from BaseLayer are rejected."""
+        """Tests if the layer operation inherits from the abstract BaseLayer class."""
         with raises(
             TypeError,
             match=r"Operation at index \d+\ must inherit from BaseLayer, got \*?",
@@ -173,9 +173,9 @@ class TestQCNN:
         [(2, [(BaseLayer, {})])],
     )
     def test_baselayer(self, num_qubits, operations):
-        """Tests that BaseLayer itself is rejected."""
+        """Tests if the layer operation is the abstract BaseLayer class."""
         with raises(
             TypeError,
-            match=r"Operation at index \d+\ cannot be BaseLayer itself, got \*?",
+            match=r"Operation at index \d+\ cannot be BaseLayer itself.",
         ):
             _ = QCNN(num_qubits).sequence(operations)
