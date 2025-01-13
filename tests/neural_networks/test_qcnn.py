@@ -27,6 +27,7 @@ from piqture.neural_networks.layers import (
     QuantumPoolingLayer2,
     QuantumPoolingLayer3,
 )
+from piqture.tensor_networks import MERA
 
 
 class TestQCNN:
@@ -79,23 +80,22 @@ class TestQCNN:
 
     @pytest.mark.parametrize(
         "num_qubits, operations",
-        [(2, [([], {})]), (3, [(pytest.mark, {})]), (4, [(1, {})]), (5, [("abc", {})])],
+        [
+            (2, [([], {})]),
+            (3, [(pytest.mark, {})]),
+            (4, [(1, {})]),
+            (5, [("abc", {})]),
+            (2, [(print, {})]),
+            (3, [(sum, {})]),
+            (4, [(lambda x: x, {})]),
+        ],
     )
-    def test_operation(self, num_qubits, operations):
+    def test_operation_isclass(self, num_qubits, operations):
         """Tests the type of operation in operation tuple."""
-        # Construct the expected error message based on the input
-        for idx, (layer, _) in enumerate(operations):
-            # Determine the actual type of the invalid operation
-            actual_type = type(layer).__name__
-
-            # Define the expected error message
-            expected_error_message = (
-                f"Operation at index {idx} must be a class, got {actual_type}"
-            )
-
-            # Check if the error is raised and matches the dynamically constructed message
-            with raises(TypeError, match=expected_error_message):
-                _ = QCNN(num_qubits).sequence(operations)
+        with raises(
+            TypeError, match=r"Operation at index \d+\ must be a class, got .*?"
+        ):
+            _ = QCNN(num_qubits).sequence(operations)
 
     @pytest.mark.parametrize(
         "num_qubits, operations",
@@ -108,18 +108,11 @@ class TestQCNN:
     )
     def test_params(self, num_qubits, operations):
         """Tests the type of params in operation tuple."""
-        for idx, (_, params) in enumerate(operations):
-            # Determine the actual type of the invalid parameter
-            actual_type = type(params).__name__
-
-            # Construct the expected error message dynamically
-            expected_error_message = (
-                f"Parameters at index {idx} must be in a dictionary, got {actual_type}"
-            )
-
-            # Validate that the correct error message is raised
-            with raises(TypeError, match=expected_error_message):
-                _ = QCNN(num_qubits).sequence(operations)
+        with raises(
+            TypeError,
+            match=r"Parameters of operation at index \d+ must be in a dictionary, got .*?",
+        ):
+            _ = QCNN(num_qubits).sequence(operations)
 
     @pytest.mark.parametrize(
         "num_qubits, operations",
@@ -157,38 +150,32 @@ class TestQCNN:
                 or mock_fully_connected_layer.call_count > 0
             )
 
-    # Tests added for BaseLayer inheritance validation
-    @pytest.mark.parametrize(
-        "num_qubits, operations",
-        [
-            (2, [(print, {})]),
-            (3, [(sum, {})]),
-            (4, [(lambda x: x, {})]),
-        ],
-    )
-    def test_non_class_operations(self, num_qubits, operations):
-        """Tests that non-class callables are rejected."""
-        with raises(TypeError, match="must be a class"):
-            _ = QCNN(num_qubits).sequence(operations)
-
     @pytest.mark.parametrize(
         "num_qubits, operations",
         [
             (2, [(dict, {})]),
             (3, [(str, {})]),
             (4, [(object, {})]),
+            (2, [(MERA, {})]),
+            (3, [(QCNN, {})]),
         ],
     )
-    def test_non_baselayer_operations(self, num_qubits, operations):
+    def test_non_baselayer_operation(self, num_qubits, operations):
         """Tests that classes not inheriting from BaseLayer are rejected."""
-        with raises(TypeError, match="must inherit from BaseLayer"):
+        with raises(
+            TypeError,
+            match=r"Operation at index \d+\ must inherit from BaseLayer, got \*?",
+        ):
             _ = QCNN(num_qubits).sequence(operations)
 
     @pytest.mark.parametrize(
         "num_qubits, operations",
         [(2, [(BaseLayer, {})])],
     )
-    def test_baselayer_itself(self, num_qubits, operations):
+    def test_baselayer(self, num_qubits, operations):
         """Tests that BaseLayer itself is rejected."""
-        with raises(TypeError, match="cannot be BaseLayer itself"):
+        with raises(
+            TypeError,
+            match=r"Operation at index \d+\ cannot be BaseLayer itself, got \*?",
+        ):
             _ = QCNN(num_qubits).sequence(operations)

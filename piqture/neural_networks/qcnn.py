@@ -82,21 +82,19 @@ class QCNN(QuantumNeuralNetwork):
 
             if not issubclass(layer, BaseLayer):
                 raise TypeError(
-                    f"Operation at index {idx} must inherit from BaseLayer, "
-                    f"got {layer.__name__}"
+                    f"Operation at index {idx} must inherit from BaseLayer, got {layer.__name__}"
                 )
 
             # Prevent using BaseLayer itself
             if layer is BaseLayer:
                 raise TypeError(
-                    f"Operation at index {idx} cannot be BaseLayer itself, "
-                    "must be a concrete implementation"
+                    f"Operation at index {idx} cannot be BaseLayer itself, got *"
                 )
 
             # Validate parameters
             if not isinstance(params, dict):
                 raise TypeError(
-                    f"Parameters at index {idx} must be in a dictionary, "
+                    f"Parameters of operation at index {idx} must be in a dictionary, "
                     f"got {type(params).__name__}"
                 )
 
