@@ -1,6 +1,6 @@
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.5.0
+  rev: v5.0.0
   hooks:
     - id: trailing-whitespace
       exclude: ^(docs|graphics|utils)/
@@ -12,26 +12,26 @@ repos:
     - id: detect-private-key
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.4.8
+  rev: v0.11.8
   hooks:
     - id: ruff
       exclude: ^(docs|graphics|utils)/
 
 - repo: https://github.com/PyCQA/isort
-  rev: 5.13.2
+  rev: 6.0.1
   hooks:
     - id: isort
       args: ["--profile", "black"]
       exclude: ^(docs|graphics|utils)/
 
 - repo: https://github.com/psf/black
-  rev: 24.4.2
+  rev: 25.1.0
   hooks:
     - id: black
       exclude: ^(docs|graphics|utils)/
 
 - repo: https://github.com/PyCQA/pylint
-  rev: v3.3.1
+  rev: v3.3.6
   hooks:
     - id: pylint
       args: [--disable=import-error]
