@@ -1,0 +1,53 @@
+piqture.embeddings.image\_embeddings package
+============================================
+
+Submodules
+----------
+
+piqture.embeddings.image\_embeddings.brqi module
+------------------------------------------------
+
+.. automodule:: piqture.embeddings.image_embeddings.brqi
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+piqture.embeddings.image\_embeddings.frqi module
+------------------------------------------------
+
+.. automodule:: piqture.embeddings.image_embeddings.frqi
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+piqture.embeddings.image\_embeddings.ineqr module
+-------------------------------------------------
+
+.. automodule:: piqture.embeddings.image_embeddings.ineqr
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+piqture.embeddings.image\_embeddings.mcrqi module
+-------------------------------------------------
+
+.. automodule:: piqture.embeddings.image_embeddings.mcrqi
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+piqture.embeddings.image\_embeddings.neqr module
+------------------------------------------------
+
+.. automodule:: piqture.embeddings.image_embeddings.neqr
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: piqture.embeddings.image_embeddings
+   :members:
+   :show-inheritance:
+   :undoc-members:
