@@ -29,7 +29,7 @@ jobs:
 
     - name: Sphinx build
       run: |
-        rm -rf docs/source/
+        rm -f docs/source/piqture*.rst
         sphinx-apidoc -o docs/source piqture
         sphinx-build docs/source docs/_build/html
 
