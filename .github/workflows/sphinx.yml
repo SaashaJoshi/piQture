@@ -29,6 +29,7 @@ jobs:
 
     - name: Sphinx build
       run: |
+        sphinx-apidoc -o docs/source piqture
         sphinx-build docs/source docs/_build/html
 
     - name: Deploy to gh-pages
