@@ -2,7 +2,6 @@
    sphinx-quickstart on Wed Apr 24 19:35:42 2024.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
-
 Welcome to piQture's documentation!
 ===================================
 
