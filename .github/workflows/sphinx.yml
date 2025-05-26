@@ -21,10 +21,13 @@ jobs:
 
     - name: Set up Python
       uses: actions/setup-python@v3
+      with:
+        python-version: "3.11"
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        pip install -r requirements.txt
         python -m pip install sphinx furo
 
     - name: Sphinx build
@@ -32,6 +35,15 @@ jobs:
         rm -f docs/source/piqture*.rst
         sphinx-apidoc -o docs/source piqture
         sphinx-build docs/source docs/_build/html
+
+    - name: Deploy to preview branch for PRs
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.event_name == 'pull_request'
+      with:
+        publish_branch: docs-preview/${{ github.head_ref }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: docs/_build/html
+        force_orphan: true
 
     - name: Deploy to gh-pages
       uses: peaceiris/actions-gh-pages@v3
