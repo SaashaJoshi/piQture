@@ -36,6 +36,15 @@ jobs:
         sphinx-apidoc -o docs/source piqture
         sphinx-build docs/source docs/_build/html
 
+    - name: Deploy to preview branch for PRs
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.event_name == 'pull_request'
+      with:
+        publish_branch: docs-preview/${{ github.head_ref }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: docs/_build/html
+        force_orphan: true
+
     - name: Deploy to gh-pages
       uses: peaceiris/actions-gh-pages@v3
       if: ${{ github.ref == 'refs/heads/main' }}
