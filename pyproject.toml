@@ -1,0 +1,6 @@
+[build-system]
+requires = ["setuptools>=80.1.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+license-files = []

@@ -22,6 +22,7 @@ with open("README.md", "r", encoding="utf-8") as readme:
 setup(
     name="piqture",
     version=version,
+    license="Apache-2.0",
     description="piQture: A QML library for Image Processing",
     long_description=long_description,
     long_description_content_type="text/markdown",
