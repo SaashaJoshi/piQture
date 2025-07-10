@@ -1,4 +1,4 @@
 matplotlib==3.7.5
-qiskit>=1.1.0
-setuptools>=70.0.0
+qiskit>=2.0.0
+setuptools>=80.1.0
 torchvision==0.17.1
