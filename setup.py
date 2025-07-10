@@ -29,7 +29,7 @@ setup(
     author_email="saashajoshi08@gmail.com",
     url="https://github.com/SaashaJoshi/piQture",
     packages=find_packages(include=["piqture", "piqture.*", "tests"]),
-    python_requires=">=3.8",
+    python_requires=">=3.10",
     install_requires=install_requires,
     include_package_data=True,
     zip_safe=False,
