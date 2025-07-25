@@ -21,7 +21,7 @@ jobs:
         run: rm -rf dist build *.egg-info
 
       - name: Build package
-        run: python setup.py sdist bdist_wheel
+        run: python -m build
 
       - name: Upload package to Test PyPI
         env:
