@@ -126,15 +126,20 @@ class TestQCNN:
     def test_sequence(self, num_qubits, operations):
         """Tests the sequence method of QCNN class."""
 
-        with mock.patch(
-            "piqture.neural_networks.layers.QuantumConvolutionalLayer.build_layer"
-        ) as mock_quantum_convolutional_layer, mock.patch(
-            "piqture.neural_networks.layers.QuantumPoolingLayer2.build_layer"
-        ) as mock_quantum_pooling_layer2, mock.patch(
-            "piqture.neural_networks.layers.QuantumPoolingLayer3.build_layer"
-        ) as mock_quantum_pooling_layer3, mock.patch(
-            "piqture.neural_networks.layers.FullyConnectedLayer.build_layer"
-        ) as mock_fully_connected_layer:
+        with (
+            mock.patch(
+                "piqture.neural_networks.layers.QuantumConvolutionalLayer.build_layer"
+            ) as mock_quantum_convolutional_layer,
+            mock.patch(
+                "piqture.neural_networks.layers.QuantumPoolingLayer2.build_layer"
+            ) as mock_quantum_pooling_layer2,
+            mock.patch(
+                "piqture.neural_networks.layers.QuantumPoolingLayer3.build_layer"
+            ) as mock_quantum_pooling_layer3,
+            mock.patch(
+                "piqture.neural_networks.layers.FullyConnectedLayer.build_layer"
+            ) as mock_fully_connected_layer,
+        ):
 
             mock_quantum_convolutional_layer.return_value = None, None
             mock_quantum_pooling_layer2.return_value = None, None
